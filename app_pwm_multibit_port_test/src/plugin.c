@@ -1,0 +1,27 @@
+#include <syscall.h>
+#include "plugin.h"
+
+#define NOTIFY_PWM_PLUGIN_DONE_ADDRESS 1000
+#define NOTIFY_PWM_PLUGIN_MAX_NUM_CYCLES 1001
+
+void setupPluginWait(unsigned char buffer[], unsigned int maxNumCycles) {
+    // Informs the plugin of the 'done' address which is 
+    // uses to signal back to us that the pwm has finished.
+    _plugins(NOTIFY_PWM_PLUGIN_DONE_ADDRESS, (unsigned int)buffer, 0);
+    _plugins(NOTIFY_PWM_PLUGIN_MAX_NUM_CYCLES, maxNumCycles, 0);
+}
+
+void waitUntilPluginIsFinished(unsigned char buffer[], unsigned int numPorts) {
+    while(1) {
+        unsigned int numFinished = 0;
+        for (unsigned int i = 0; i < numPorts; ++i) {
+            if (buffer[i] == 0x1)
+               ++numFinished; 
+        }
+
+        if (numFinished == numPorts)
+            break;
+    }
+}
+
+
