@@ -66,6 +66,14 @@ Functional Specification
      timestep parameter to 0 will provide a 10 ns minimum time-step.
      This is passed as a run-time parameter to the relevent server function.
 
+.. feature:: PWM_MODULATION_TYPE
+   :parents: PWM_SINGLE_BIT, PWM_MULTI_BIT
+
+     The edge of the components is configured with value 1, 2 or 3 depending on the required pulse-width modulation type
+     value 1 configures the component as lead edge pwm
+     2 configures the component as tail edge pwm
+     3 configures the component as Centred variation pwm.
+
 Limitations
 ===========
 
@@ -95,7 +103,8 @@ PWM Single Bit Component
                 out buffered port:32 p[], 
                 unsigned int numPorts, 
                 unsigned int resolution, 
-                unsigned int timeStep);
+                unsigned int timeStep
+                unsigned int edge);
 
    This function starts the pwm server and configures it with the a channel
    with which it will communicate with the client, a clock block required for the
@@ -109,6 +118,8 @@ PWM Single Bit Component
    maximum of 256.  Therefore, the resulting period of the pwm (in ns) is given by
    the following expression: 
    (10 * resolution) [if timestep = 0] or (timestep * 20 * resolution) [if timestep > 0]
+   The edge configures the PWM edge variations
+   1 --> Lead Edge, 2 -- > Tail Edge, 3 --> Centred variations
 
 .. feature:: PWM_SINGLE_BIT_CLIENT_API
    :parents: PWM_SINGLE_BIT
@@ -136,12 +147,14 @@ PWM Multi Bit Component
                 out buffered port:32 p, 
                 unsigned int portWidth, 
                 unsigned int resolution, 
-                unsigned int timeStep);
+                unsigned int timeStep
+                unsigned int edge);
+
 
    This function starts the pwm server and configures it with the a channel
    with which it will communicate with the client, a clock block required for the
    clocking of the port, a 4, 8 or 16-bit port on which the pwm signals will
-   be emmitted, and the width of the given port. The resolution and timestep
+   be emmitted, and the width of the given port. The resolution timestep and edge
    parameters are treated in the same way as in the PWM_SINGLE_BIT component.
 
 .. feature:: PWM_MULTI_BIT_CLIENT_API
