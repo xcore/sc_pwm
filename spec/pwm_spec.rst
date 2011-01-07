@@ -40,13 +40,17 @@ Functional Specification
 
 .. feature:: PWM_MULITPLE_PORTS
    :parents: PWM_SINGLE_BIT
+   :config_options: 1 | 2 | 7 | 8 | 15 | 16
 
    The PWM_SINGLE_BIT component is configured with an array of ports, thus can produce 
    multiple sychronised pwm signals on multiple 1-bit ports. The number of ports
-   is passed as a run-time parameter to the PWM_SINGLE_BIT server function.
+   is passed as a run-time parameter to the PWM_SINGLE_BIT server function. The config 
+   option for this feature is varied from single 1-bit port to sixteen 1-bit ports with increment
+   of 1 for test case creation. However only 1,2,7,8,15 and 16 are specified for testing.
 
 .. feature:: PWM_PORT_WIDTH
    :parents: PWM_MULTI_BIT
+   :config_options: 4 | 8 | 16
 
    The PWM_MULTI_BIT component is configured with a 4, 8 or 16-bit port, and will produce 
    multiple sychronised pwm signals on each pin of the given port. The port width
@@ -54,25 +58,29 @@ Functional Specification
 
 .. feature:: PWM_RESOLUTION
    :parents: PWM_SINGLE_BIT, PWM_MULTI_BIT
+   :config_options: 32 | 64 | 256 | 1024
 
-     The resolution of each of the components is configurable. For example, setting the 
-     resolution to 1024 will provide 1024 (10-bit) distinct levels.
-     This is passed as a run-time parameter to the relevent server function.
+   The resolution of each of the components is configurable. For example, setting the 
+   resolution to 1024 will provide 1024 (10-bit) distinct levels. The config options 
+   for this feature is always multiple of 32 and tested with only with values 32, 62 192, 256, 640 and 1024.
+   This is passed as a run-time parameter to the relevent server function. A subset are selected for testing.
 
 .. feature:: PWM_TIMESTEP
    :parents: PWM_SINGLE_BIT, PWM_MULTI_BIT
+   :config_options: 0 | 10 | 100
 
-     The time-step width of each of the components is configurable. For example, setting the
-     timestep parameter to 0 will provide a 10 ns minimum time-step.
-     This is passed as a run-time parameter to the relevent server function.
+
+   The time-step width of each of the components is configurable. For example, setting the
+   timestep parameter to 0 will provide a 10 ns minimum time-step. 
+   Config options for timestep is test with value 0,10  & 100.
+   This is passed as a run-time parameter to the relevent server function.
 
 .. feature:: PWM_MODULATION_TYPE
    :parents: PWM_SINGLE_BIT, PWM_MULTI_BIT
+   :config_options: 1 | 2 | 3
 
-     The edge of the components is configured with value 1, 2 or 3 depending on the required pulse-width modulation type
-     value 1 configures the component as lead edge pwm
-     2 configures the component as tail edge pwm
-     3 configures the component as Centred variation pwm.
+   The edge of the components is configured with value 1, 2 or 3 depending on the required pulse-width modulation type
+   value 1 configures the component as lead edge pwm 2 configures the component as tail edge pwm 3 configures the component as Centred variation pwm.
 
 Limitations
 ===========
@@ -93,8 +101,6 @@ This section describes the API of the two PWM components.
 PWM Single Bit Component
 ------------------------
 
-.. feature:: PWM_SINGLE_BIT_COMPONENT_API
-   :parents: PWM_SINGLE_BIT
 
    The component will run in a par with the following
    function which does not terminate.
@@ -137,8 +143,6 @@ PWM Single Bit Component
 PWM Multi Bit Component
 ------------------------
 
-.. feature:: PWM_MULTI_BIT_COMPONENT_API
-   :parents: PWM_MULTI_BIT
 
    The component will run in a par with the following
    function which does not terminate.
@@ -230,22 +234,6 @@ the following demo programs developed.
    This application will highlight the PWM functionality using the leds on
    a XC-1A development kit.
 
-Documentation
-=============
-
-Standard Arkanoid component documentation will be delivered:
-
-.. feature:: SUMMARY_PARAGRAPH
-   :parents: PWM_SINGLE_BIT, PWM_MULTI_BIT
-
-   A summary paragraph of the main features of the component 
-   for inclusion in the datasheet.
-
-.. feature:: MANUAL
-   :parents: PWM_SINGLE_BIT, PWM_MULTI_BIT
-
-   The pdf manual is a stand-alone document describing how to use the
-   component to a programmer. It includes the API description.
 
 Related Documents
 =================
