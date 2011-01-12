@@ -78,7 +78,7 @@ int main() {
         on stdcore[3] : enableClockLeds(clockLed3);
 
         on stdcore[0] : client(c);
-        on stdcore[0] : pwmSingleBitPort(c, clk, rgPorts, NUM_PORTS, RESOLUTION, TIMESTEP);
+        on stdcore[0] : pwmSingleBitPort(c, clk, rgPorts, NUM_PORTS, RESOLUTION, TIMESTEP,1);
 
     }
     return 0;
