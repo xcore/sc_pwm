@@ -6,7 +6,8 @@ void pwmSingleBitPort(
     out buffered port:32 p[], 
     unsigned int numPorts, 
     unsigned int resolution, 
-    unsigned int timeStep);
+    unsigned int timeStep,
+    unsigned int edge);
 
 void pwmSingleBitPortSetDutyCycle(
     chanend c, 
