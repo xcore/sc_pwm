@@ -48,7 +48,7 @@ int main() {
 
     par {
         setDutyCycles(c);
-        pwmSingleBitPort(c, clk, ports, NUM_PORTS, 256, 10);
+        pwmSingleBitPort(c, clk, ports, NUM_PORTS, 256, 10,1);
     }
     return 0;
 }
