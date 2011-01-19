@@ -2,6 +2,7 @@
 #include <print.h>
 #include <stdlib.h>
 #include <xs1.h>
+#include <stdio.h>
 #include "pwm_singlebit_port.h"
 
 #define MAX_NUM_PORTS 16
@@ -37,17 +38,16 @@ void pwmSingleBitPort(
     // Gets the initial time. 
     t :> time;
     time += period;
-
     while (1) {
-        select {
+    	select {
         // A new set of duty cycle values are avaliable.
         #pragma xta endpoint "updateDutyCycle"
         case slave { 
             int i = 0;
             do { 
             	numTicks = 0;
-                c :> dutyCycle[i];  
-                ++i; 
+                c :> dutyCycle[i];
+                ++i;
             } while (i < numPorts);}:
             break;
 
@@ -61,52 +61,54 @@ void pwmSingleBitPort(
                 #pragma xta label "handlePwmLoop"
                 unsigned int value = dutyCycle[i];
 
-
                 if(edge == 1) {
-                	if(value < numTicks){
+		    // Leading edge PWM
+                	if(value <= numTicks){
                 		p[i] <: 0x0;
-                	} else if(value > (numTicks + 32)){
+                	} else if(value >= (numTicks + 32)){
                 		p[i] <: 0xffffffff;
-                	} else{
+                	} else {
                 		p[i] <: ((1 << (value & 0x1f)) - 1);
                 	}
                 } else if(edge == 2){
+		    // Trailing edge PWM
                 	value_te = resolution - value;
-                	if(value_te > (numTicks + 32)){
+                	if(value_te >= (numTicks + 32)){
                 		p[i] <: 0x0;
-                	} else if(value_te < numTicks){
+                	} else if(value_te <= numTicks){
                 		p[i] <: 0xffffffff;
-                	} else{
+                	} else {
                 		p[i] <: (0xffffffff << (value_te & 0x1f));
                 	}
-                }
-                	else if(edge == 3){
+                } else if(edge == 3){
                 	value_le = (resolution + value)>>1;
                 	value_te = (resolution - value)>>1;
 
-                	if(value > 32) {
-                		if (value_te > (numTicks + 32)){
-                			p[i] <: 0x0;
-                		} else if ((value_te > numTicks) & (value_te < (numTicks + 32))) {
-               	    	 p[i] <: (0xffffffff << (value_te & 0x1f));
-               	     }else if(value_le < numTicks){
-            	    	 p[i] <: 0x0;
-            	     }else if ((value_le > numTicks) & (value_le < (numTicks + 32))) {
-            	    	 p[i] <: ((1 << (value & 0x1f)) - 1);
-            	     }else {
-            	    	 p[i] <: 0xffffffff;
-            	     }
-                    //end of 32
-                	} else {
-                	     if (((resolution>>1) > numTicks) & ((resolution>>1) < (numTicks + 32))) {
-                	          p[i] <: (((1 << (value & 0x1f)) - 1) << (16 - (value>>1)));
-                	     } else{
-                	     p[i] <: 0x0;
+                	if ( (value <= 32) && ((resolution>>5) & 0x1)){
+                	     if (((resolution>>1) > numTicks) && ((resolution>>1) < (numTicks + 32))) {
+                	          if(value == 0){
+                	        	  p[i] <: 0x0;
+                	          } else {
+                	        	  p[i] <: ((0xffffffff >> ((32-value) & 0x1f))<<(16 - (value>>1)));
+                	          }
+                	     } else {
+                	    	 p[i] <: 0x0;
                 	     }
+                	} else {
+                		if(value_te >= (numTicks + 32)){
+                			p[i] <: 0x0;
+                		} else if((value_te > numTicks) && (value_te < (numTicks + 32))){
+                			p[i] <: (0xffffffff << (value_te & 0x1f));
+                		} else if (value_le <= numTicks){
+                			p[i] <: 0x0;
+                		} else if((value_le > numTicks) && (value_le < (numTicks + 32))){
+                			p[i] <: (0xffffffff >> ((numTicks + 32) - value_le));
+                		}else {
+                			p[i] <: 0xffffffff;
+                		}
                 	}
 
-
-                }//end
+                }
             }
             numTicks += 32;
             time += period;
@@ -127,6 +129,8 @@ void pwmSingleBitPortSetDutyCycle(
         }
     }
 }
+
+
 
 
 
