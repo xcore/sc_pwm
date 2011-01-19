@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <syscall.h>
 #include <xs1.h>
+#include <stdio.h>
 #include "pwm_singlebit_port.h"
 
 on stdcore[0] : out buffered port:32 rgPorts[] = { PORT_CLOCKLED_SELR, PORT_CLOCKLED_SELG };
@@ -13,11 +14,11 @@ on stdcore[1] : port clockLed1 = PORT_CLOCKLED_1;
 on stdcore[2] : port clockLed2 = PORT_CLOCKLED_2;
 on stdcore[3] : port clockLed3 = PORT_CLOCKLED_3;
 
-#define MILLISECONDS 100000
-#define PERIOD 100 * MILLISECONDS
-
+//#define MILLISECONDS 100000
+//#define PERIOD 100 * MILLISECONDS
+#define RESOLUTION 256
+#define PERIOD (RESOLUTION*20)
 #define NUM_PORTS 2
-#define RESOLUTION 32
 #define TIMESTEP 10
 
 enum { COUNTUP, COUNTDOWN };
@@ -64,6 +65,7 @@ void client(chanend c) {
         t when timerafter (time) :> void;
         updateValues(values, direction);
         pwmSingleBitPortSetDutyCycle(c, values, NUM_PORTS);
+        //printf("Time = %d values %d.. %d \n",time,values[0], values[1]);
         time += PERIOD;
     }
 }
