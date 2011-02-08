@@ -1,0 +1,5 @@
+#define RESOLUTION 256
+#define TIMESTEP 10
+#define NUM_PORTS 16
+#define INDEPENDENT
+unsigned int mod_type = 1;unsigned int value [NUM_PORTS]= {0,16,32,48,64,80,96,112,128,144,160,176,192,208,224,240};
