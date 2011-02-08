@@ -179,7 +179,7 @@ regression = 1
 run_while = 1
 ind_test = 0
 ind_test_val = 0
-ind_test_val_max = 1
+ind_test_val_max = 16
 inp_data_val =0
 resolution = ''
 
