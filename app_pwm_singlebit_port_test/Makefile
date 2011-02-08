@@ -18,7 +18,9 @@ APP_NAME =
 # If the variable XCC_MAP_FLAGS is set it overrides the flags passed to 
 # xcc for the final link (mapping) stage.
 
-XCC_FLAGS = -g -O3
+XCC_FLAGS = -g -O3 -DNUM_PORTS=$(NUM_PORTS)
+
+
 
 # The USED_MODULES variable lists other module used by the application. 
 
@@ -26,15 +28,42 @@ USED_MODULES = module_pwm_singlebit_port.1v0
 
 #=============================================================================
 
+.PHONY : test time
+
 EXECUTABLE=bin/XC-1A/app_pwm_singlebit_port_test.xe
-TIMINGSCRIPT=../module_pwm_singlebit_port.1v0/src/pwm.py
+#TIMINGSCRIPT=../module_pwm_singlebit_port.1v0/src/pwm.py
 #TRACING=--trace-to trace.txt --vcd-tracing '-o trace.vcd -ports-detailed'
 
 PWM_PLUGIN = ../plugin_pwm/bin/PWM.dll
 
+#xsim $(TRACING) --plugin $(PWM_PLUGIN) '40' --plugin $(PWM_PLUGIN) '41' --plugin $(PWM_PLUGIN) '50' --plugin $(PWM_PLUGIN) '51' $(EXECUTABLE)
+#xsim $(TRACING) --plugin $(PWM_PLUGIN) '40' --plugin  $(PWM_PLUGIN) '41' $(EXECUTABLE)
 test:
-	xsim $(TRACING) --plugin $(PWM_PLUGIN) '40' --plugin $(PWM_PLUGIN) '41' --plugin $(PWM_PLUGIN) '50' --plugin $(PWM_PLUGIN) '51' $(EXECUTABLE)
-
+ifeq ($(NUM_PORTS), 1)
+	xsim $(TRACING) --plugin $(PWM_PLUGIN) '40' $(EXECUTABLE)
+else
+ifeq ($(NUM_PORTS), 2)
+	xsim $(TRACING) --plugin $(PWM_PLUGIN) '40' --plugin $(PWM_PLUGIN) '41' $(EXECUTABLE)
+else
+ifeq ($(NUM_PORTS), 7)
+	xsim $(TRACING) --plugin $(PWM_PLUGIN) '40' --plugin $(PWM_PLUGIN) '41' --plugin $(PWM_PLUGIN) '50' --plugin $(PWM_PLUGIN) '51' --plugin $(PWM_PLUGIN) '52' --plugin $(PWM_PLUGIN) '53' --plugin $(PWM_PLUGIN) '62' $(EXECUTABLE)
+else
+ifeq ($(NUM_PORTS), 8)
+	xsim $(TRACING) --plugin $(PWM_PLUGIN) '40' --plugin $(PWM_PLUGIN) '41' --plugin $(PWM_PLUGIN) '50' --plugin $(PWM_PLUGIN) '51' --plugin $(PWM_PLUGIN) '52' --plugin $(PWM_PLUGIN) '53' --plugin $(PWM_PLUGIN) '62' --plugin $(PWM_PLUGIN) '63' $(EXECUTABLE)
+else
+ifeq ($(NUM_PORTS), 15)
+	xsim $(TRACING) --plugin $(PWM_PLUGIN) '40' --plugin $(PWM_PLUGIN) '41' --plugin $(PWM_PLUGIN) '50' --plugin $(PWM_PLUGIN) '51' --plugin $(PWM_PLUGIN) '52' --plugin $(PWM_PLUGIN) '53' --plugin $(PWM_PLUGIN) '62' --plugin $(PWM_PLUGIN) '63' --plugin $(PWM_PLUGIN) '20' --plugin $(PWM_PLUGIN) '21' --plugin $(PWM_PLUGIN) '30' --plugin $(PWM_PLUGIN) '31' --plugin $(PWM_PLUGIN) '32' --plugin $(PWM_PLUGIN) '33' --plugin $(PWM_PLUGIN) '34' '35' $(EXECUTABLE)
+else
+ifeq ($(NUM_PORTS), 16)
+	xsim $(TRACING) --plugin $(PWM_PLUGIN) '40' --plugin $(PWM_PLUGIN) '41' --plugin $(PWM_PLUGIN) '50' --plugin $(PWM_PLUGIN) '51' --plugin $(PWM_PLUGIN) '52' --plugin $(PWM_PLUGIN) '53' --plugin $(PWM_PLUGIN) '62' --plugin $(PWM_PLUGIN) '63' --plugin $(PWM_PLUGIN) '20' --plugin $(PWM_PLUGIN) '21' --plugin $(PWM_PLUGIN) '30' --plugin $(PWM_PLUGIN) '31' --plugin $(PWM_PLUGIN) '32' --plugin $(PWM_PLUGIN) '33' --plugin $(PWM_PLUGIN) '34' --plugin $(PWM_PLUGIN) '35' $(EXECUTABLE)
+else
+	$(error "Invalid port number")
+endif
+endif
+endif
+endif
+endif
+endif
 time:
 	xta load $(EXECUTABLE) source $(TIMINGSCRIPT) 4 10 -exit
 
@@ -51,7 +80,7 @@ time:
 # in the $(BIN_DIR) directory e.g.
 #
 #  all : $(BIN_DIR)/my_app.xe
-
+#
 all: $(BIN_DIR)/$(APP_NAME).xe
 	@echo Build Complete
 
