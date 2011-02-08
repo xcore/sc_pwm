@@ -5,30 +5,23 @@
 #ifndef _PWM_MONITOR_H_
 #define _PWM_MONITOR_H_
 
-class XsiCallbacks;
+#include <list>
+
+struct XsiCallbacks;
 
 class PwmMonitor {
 public:
-	PwmMonitor(XsiCallbacks *xsi, unsigned int instanceId, const char *arguments);
+	PwmMonitor(struct XsiCallbacks *xsi, const char *arguments);
 
 	void clock();
-
-	void setTracingEnabled(bool tracingEnabled);
-	void setDoneAddress(unsigned int doneAddress);
-	void setMaxNumCycles(unsigned int maxNumCycles);
+	void setMonitoring(bool enabled);
+	void reportStatus();
 
 private:
-	XsiCallbacks *m_xsi;
-	unsigned int m_instanceId;
+	struct XsiCallbacks *m_xsi;
 	unsigned int m_padNumber;
-	unsigned int m_oldPadValue;
-	unsigned int m_numHighs;
-	unsigned int m_numLows;
-    unsigned int m_clock;
-    unsigned int m_doneAddress;
-    bool m_tracingEnabled;
-    unsigned int m_numCycles;
-    unsigned int m_maxNumCycles;
+    bool m_monitoringEnabled;
+    std::list<unsigned int> m_values;
 };
 
 #endif
