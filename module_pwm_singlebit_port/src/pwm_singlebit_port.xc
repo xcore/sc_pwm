@@ -122,7 +122,7 @@ void pwmSingleBitPortSetDutyCycle(
     unsigned int dutyCycle[], 
     unsigned int numPorts) {
 
-    assert(numPorts < MAX_NUM_PORTS);
+    assert(numPorts <= MAX_NUM_PORTS);
     master {
         for (unsigned int i = 0; i < numPorts; ++i) {
             c <: dutyCycle[i];
