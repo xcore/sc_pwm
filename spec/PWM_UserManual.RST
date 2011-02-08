@@ -1,7 +1,10 @@
 Overview 
 ========
-    Pulse Width Modulation(PWM) components gives the ability to generate the pulse width modulated signals in single bit ports and multibit ports.
-    These components can generate modulated signals in three kinds of variation Leading edge, Trailing edge and Center edge
+
+The Pulse Width Modulation(PWM) components generates a number PWM signals using either one multibit port or a group of 1-bit ports. 
+The component can be configured for Leading edge, Trailing edge and Center edge variations.
+
+[DW: add a little info about client api here, client server model ]
 
 Components 
 ----------
@@ -9,42 +12,40 @@ Components
 PWM single bit component
 ++++++++++++++++++++++++
 
-This components generates the pulse width modulated signals on upto 16 ports. The number of ports, resolution, edge variation and the Timestep are configurable.
+This variation generates the PWM signals on upto 16 1-bit ports from a single thread. The number of ports, resolution, edge variation and the timestep are configurable.
  
 PWM multi bit component
 +++++++++++++++++++++++
-This component genrates the pulse width modulated signals on 4bit ports , 8 bit port and 16-bit port. The port width, resolution, edge variation and Timestep are configrable
+This component generates the PWM signals on a single 4, 8 or 16 bit port. The port width, resolution, edge variation and timestep are configrable.
 
 Hardware Platform:
 =================
- The PWM components are supported by all the hardware platforms from XMOS such as XC-1,XC-1A,XC-2,XK-1,etc.It can run on any of the XMOS devices such as XS1-L1,XS1-G4,etc.
- [provided runs on XC-1A hardware platform.
- XC-1A uses single XS1-G4 device. ]
-
+The PWM components are supported by all the hardware platforms from XMOS having suitable IO such as XC-1,XC-1A,XC-2,XK-1,etc and can be run on any XS1-L or XS1-G series devices.
  
-The following modules are provided in this package, these can be
-used in your applications:
+The following modules are provided in this package, these can be used in your applications:
 
 Demo applications :
 ------------------
 
-    The PWM functionality is demonstrated using following demo applications. The applications run on XC-1 board and  XDE 10.4.2 or later versions.
+The PWM functionality is demonstrated using following demo applications. The applications run on XC-1 board and  XDE 10.4.2 or later versions.
 
 app_pwm_singlebit_demo : 
 +++++++++++++++++++++++    
+
    This demo is for PWM single bit port and the duty cycle is changed once in every second starting from 0 to 32 and the PWM functionality is highlighted using leds on the development board.
   
 app_pwm_multibit_demo : 
 +++++++++++++++++++++
+
    This demo is for PWM multi bit port and the duty cycle is changed once in every second starting from 0 to 32 and the PWM functionality is highlighted using leds on the development board.
 
 
 System Description :
 ===================
 
-   The pwm single bit port component and pwm multibit port multibit components run on its own independent threads.
-   The pwm server is connected with the client api through a channel on using which client can configure the PWM  component with the parameters resolution, number of ports for PWM single bit component, port width for PWM multibit component,Output Ports, Timestep and Edge variation.
-   client uses pwmSingleBitPortSetDutyCycle function to give the new dutycycle for the server for each port .The server continues to output at this value and until the the function pwmSingleBitPortSetDutyCycle  called again.
+   The pwm component runs in its own threads. The component acts as a server, connected with the client api through a channel on using which client can configure the PWM  component by changing its resolution, Timestep and Edge variation. The number and assignment of of ports for PWM single bit component, or the port width and assignment for PWM multibit component can also be configured.
+
+   The client application uses pwmSingleBitPortSetDutyCycle function to give the new dutycycle for the server for each port .The server continues to output at this value and until the the function pwmSingleBitPortSetDutyCycle  called again.
 
 
 Programming Guide :
@@ -52,8 +53,10 @@ Programming Guide :
  
 API (Application Programming Interface) :
 ---------------------------------------
+
 PWM Single Bit Component API : 
 ++++++++++++++++++++++++++++++   
+
 The component will run in a par with the following function which does not terminate.
 
 void pwmSingleBitPort(chanend c, clock clk,
@@ -63,21 +66,25 @@ void pwmSingleBitPort(chanend c, clock clk,
                       unsigned int timeStep
                       unsigned int mod_type);
 
-This function starts the pwm server and configures it with the a channel with which it will communicate with the client, a clock block required for the  clocking of the required ports, 
-an array of ports on which the pwm signals will be generated, and the number of ports in the array. The resolution specifes the number of levels permitted in the pwm, thus a resolution 
-of 100 will provide 100 distinct levels, and a resolution of 1024 will provide 1024 distinct levels (i.e. equivilent to 10-bits resolution). Also, the resolution must be a multiple of 32.  
-The timestep configures how long each level lasts for.  For example: 0 -> 10ns, 1 -> 20ns, 2 -> 40ns, 3 -> 60ns, 4 -> 80ns, etc, up to a maximum of 256.  Therefore, the resulting period 
-of the pwm (in ns) is given by the following expression: 
+This function starts the pwm server and passes it a channel with 
+which it will communicate with the client, a clock block required for the clocking of the required ports, an array of ports on which the pwm signals will be generated, and the number of ports in the array. 
+
+The resolution specifes the number of levels permitted in the pwm, thus a resolution  of 100 will provide 100 distinct levels, and a resolution of 1024 will provide 1024 distinct levels (i.e. equivilent to 10-bits resolution). Also, the resolution must be a multiple of 32.  
+
+The timestep configures how long each level lasts for.  For example: 0 -> 10ns, 1 -> 20ns, 2 -> 40ns, 3 -> 60ns, 4 -> 80ns, etc, up to a maximum of 256.  Therefore, the resulting period of the pwm (in ns) is given by the following expression: 
 
 (10 * resolution) [if timestep = 0] or (timestep * 20 * resolution) [if timestep > 0]
+
 The mod_type configures the PWM edge variations
 1 --> Lead Edge, 2 -- > Tail Edge, 3 --> Centred variations
 
+[DW: are these values 1,2,3  #defines, e.g. #define LEAD_EDGE 1 ?? ]
+
 void setDutyCycle(chanend c, unsigned int dutyCycle[], unsigned int numPorts);
 
-The client uses this function to give the pwm server a new set of duty cycles, one for 
-each of the ports in use. The server will then continue to output at that value until
-this function is called again.
+The client uses this function to give the pwm server a new set of duty cycles, one for  each of the ports in use. The server will then continue to output at that value until this function is called again.
+
+[DW; why is num_ports passed to this function?]
 
 PWM Multi Bit Component :
 +++++++++++++++++++++++++
@@ -99,9 +106,12 @@ parameters are treated in the same way as in the PWM_SINGLE_BIT component.
 void setDutyCycle(chanend c, unsigned int dutyCycle[], unsigned int portWidth);
 This function is same as described in pwm single bit component.
 
+[DW: why is portwidth passed ?]
 
 Resource Usage :
 ==============
+
+[DW: please put the below into a table as in the uart document]
 
 Memory Usage
 ------------
@@ -123,6 +133,8 @@ Other remaining 58743 bytes (89.63 % ) is available
 Port :
 -----
   
+[DW; please describe the below as constraints, and place in a table]
+
 pwm single bit port can configured starting from one 1 single bit port to 16 single bit port
 Maximum of 16 single bit ports are can be used for pwm single bit component if the timestep is 20
 Maximum of 13 single bit ports are can be used for pwm single bit component if time step is 10
