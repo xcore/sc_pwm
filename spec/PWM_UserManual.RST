@@ -3,8 +3,8 @@ Overview
 
 The Pulse Width Modulation(PWM) components generates a number PWM signals using either one multibit port or a group of 1-bit ports. 
 The component can be configured for Leading edge, Trailing edge and Center edge variations.
-
-[DW: add a little info about client api here, client server model ]
+The client application uses SetDutyCycle function to give the new dutycycle for the server for each port. The server continues to 
+output the pwm signal with given duty cycle and changes the dutycyle when the function SetDutyCycle is called with another dutycycle.
 
 Components 
 ----------
@@ -78,13 +78,10 @@ The timestep configures how long each level lasts for.  For example: 0 -> 10ns, 
 The mod_type configures the PWM edge variations
 1 --> Lead Edge, 2 -- > Tail Edge, 3 --> Centred variations
 
-[DW: are these values 1,2,3  #defines, e.g. #define LEAD_EDGE 1 ?? ]
-
 void setDutyCycle(chanend c, unsigned int dutyCycle[], unsigned int numPorts);
 
 The client uses this function to give the pwm server a new set of duty cycles, one for  each of the ports in use. The server will then continue to output at that value until this function is called again.
 
-[DW; why is num_ports passed to this function?]
 
 PWM Multi Bit Component :
 +++++++++++++++++++++++++
@@ -106,46 +103,79 @@ parameters are treated in the same way as in the PWM_SINGLE_BIT component.
 void setDutyCycle(chanend c, unsigned int dutyCycle[], unsigned int portWidth);
 This function is same as described in pwm single bit component.
 
-[DW: why is portwidth passed ?]
-
 Resource Usage :
 ==============
 
-[DW: please put the below into a table as in the uart document]
+The following table details the resource usage of each
+component of the reference design software.
 
-Memory Usage
-------------
-Out of available memory , following is the distribution of Usage  for app_pwm_singlebit_port application :      
-Stack memory : 685 bytes (1.05%)
-data memory :   838 bytes (1.28)
-program memory : 6442 bytes (9.83%) 
+.. table:: Resource Usage
 
-Other remaining 57571 bytes (87.85 % ) is available 
+  .. Memory :
 
-Out of available memory , following is the distribution of Usage  for app_pwm_multibit_port application :      
-Stack memory : 449 bytes (0.69%)
-data memory :   486 bytes (0.74)
-program memory : 5858 bytes (8.94%) 
+ For app_pwm_singlebit_port application :      
 
-Other remaining 58743 bytes (89.63 % ) is available 
+ +---------------+------------- -+----------------+
+ |   Memory      |  Size(KB)     | percentage(%)  |
+ +===============+===============+================+
+ | Stack Memory  |     0.685     |    1.05        |
+ |               |               |                |
+ +---------------+---------------+----------------+			
+ | Data Memory   |     0.838     |    1.28        |
+ +---------------+---------------+----------------+
+ |Program Memory |     6.442     |    9.83        | 
+ +---------------+---------------+----------------+ 
+ |Free(available)|     57.571    |    87.85       |                      
+ +---------------+---------------+----------------+
 
- 
-Port :
------
+ For app_pwm_multibit_port application :      
+
+ +---------------+------------- -+----------------+
+ |   Memory      |  Size(KB)     | percentage(%)  |
+ +===============+===============+================+
+ | Stack Memory  |     0.449     |    0.69        |
+ |               |               |                |
+ +---------------+---------------+----------------+			
+ | Data Memory   |     0.486     |    0.74        |
+ +---------------+---------------+----------------+
+ |Program Memory |     5.858     |    8.94        | 
+ +---------------+---------------+----------------+ 
+ |Free(available)|     58.743    |    89.63       |                      
+ +---------------+---------------+----------------+
+
+  ..Port :
   
-[DW; please describe the below as constraints, and place in a table]
+    For each configuration , it requires 1 x1-bit port.
 
-pwm single bit port can configured starting from one 1 single bit port to 16 single bit port
-Maximum of 16 single bit ports are can be used for pwm single bit component if the timestep is 20
-Maximum of 13 single bit ports are can be used for pwm single bit component if time step is 10
+Constraint :
+==============
 
-Pwm multi bit component can be configured as 4bit output port, 8 bit output port and 16 bit output port
-4bit port can be used for pwm multibit port if time step is more than equal to 10
-8bit port can be used if timestep is greater than or equal to 40
-16 bit port can be used if timestep is greater than or equal to 120. 
+.. table:: constraint
 
+  ..constraint :
 
+The following table gives the details of the constraint for the number of ports in pwm singlebit component
 
+ +------------- ----+----------------------------+
+ | Number of port   | Minimum Timestep required  |
+ +==================+============================+
+ |     16 to 14     |        20                  |
+ |                  |                            |
+ +------------------+----------------------------+			
+ |      13 to 1     |        10                  |
+ +------------------+----------------------------+
+
+The following table details the constraint for the number of ports in pwm multibit component
+
+ +------------- ----+----------------------------+
+ |    port width    | Minimum Timestep required  |
+ +==================+============================+
+ |     4            |        10                  |
+ +------------------+----------------------------+			
+ |     8            |        40                  |
+ +------------------+----------------------------+
+ |     16           |       120                  |
+ +------------------+----------------------------+
 
 
 Validation :
