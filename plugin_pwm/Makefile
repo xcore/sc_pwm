@@ -22,6 +22,6 @@ CC_FLAGS = -g
 
 # Use the version of the plugin build from module_xmos_common
 -include ../module_xmos_common/build/Makefile.plugin
--include ../../xmos_common/module_xmos_common/build/Makefile.plugin
+-include ../../xcommon/module_xcommon/build/Makefile.plugin
 
 clean: clean_common
