@@ -16,46 +16,48 @@ This variation generates the PWM signals on upto 16 1-bit ports from a single th
  
 PWM multi bit component
 +++++++++++++++++++++++
+
 This component generates the PWM signals on a single 4, 8 or 16 bit port. The port width, resolution, edge variation and timestep are configrable.
 
-Hardware Platform:
+Hardware Platform
 =================
+
 The PWM components are supported by all the hardware platforms from XMOS having suitable IO such as XC-1,XC-1A,XC-2,XK-1,etc and can be run on any XS1-L or XS1-G series devices.
  
 The following modules are provided in this package, these can be used in your applications:
 
-Demo applications :
-------------------
+Demo applications 
+-----------------
 
 The PWM functionality is demonstrated using following demo applications. The applications run on XC-1 board and  XDE 10.4.2 or later versions.
 
-app_pwm_singlebit_demo : 
-+++++++++++++++++++++++    
+app_pwm_singlebit_demo 
+++++++++++++++++++++++   
 
    This demo is for PWM single bit port and the duty cycle is changed once in every second starting from 0 to 32 and the PWM functionality is highlighted using leds on the development board.
   
-app_pwm_multibit_demo : 
+app_pwm_multibit_demo 
 +++++++++++++++++++++
 
    This demo is for PWM multi bit port and the duty cycle is changed once in every second starting from 0 to 32 and the PWM functionality is highlighted using leds on the development board.
 
 
-System Description :
-===================
+System Description
+==================
 
    The pwm component runs in its own threads. The component acts as a server, connected with the client api through a channel on using which client can configure the PWM  component by changing its resolution, Timestep and Edge variation. The number and assignment of of ports for PWM single bit component, or the port width and assignment for PWM multibit component can also be configured.
 
    The client application uses pwmSingleBitPortSetDutyCycle function to give the new dutycycle for the server for each port .The server continues to output at this value and until the the function pwmSingleBitPortSetDutyCycle  called again.
 
 
-Programming Guide :
+Programming Guide 
 =================
  
-API (Application Programming Interface) :
+API (Application Programming Interface)
 ---------------------------------------
 
-PWM Single Bit Component API : 
-++++++++++++++++++++++++++++++   
+PWM Single Bit Component API
+++++++++++++++++++++++++++++  
 
 The component will run in a par with the following function which does not terminate.
 
@@ -83,8 +85,8 @@ void setDutyCycle(chanend c, unsigned int dutyCycle[], unsigned int numPorts);
 The client uses this function to give the pwm server a new set of duty cycles, one for  each of the ports in use. The server will then continue to output at that value until this function is called again.
 
 
-PWM Multi Bit Component :
-+++++++++++++++++++++++++
+PWM Multi Bit Component
++++++++++++++++++++++++
 The component will run in a par with the following function which does not terminate.
 
 void pwmMultiBitPort(chanend c, clock clk,
@@ -103,23 +105,18 @@ parameters are treated in the same way as in the PWM_SINGLE_BIT component.
 void setDutyCycle(chanend c, unsigned int dutyCycle[], unsigned int portWidth);
 This function is same as described in pwm single bit component.
 
-Resource Usage :
+Resource Usage
 ==============
 
 The following table details the resource usage of each
 component of the reference design software.
 
-.. table:: Resource Usage
-
-  .. Memory :
-
- For app_pwm_singlebit_port application :      
+For app_pwm_singlebit_port application       
 
  +---------------+------------- -+----------------+
  |   Memory      |  Size(KB)     | percentage(%)  |
  +===============+===============+================+
  | Stack Memory  |     0.685     |    1.05        |
- |               |               |                |
  +---------------+---------------+----------------+			
  | Data Memory   |     0.838     |    1.28        |
  +---------------+---------------+----------------+
@@ -128,13 +125,12 @@ component of the reference design software.
  |Free(available)|     57.571    |    87.85       |                      
  +---------------+---------------+----------------+
 
- For app_pwm_multibit_port application :      
+For app_pwm_multibit_port application :      
 
  +---------------+------------- -+----------------+
  |   Memory      |  Size(KB)     | percentage(%)  |
  +===============+===============+================+
  | Stack Memory  |     0.449     |    0.69        |
- |               |               |                |
  +---------------+---------------+----------------+			
  | Data Memory   |     0.486     |    0.74        |
  +---------------+---------------+----------------+
@@ -143,16 +139,10 @@ component of the reference design software.
  |Free(available)|     58.743    |    89.63       |                      
  +---------------+---------------+----------------+
 
-  ..Port :
-  
-    For each configuration , it requires 1 x1-bit port.
 
-Constraint :
-==============
+Timing Constraints 
+==================
 
-.. table:: constraint
-
-  ..constraint :
 
 The following table gives the details of the constraint for the number of ports in pwm singlebit component
 
@@ -160,7 +150,6 @@ The following table gives the details of the constraint for the number of ports 
  | Number of port   | Minimum Timestep required  |
  +==================+============================+
  |     16 to 14     |        20                  |
- |                  |                            |
  +------------------+----------------------------+			
  |      13 to 1     |        10                  |
  +------------------+----------------------------+
@@ -178,7 +167,7 @@ The following table details the constraint for the number of ports in pwm multib
  +------------------+----------------------------+
 
 
-Validation :
+Validation 
 ==========
    
 Test bench provided for validation of the pwm single bit component take different set of parameters for resolution, timestep, mod_type and number of ports.
