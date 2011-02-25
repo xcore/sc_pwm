@@ -113,7 +113,7 @@ component of the reference design software.
 
 For app_pwm_singlebit_port application       
 
- +----------------+------------- -+----------------+
+ +----------------+---------------+----------------+
  |   Memory       |  Size(KB)     | percentage(%)  |
  +================+===============+================+
  | Stack Memory   |     0.685     |    1.05        |
@@ -127,7 +127,7 @@ For app_pwm_singlebit_port application
 
 For app_pwm_multibit_port application :      
 
- +----------------+------------- -+----------------+
+ +----------------+---------------+----------------+
  |   Memory       |  Size(KB)     | percentage(%)  |
  +================+===============+================+
  | Stack Memory   |     0.449     |    0.69        |
@@ -146,7 +146,7 @@ Timing Constraints
 
 The following table gives the details of the constraint for the number of ports in pwm singlebit component
 
- +------------- ----+----------------------------+
+ +------------------+----------------------------+
  | Number of port   | Minimum Timestep required  |
  +==================+============================+
  |     16 to 14     |        20                  |
@@ -156,7 +156,7 @@ The following table gives the details of the constraint for the number of ports 
 
 The following table details the constraint for the number of ports in pwm multibit component
 
- +------------- ----+----------------------------+
+ +------------------+----------------------------+
  |    port width    | Minimum Timestep required  |
  +==================+============================+
  |     4            |        10                  |
