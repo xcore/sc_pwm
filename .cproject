@@ -14,7 +14,7 @@
 </extensions>
 </storageModule>
 <storageModule moduleId="cdtBuildSystem" version="4.0.0">
-<configuration artifactName="xmos_pwm" buildProperties="" id="com.xmos.cdt.toolchain.30841826" name="XMOS Compiler Collection (xcc)" parent="org.eclipse.cdt.build.core.emptycfg">
+<configuration artifactName="sc_pwm" buildProperties="" id="com.xmos.cdt.toolchain.30841826" name="XMOS Compiler Collection (xcc)" parent="org.eclipse.cdt.build.core.emptycfg">
 <folderInfo id="com.xmos.cdt.toolchain.30841826.1961785845" name="/" resourcePath="">
 <toolChain id="com.xmos.cdt.toolchain.331533569" name="com.xmos.cdt.toolchain" superClass="com.xmos.cdt.toolchain">
 <targetPlatform archList="all" binaryParser="com.xmos.cdt.core.XEBinaryParser" id="com.xmos.cdt.core.platform.312514423" isAbstract="false" osList="linux,win32,macosx" superClass="com.xmos.cdt.core.platform"/>
@@ -125,6 +125,6 @@
 </cconfiguration>
 </storageModule>
 <storageModule moduleId="cdtBuildSystem" version="4.0.0">
-<project id="xmos_pwm.null.306906532" name="xmos_pwm"/>
+<project id="sc_pwm.null.306906532" name="sc_pwm"/>
 </storageModule>
 </cproject>
