@@ -32,16 +32,16 @@ PWM_PLUGIN = ../plugin_pwm/bin/PWM.dll
 PORT_WIDTH=4
 
 ifeq ($(PORT_WIDTH), 4)
-    TIMESTEP=10
+    TIMESTEP=150
     PLUGINS=--plugin $(PWM_PLUGIN) '42' --plugin $(PWM_PLUGIN) '43' --plugin $(PWM_PLUGIN) '48' --plugin $(PWM_PLUGIN) '49'
 else
 ifeq ($(PORT_WIDTH), 8)
-    TIMESTEP=50
+    TIMESTEP=150
     PLUGINS=--plugin $(PWM_PLUGIN) '42' --plugin $(PWM_PLUGIN) '43' --plugin $(PWM_PLUGIN) '44' --plugin $(PWM_PLUGIN) '45' \
             --plugin $(PWM_PLUGIN) '46' --plugin $(PWM_PLUGIN) '47' --plugin $(PWM_PLUGIN) '48' --plugin $(PWM_PLUGIN) '49'
 else
 ifeq ($(PORT_WIDTH), 16)
-    TIMESTEP=100
+    TIMESTEP=250
     PLUGINS=--plugin $(PWM_PLUGIN) '42' --plugin $(PWM_PLUGIN) '43' --plugin $(PWM_PLUGIN) '44' --plugin $(PWM_PLUGIN) '45' \
             --plugin $(PWM_PLUGIN) '46' --plugin $(PWM_PLUGIN) '47' --plugin $(PWM_PLUGIN) '48' --plugin $(PWM_PLUGIN) '49' \
             --plugin $(PWM_PLUGIN) '54' --plugin $(PWM_PLUGIN) '55' --plugin $(PWM_PLUGIN) '56' --plugin $(PWM_PLUGIN) '57' \
@@ -69,7 +69,7 @@ time:
 
 # Use the latest 1v* version of module_xmos_common
 -include ../module_xmos_common/build/Makefile.common
--include ../../xcommon/module_xcommon/build/Makefile.common
+-include ../../xmos_common/module_xmos_common/build/Makefile.common
 
 # The final target of the build. This is usually dependent on a binary file
 # in the $(BIN_DIR) directory e.g.
