@@ -5,63 +5,69 @@
 #include <stdio.h>
 #include "plugin.h"
 #include "pwm_multibit_port.h"
+#include "test_pwm_multibit.h"
 
 #if PORT_WIDTH == 4
     out buffered port:32 p = XS1_PORT_4A;
-    unsigned int value1[PORT_WIDTH] = {1, 2, 3, 4};
-    unsigned int value2[PORT_WIDTH] = {1, 2, 3, 4};
-    #define RESOLUTION 32
 
 #elif PORT_WIDTH == 8
     out buffered port:32 p = XS1_PORT_8A;
-    unsigned int value1[PORT_WIDTH] = {1, 2, 3, 4, 5, 6, 7, 8};
-    unsigned int value2[PORT_WIDTH] = {1, 2, 3, 4, 5, 6, 7, 8};
-    
-    #define RESOLUTION 32
 
 #elif PORT_WIDTH == 16
     out buffered port:32 p = XS1_PORT_16A;
-    unsigned int value1[PORT_WIDTH] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-    unsigned int value2[PORT_WIDTH] = {1, 1, 1, 1, 1, 2, 2, 2, 2,  10, 11, 12, 13, 14, 15, 16 };
-    #define RESOLUTION 32
 
 #else
 #error "PORT_WIDTH must be 4, 8 or 16"
 #endif
 
 #define MAX_NUM_CYCLES 5
-unsigned int edge=1;
-unsigned int PERIOD=(TIMESTEP*32*4);
+unsigned int period=(TIMESTEP*32*4);
+unsigned int i;
 clock clk = XS1_CLKBLK_1;
 
-void setDutyCycles(chanend c, unsigned int portWidth) {
+#define START_MONITORING 1000
+#define STOP_MONITORING  1001
+#define REPORT_STATUS    1002
+
+void startPluginMonitoring() {
+	_plugins(START_MONITORING, 0, 0);
+}
+
+void stopPluginMonitoring() {
+	_plugins(STOP_MONITORING, 0, 0);
+}
+
+void reportPluginStatus() {
+	_plugins(REPORT_STATUS, 0, 0);
+}
+
+void delay() {
     timer t;
     int time;
-    unsigned int current = 0;
-    int period = PERIOD;
-    unsigned int numCycles = 0;
-    unsigned char done[PORT_WIDTH] = {0};
-
-    //setupPluginWait(done, MAX_NUM_CYCLES);
-    //_traceStart();
-
+    int period = (TIMESTEP == 0) ? (40 * RESOLUTION) : (40 * TIMESTEP * RESOLUTION);
     t :> time;
     time += period;
+	t when timerafter (time) :> void;
+}
+void setDutyCycles(chanend c, unsigned int portWidth) {
 
-    while (numCycles < MAX_NUM_CYCLES) {
-        t when timerafter (time) :> void;
-        if (current == 0){
-            pwmMultiBitPortSetDutyCycle(c, value1, portWidth);
-        }
-        else
-            pwmMultiBitPortSetDutyCycle(c, value2, portWidth);
+    unsigned int numCycles = 0;
 
-        current = !current;
-        time += period;
-        ++numCycles;
+    while (numCycles <= RESOLUTION) {
+    	pwmMultiBitPortSetDutyCycle(c, value, portWidth);
+       	delay();
+       	startPluginMonitoring();
+       	delay();
+       	stopPluginMonitoring();
+       	reportPluginStatus();
+       	for(i =0; i < PORT_WIDTH; i++){
+       		value[i]++;
+       	}
+       	++numCycles;
     }
 
     //waitUntilPluginIsFinished(done, PORT_WIDTH);
+    delay();
     exit(0);
 }
 
