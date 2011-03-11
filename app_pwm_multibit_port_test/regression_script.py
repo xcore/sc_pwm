@@ -99,7 +99,7 @@ def run_independent(ind_test_val,ind_test_val_max):
 	res_ind_final=1
 	for n in range(ind_test_val,ind_test_val_max):
 		print '-----------Running independent---------------'
-		hdr = open('src/test_pwm.h','w')
+		hdr = open('src/test_pwm_multibit.h','w')
 		hdr.write("#define RESOLUTION 256")
 		hdr.write("\n")
 		hdr.write("#define TIMESTEP 10")
@@ -247,7 +247,7 @@ while((resolution != '') & (run_while == 1) & (ind_test == 0) & (inp_data_val ==
 		res_int=int(resolution)
 	
 	print (res_int + 1)
-	hdr = open('src/test_pwm.h','w')
+	hdr = open('src/test_pwm_multibit.h','w')
 	hdr.write("# define RESOLUTION ")
 	hdr.write(resolution)
 	print (mt_int + 1)
