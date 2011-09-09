@@ -1,3 +1,15 @@
+Fast 8-bit wide PWM
+===================
+
+This module implements a 100 Mhz PWM on 8 bits simultaneously. It performs
+this task by utilising two threads: one thread reads a block of memory and
+outputs values from memory to the 8-bit port as quickly as possible. The
+other thread arranges the values in memory to be output. The values are
+arranged in the form of a small program that has instructions to output a
+group of different values in sequence, or the same value N times. The
+thread that writes to memory effectively compiles the PWM requirements into
+instructions that will effect the PWM.
+
 Instruction Set
 ---------------
 

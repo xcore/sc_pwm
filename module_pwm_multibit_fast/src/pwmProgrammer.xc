@@ -38,7 +38,7 @@ static void explain(unsigned addr, unsigned w) {
 #ifdef unsafearrays
 #pragma unsafe arrays    
 #endif
-void
+static inline void
 patchLoopIntoChange(unsigned program[], unsigned int previousPC, unsigned pc, int opcode, int time) {
     program[previousPC+2] = opcode;
     program[previousPC+3] = time;
@@ -47,7 +47,7 @@ patchLoopIntoChange(unsigned program[], unsigned int previousPC, unsigned pc, in
 #ifdef unsafearrays
 #pragma unsafe arrays    
 #endif
-void
+static inline void
 patchStableIntoChange(unsigned program[], unsigned int previousPC, unsigned pc, int time) {
     program[previousPC+2] = stableOpcode(time);
 }
@@ -59,14 +59,14 @@ patchStableIntoChange(unsigned program[], unsigned int previousPC, unsigned pc, 
 #pragma unsafe arrays    
 #endif
 {unsigned, unsigned}
-dispatchShorts(unsigned program[], unsigned previousPC, unsigned pc, unsigned shortOnes, unsigned shortlist[], int timeDiff, int currentval) {
+static inline dispatchShorts(unsigned program[], unsigned previousPC, unsigned pc, unsigned shortOnes, unsigned shortlist[], int timeDiff, int currentval) {
     program[previousPC] = makeAddress(program, pc);
     program[previousPC+1] = changeOpcode(shortOnes);
     previousPC = pc;
     pc += 4;                // leave room for nextPC, nextInstr, stable, loopcount
     program[pc++] = currentval;
     for(int i = 0; i < shortOnes; i++) {
-        printf("Short %08x\n", shortlist[i]);
+//        printf("Short %08x\n", shortlist[i]);
         program[pc+shortOnes - i-1] = shortlist[i];
     }
     pc += shortOnes;
@@ -86,7 +86,7 @@ dispatchShorts(unsigned program[], unsigned previousPC, unsigned pc, unsigned sh
 #pragma unsafe arrays    
 #endif
 {unsigned,unsigned,unsigned}
-buildprogram(struct pwmpoint words[16], unsigned program[], unsigned int currenttime, int previousPC, unsigned pc, int numwords) {
+static inline buildprogram(struct pwmpoint words[16], unsigned program[], unsigned int currenttime, int previousPC, unsigned pc, int numwords) {
     int currentword = 0;
     static int shortOnes = 0;
     static unsigned shortlist[64];
@@ -94,7 +94,7 @@ buildprogram(struct pwmpoint words[16], unsigned program[], unsigned int current
     while(currentword < numwords) {
         int newtime = words[currentword].time;
         int timeDiff = (int)(newtime - currenttime) >> 2;
-        printf("Current %d new %d Timediff %d shortOnes %d\n", currenttime, newtime, timeDiff, shortOnes);
+//        printf("Current %d new %d Timediff %d shortOnes %d\n", currenttime, newtime, timeDiff, shortOnes);
         if (timeDiff > 4) {
             {previousPC, pc} = dispatchShorts(program, previousPC, pc, shortOnes, shortlist, timeDiff, currentval);
             shortOnes = 0;
@@ -115,7 +115,7 @@ buildprogram(struct pwmpoint words[16], unsigned program[], unsigned int current
 #pragma unsafe arrays    
 #endif
 {unsigned,unsigned}
-buildWords(struct pwmpoint points[8], struct pwmpoint words[16], int currenttime, int currentval) {
+static inline buildWords(struct pwmpoint points[8], struct pwmpoint words[16], int currenttime, int currentval) {
     int currentpoint = 0;
     int portval = 0;
     unsigned int nexttime;
@@ -172,13 +172,19 @@ buildWords(struct pwmpoint points[8], struct pwmpoint words[16], int currenttime
 void pwmControl1(chanend c, chanend toPWM) {
     struct pwmpoint points[8], words[16];
     int currentval = 0, newval;
-    unsigned programspace[128];
+    unsigned programspace[256];
     unsigned pc = 0, previousPC;
     unsigned currenttime = 0xdeadbeef;
     int first = 1, numwords, currentByte = 0;
+    timer t;
+    int ot, t1;
 
     first = 1;
     while(1) {
+        ot = t1;
+        t :> t1;
+        printf("%d\n", t1-ot);
+        t :> t1;
         slave {
             for(int i = 0; i < 8; i++) {
                 c :> points[i].time;
@@ -200,16 +206,16 @@ void pwmControl1(chanend c, chanend toPWM) {
             programspace[pc++] = currentval;
         }
         {numwords,currentByte} = buildWords(points, words, currenttime, currentByte);
-        for(int i =0; i < numwords; i++) {
-            printf("%8d %08x\n", words[i].time, words[i].value);
-        }
+//        for(int i =0; i < numwords; i++) {
+//            printf("%8d %08x\n", words[i].time, words[i].value);
+//        }
         {currenttime, previousPC, pc} = buildprogram(words, programspace, currenttime, previousPC, pc, numwords);
         currentval = newval;
         first++;
         if (first == 3) {
-            for(int i = 0; i < pc; i++) {
-                explain(makeAddress(programspace, i), programspace[i]);
-            }
+//            for(int i = 0; i < pc; i++) {
+//                explain(makeAddress(programspace, i), programspace[i]);
+//            }
             toPWM <: makeAddress(programspace, 0);
             first = 0;
         }
