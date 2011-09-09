@@ -126,13 +126,7 @@ buildWords(struct pwmpoint points[8], struct pwmpoint words[16], int currenttime
     currenttime = points[0].time & ~3;
     while(1) {
         nexttime = points[currentpoint].time;
-        if ((currenttime >> 2) == (nexttime >> 2)) {
-            while (currenttime != nexttime) {
-                portval |= currentval << bitcount;
-                bitcount += 8;
-                currenttime++;
-            }
-        } else {
+        if ((currenttime >> 2) != (nexttime >> 2)) {
             while (bitcount < 32) {
                 portval |= currentval << bitcount;
                 bitcount += 8;
@@ -149,7 +143,12 @@ buildWords(struct pwmpoint points[8], struct pwmpoint words[16], int currenttime
             }
             bitcount = 0;
             portval = 0;
-            currenttime = nexttime;
+            currenttime = nexttime&~3;
+        }
+        while (currenttime != nexttime) {
+            portval |= currentval << bitcount;
+            bitcount += 8;
+            currenttime++;
         }
 
         currentval = points[currentpoint].value;
