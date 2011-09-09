@@ -53,6 +53,7 @@ patchStableIntoChange(unsigned program[], unsigned int previousPC, unsigned pc, 
 }
 
 #define MAX 8
+#define LOOPOFFSET 6
 
 #ifdef unsafearrays
 #pragma unsafe arrays    
@@ -62,7 +63,7 @@ dispatchShorts(unsigned program[], unsigned previousPC, unsigned pc, unsigned sh
     program[previousPC] = makeAddress(program, pc);
     program[previousPC+1] = changeOpcode(shortOnes);
     previousPC = pc;
-    pc += 3;                // leave room for nextPC, nextInstr, stable
+    pc += 4;                // leave room for nextPC, nextInstr, stable, loopcount
     program[pc++] = currentval;
     for(int i = 0; i < shortOnes; i++) {
         printf("Short %08x\n", shortlist[i]);
@@ -71,9 +72,9 @@ dispatchShorts(unsigned program[], unsigned previousPC, unsigned pc, unsigned sh
     pc += shortOnes;
     if (timeDiff > MAX) {
         if (timeDiff & 1) {
-            patchLoopIntoChange(program, previousPC, pc, loopOdd, timeDiff);
+            patchLoopIntoChange(program, previousPC, pc, loopOdd, timeDiff-1-LOOPOFFSET);
         } else {
-            patchLoopIntoChange(program, previousPC, pc, loopEven, timeDiff);
+            patchLoopIntoChange(program, previousPC, pc, loopEven, timeDiff-LOOPOFFSET);
         }
     } else {
         patchStableIntoChange(program, previousPC, pc, timeDiff);
@@ -85,10 +86,11 @@ dispatchShorts(unsigned program[], unsigned previousPC, unsigned pc, unsigned sh
 #pragma unsafe arrays    
 #endif
 {unsigned,unsigned,unsigned}
-buildprogram(struct pwmpoint words[16], unsigned program[], unsigned int currenttime, unsigned int currentval, int previousPC, unsigned pc, int numwords) {
+buildprogram(struct pwmpoint words[16], unsigned program[], unsigned int currenttime, int previousPC, unsigned pc, int numwords) {
     int currentword = 0;
-    int shortOnes = 0;
-    unsigned shortlist[64];
+    static int shortOnes = 0;
+    static unsigned shortlist[64];
+    static int currentval;
     while(currentword < numwords) {
         int newtime = words[currentword].time;
         int timeDiff = (int)(newtime - currenttime) >> 2;
@@ -105,9 +107,6 @@ buildprogram(struct pwmpoint words[16], unsigned program[], unsigned int current
         currenttime = newtime;
         currentval = words[currentword].value;
         currentword++;
-    }
-    if (shortOnes > 0) {
-        {previousPC, pc} = dispatchShorts(program, previousPC, pc, shortOnes, shortlist, 1000, currentval);
     }
     return {currenttime, previousPC, pc};
 }
@@ -156,15 +155,13 @@ buildWords(struct pwmpoint points[8], struct pwmpoint words[16], int currenttime
         currentval = points[currentpoint].value;
         currentpoint++;
         if (currentpoint == 8) {
-            if (bitcount != 0) {
-                while (bitcount < 32) {
-                    portval |= currentval << bitcount;
-                    bitcount += 8;
-                }
-                words[wordCount].time = currenttime&~3;
-                words[wordCount].value = portval;
-                wordCount++;
+            while (bitcount < 32) {
+                portval |= currentval << bitcount;
+                bitcount += 8;
             }
+            words[wordCount].time = currenttime&~3;
+            words[wordCount].value = portval;
+            wordCount++;
             return {wordCount, currentval};
         }
     }
@@ -178,7 +175,7 @@ void pwmControl1(chanend c, chanend toPWM) {
     int currentval = 0, newval;
     unsigned programspace[128];
     unsigned pc = 0, previousPC;
-    unsigned currenttime = 30000;
+    unsigned currenttime = 0xdeadbeef;
     int first = 1, numwords, currentByte = 0;
 
     first = 1;
@@ -207,7 +204,7 @@ void pwmControl1(chanend c, chanend toPWM) {
         for(int i =0; i < numwords; i++) {
             printf("%8d %08x\n", words[i].time, words[i].value);
         }
-        {currenttime, previousPC, pc} = buildprogram(words, programspace, currenttime,currentval, previousPC, pc, numwords);
+        {currenttime, previousPC, pc} = buildprogram(words, programspace, currenttime, previousPC, pc, numwords);
         currentval = newval;
         first++;
         if (first == 3) {
