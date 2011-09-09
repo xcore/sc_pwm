@@ -1,6 +1,8 @@
+all: bin/simchecker
+
 test: bin/simchecker
-	bin/simchecker "$(TFLAG) ../app_ethercat_test/bin/XK-1/app_ethercat_test.xe"
+	bin/simchecker "$(TFLAG) ../app_pwm_multibit_fast_demo/bin/Release/app_pwm_multibit_fast_demo.xe"
 
 bin/simchecker: src/simchecker.c
 	if [ ! -d bin ]; then mkdir bin; fi
-	c++ -o bin/simchecker -std=c99 -m32 -I $(installpath)/include src/simchecker.c $(installpath)/lib/libxsidevice.so 
+	c++ -o bin/simchecker -m32 -I $(installpath)/include src/simchecker.c $(installpath)/lib/libxsidevice.so 

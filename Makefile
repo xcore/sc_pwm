@@ -1,5 +1,8 @@
-BUILD_SUBDIRS = plugin_pwm app_pwm_singlebit_port_demo app_pwm_singlebit_port_test app_pwm_multibit_port_demo app_pwm_multibit_port_test
-TEST_SUBDIRS = app_pwm_singlebit_port_test app_pwm_multibit_port_test
+# BUILD_SUBDIRS = plugin_pwm app_pwm_singlebit_port_demo app_pwm_singlebit_port_test app_pwm_multibit_port_demo app_pwm_multibit_port_test
+# TEST_SUBDIRS = app_pwm_singlebit_port_test app_pwm_multibit_port_test
+
+BUILD_SUBDIRS = app_pwm_multibit_fast_demo testbench_multibit_fast
+TEST_SUBDIRS= testbench_multibit_fast
 
 %.all:
 	cd $* && xmake all

@@ -18,12 +18,21 @@ static inline int changeOpcode(int K) {
     return changeZero - (K << 2);
 }
 
-static inline int before(unsigned int t1, unsigned int t2) {
-    return ((int)(t1-t2)) < 0;
-}
-
-static inline int insertByte(unsigned portval, unsigned byte) {
-    return (portval >> 8) | (byte << 24);
+static void explain(unsigned addr, unsigned w) {
+    printf("%08x  %08x ", addr, w);
+    if (w > stableZero - 20 && w <= stableZero) {
+        printf("  Stable%d", (stableZero-w)>>1);
+    } 
+    if (w > changeZero - 80 && w <= changeZero) {
+        printf("  Change%d", (changeZero-w)>>2);
+    } 
+    if (w == loopEven) {
+        printf("  Loop Even");
+    }
+    if (w == loopOdd) {
+        printf("  Loop Odd");
+    }
+    printf("\n");
 }
 
 #ifdef unsafearrays
@@ -49,16 +58,17 @@ patchStableIntoChange(unsigned program[], unsigned int previousPC, unsigned pc, 
 #pragma unsafe arrays    
 #endif
 {unsigned, unsigned}
-dispatchShorts(unsigned program[], unsigned previousPC, unsigned pc, unsigned shortones, unsigned shortlist[], int timeDiff, int currentval) {
+dispatchShorts(unsigned program[], unsigned previousPC, unsigned pc, unsigned shortOnes, unsigned shortlist[], int timeDiff, int currentval) {
     program[previousPC] = makeAddress(program, pc);
-    program[previousPC+1] = changeOpcode(shortones);
+    program[previousPC+1] = changeOpcode(shortOnes);
     previousPC = pc;
     pc += 3;                // leave room for nextPC, nextInstr, stable
     program[pc++] = currentval;
-    for(int i = 0; i < shortones; i++) {
-        program[pc+shortones - i-1] = shortlist[i];
+    for(int i = 0; i < shortOnes; i++) {
+        printf("Short %08x\n", shortlist[i]);
+        program[pc+shortOnes - i-1] = shortlist[i];
     }
-    pc += shortones;
+    pc += shortOnes;
     if (timeDiff > MAX) {
         if (timeDiff & 1) {
             patchLoopIntoChange(program, previousPC, pc, loopOdd, timeDiff);
@@ -77,17 +87,18 @@ dispatchShorts(unsigned program[], unsigned previousPC, unsigned pc, unsigned sh
 {unsigned,unsigned,unsigned}
 buildprogram(struct pwmpoint words[16], unsigned program[], unsigned int currenttime, unsigned int currentval, int previousPC, unsigned pc, int numwords) {
     int currentword = 0;
-    int shortones = 0;
+    int shortOnes = 0;
     unsigned shortlist[64];
     while(currentword < numwords) {
         int newtime = words[currentword].time;
-        int timeDiff = (newtime - currenttime) >> 2;
+        int timeDiff = (int)(newtime - currenttime) >> 2;
+        printf("Current %d new %d Timediff %d shortOnes %d\n", currenttime, newtime, timeDiff, shortOnes);
         if (timeDiff > 4) {
-            {previousPC, pc} = dispatchShorts(program, previousPC, pc, shortones, shortlist, timeDiff, currentval);
-            shortones = 0;
+            {previousPC, pc} = dispatchShorts(program, previousPC, pc, shortOnes, shortlist, timeDiff, currentval);
+            shortOnes = 0;
         } else {
             while(timeDiff > 0) {
-                shortlist[shortones++] = currentval;
+                shortlist[shortOnes++] = currentval;
                 timeDiff--;
             }
         }
@@ -95,8 +106,8 @@ buildprogram(struct pwmpoint words[16], unsigned program[], unsigned int current
         currentval = words[currentword].value;
         currentword++;
     }
-    if (shortones > 0) {
-        {previousPC, pc} = dispatchShorts(program, previousPC, pc, shortones, shortlist, 1000, currentval);
+    if (shortOnes > 0) {
+        {previousPC, pc} = dispatchShorts(program, previousPC, pc, shortOnes, shortlist, 1000, currentval);
     }
     return {currenttime, previousPC, pc};
 }
@@ -104,62 +115,59 @@ buildprogram(struct pwmpoint words[16], unsigned program[], unsigned int current
 #ifdef unsafearrays
 #pragma unsafe arrays    
 #endif
-unsigned
+{unsigned,unsigned}
 buildWords(struct pwmpoint points[8], struct pwmpoint words[16], int currenttime, int currentval) {
     int currentpoint = 0;
-    int inChange = 0;
-    int shortones = 0;
-    unsigned shortlist[64];
     int portval = 0;
     unsigned int nexttime;
-    int currentword = 0;
-
-    while(currentpoint < 8) {
-        int timeDiff;
-        int bitcount = 0;
+    int wordCount = 0;
+    int timeDiff;
+    int bitcount = 0;
 //        printf("Point %d\n", currentpoint);
-        portval = 0;
-        for(int i = 0; i < (currenttime&3); i++) {
-            portval |= currentval << bitcount;
-            bitcount += 8;
+    currenttime = points[0].time & ~3;
+    while(1) {
+        nexttime = points[currentpoint].time;
+        if ((currenttime >> 2) == (nexttime >> 2)) {
+            while (currenttime != nexttime) {
+                portval |= currentval << bitcount;
+                bitcount += 8;
+                currenttime++;
+            }
+        } else {
+            while (bitcount < 32) {
+                portval |= currentval << bitcount;
+                bitcount += 8;
+            }
+            words[wordCount].time = currenttime&~3;
+            words[wordCount].value = portval;
+            wordCount++;
+            if ((nexttime >> 2) != (currenttime >> 2)+1) {
+                words[wordCount].time = (currenttime&~3)+4;
+                portval = currentval << 8 | currentval;
+                portval |= portval << 16;
+                words[wordCount].value = portval;
+                wordCount++;
+            }
+            bitcount = 0;
+            portval = 0;
+            currenttime = nexttime;
         }
+
         currentval = points[currentpoint].value;
         currentpoint++;
-        if (currentpoint < 8) {
-            nexttime = points[currentpoint].time;
-            while (currentpoint < 8 && (currenttime >> 2) == (nexttime >> 2)) {
-                while (currenttime != nexttime) {
+        if (currentpoint == 8) {
+            if (bitcount != 0) {
+                while (bitcount < 32) {
                     portval |= currentval << bitcount;
                     bitcount += 8;
-                    currenttime++;
                 }
-                currentval = points[currentpoint].value;
-                currentpoint++;
-                if (currentpoint < 8) {
-                    nexttime = points[currentpoint].time;
-                }
+                words[wordCount].time = currenttime&~3;
+                words[wordCount].value = portval;
+                wordCount++;
             }
+            return {wordCount, currentval};
         }
-        while (bitcount < 32) {
-            portval |= currentval << bitcount;
-            bitcount += 8;
-        }
-        words[currentword].time = currenttime&~3;
-        words[currentword].value = portval;
-        currentword++;
-        if ((nexttime >> 2) != (currenttime >> 2)+1) {
-            words[currentword].time = (currenttime&~3)+4;
-            portval = currentval << 8 | currentval;
-            portval |= portval << 16;
-            words[currentword].value = portval;
-            currentword++;
-        }
-        currenttime = nexttime;
     }
-//    for(int i =0; i < currentword; i++) {
-//        printf("%8d %08x\n", words[i].time, words[i].value);
-//    }
-    return currentword;
 }
 
 #ifdef unsafearrays
@@ -170,53 +178,45 @@ void pwmControl1(chanend c, chanend toPWM) {
     int currentval = 0, newval;
     unsigned programspace[128];
     unsigned pc = 0, previousPC;
-    unsigned portval = 0;
     unsigned currenttime = 30000;
-    int first = 1, numwords;
-    timer t;
-    int t1, t2, t3, t4, t5, t6;
+    int first = 1, numwords, currentByte = 0;
 
-    previousPC = pc;
-    pc += 2;
-    programspace[pc++] = currenttime;
-    programspace[pc++] = portval;
     first = 1;
     while(1) {
-        t :> t1;
         slave {
             for(int i = 0; i < 8; i++) {
                 c :> points[i].time;
-                points[i].time += currenttime ; // @@@@@@@@@@TEMP@@@@@@@@@@@
-//                c :> points[i].value;
                 points[i].value = i;
             }
         }
-//        t :> t2;
         mysort(points);      // Can be optimised by using two-stage heapsort.
-//        t :> t3;
         newval = currentval;
         for(int i = 0; i < 8; i++) {
             newval ^= 1 << points[i].value;
             points[i].value = newval;
         }
-//        t :> t4;
-        numwords = buildWords(points, words, currenttime, currentval);
-//        t :> t5;
+        if (first == 1) {
+            currenttime = points[0].time-10;
+            currentval = 0;
+            previousPC = pc;
+            pc += 2;
+            programspace[pc++] = currenttime;
+            programspace[pc++] = currentval;
+        }
+        {numwords,currentByte} = buildWords(points, words, currenttime, currentByte);
+        for(int i =0; i < numwords; i++) {
+            printf("%8d %08x\n", words[i].time, words[i].value);
+        }
         {currenttime, previousPC, pc} = buildprogram(words, programspace, currenttime,currentval, previousPC, pc, numwords);
         currentval = newval;
-        if (first) {
-//            for(int i = 0; i < pc; i++) {
-//                printf("%08x\n", programspace[i]);
-//            }
+        first++;
+        if (first == 3) {
+            for(int i = 0; i < pc; i++) {
+                explain(makeAddress(programspace, i), programspace[i]);
+            }
             toPWM <: makeAddress(programspace, 0);
             first = 0;
         }
-        t :> t6;
-/*        printf("%d for 8\n", t2-t1);
-        printf("%d for 8\n", t3-t1);
-        printf("%d for 8\n", t4-t1);
-        printf("%d for 8\n", t5-t1);*/
-        printf("%d for all 8\n", t6-t1);
     }
 }
 
