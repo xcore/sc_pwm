@@ -9,6 +9,7 @@ void signalgenerator(chanend c) {
                            8004, 15, 2, 19, 30, 40, 50, 60,
                            8001, 1000, 2000, 1000, 1000, 2000, 2000, 1000};
     int now = 0;
+    c <: 5;
     for(int j = 0; j < 3; j++) {
         master {
             for(int i = 0; i < 8; i++) {
@@ -20,7 +21,7 @@ void signalgenerator(chanend c) {
 }
 
 void burn(void) {
-#if 0
+#if 1
     set_thread_fast_mode_on();
     while(1);
 #endif
