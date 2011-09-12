@@ -19,9 +19,21 @@ void signalgenerator(chanend c) {
     }
 }
 
+void burn(void) {
+#if 0
+    set_thread_fast_mode_on();
+    while(1);
+#endif
+}
+
 int main (void) {
     chan c;
     par {
+        burn();
+        burn();
+        burn();
+        burn();
+        burn();
         signalgenerator(c);
         pwmWide1(p8a, c);
     }
