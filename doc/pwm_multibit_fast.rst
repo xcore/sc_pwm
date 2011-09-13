@@ -8,7 +8,39 @@ other thread arranges the values in memory to be output. The values are
 arranged in the form of a small program that has instructions to output a
 group of different values in sequence, or the same value N times. The
 thread that writes to memory effectively compiles the PWM requirements into
-instructions that will effect the PWM.
+instructions that will cause PWM on the 8-bit port.
+
+
+Status
+------
+
+This is a proof of concept. For completion a couple of things need doing:
+
+#. Make the sort function "wrap" tolerant (using ``(a-b)<0`` rather than
+   ``a<b``)
+
+#. Exhaustive testing of the sorting function.
+
+#. Put synchronisation in place between two threads. This can take the form
+   of a timer or a timed port.
+
+#. Make the time difference function wrap tolerant (in pwmProgrammer.xc,
+   find the todo)
+
+#. Extensive testing of the PWM function
+
+#. Enable three threads to be used to drive 16 bits (@ 80 MIPS or with more
+   optimisations).
+
+Performance
+-----------
+
+Current performance using 62.5 MIPS threads (8 threads at 500 MHz) is:
+
+* Half a PWM cycle takes approx 16 us, so a full cycle will take 32 us,
+  giving around 30 KHz.
+
+* PWM thread requires no more than 62.5 MIPS to keep running without gaps.
 
 Instruction Set
 ---------------
@@ -34,7 +66,7 @@ instruction.
 
 For example, the ``stable`` instruction informs the PWM thread that all
 signals should be kept stable for N clock ticks. Only a fixed set of stable
-instructions are supported: stable3...stable32.
+instructions are supported: stable3...stable8.
 
 The ``change`` instruction informs the PWM thread that a group of values is
 provided that needs to be supplied in succession, after that, the signal is
@@ -45,6 +77,4 @@ followed by a stable signal
 Because the shortest stable signal after a change instruction is 5 clocks,
 anything that should be stable for 4 clocks or less needs to be created by a
 changeN instruction. Since there are at most eight successive changes in a
-PWM signal, that requires at most a change32 instruction (8*4). For a PWM
-cycle that is not center aligned, there are at most 16 successive changes,
-requiring at most a change64 instruction. [[Cannot do that!]]
+PWM signal, that requires at most a change32 instruction (8*4).
