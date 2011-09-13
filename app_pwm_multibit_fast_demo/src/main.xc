@@ -10,11 +10,11 @@
 buffered out port:32 p8a = XS1_PORT_8A;
 
 void signalgenerator(chanend c) {
-    int differences[24] = {17, 1, 2, 3, 1, 1, 17, 18,
+    int differences[24] = {17, 1, 1, 1, 1, 1, 1, 1,
                            8004, 15, 2, 19, 30, 40, 50, 60,
                            8001, 1000, 2000, 1000, 1000, 2000, 2000, 1000};
     int now = 0;
-    c <: 5;
+    c <: 12;
     for(int j = 0; j < 3; j++) {
         master {
             for(int i = 0; i < 8; i++) {

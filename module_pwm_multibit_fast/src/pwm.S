@@ -13,7 +13,7 @@
     .globl changeZero
     .globl loopEven
     .globl loopOdd
-stableZero: .word stable3 + 6
+stableZero: .word stable4 + 8
 changeZero: .word change1 + 4
 loopEven: .word stableloopeven
 loopOdd: .word stableloopodd
@@ -176,17 +176,15 @@ stable5:
     out res[r0], r1
 stable4:  
     out res[r0], r1
-stable3:  
-    out res[r0], r1
     ldw r2, dp[62]
     out res[r0], r1
     ldw dp, dp[63]
     out res[r0], r1
     bau r2
 
-stableloopodd:  
-    out res[r0], r1
 stableloopeven:  
+    out res[r0], r1
+stableloopodd:  
     out res[r0], r1
     ldw r11, dp[60]
 stableloop:
@@ -251,6 +249,5 @@ setTime:
     .globl stable6
     .globl stable5
     .globl stable4
-    .globl stable3
 
     .globl setTime

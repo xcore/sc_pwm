@@ -41,44 +41,8 @@ static void explain(unsigned addr, unsigned w) {
 }
 
 #define MAX 8
-#define LOOPOFFSET 6
-
-
-#ifdef unsafearrays
-#pragma unsafe arrays    
-#endif
-{unsigned,unsigned,unsigned}
-static inline dispatchWord(unsigned program[], int indexForOPCandDP, unsigned pc, int currentval, int timeDiff, int shortOnes) {
-//    printf("Got %d clocks, at %08x next\n", timeDiff, word);
-    if (timeDiff > 4) {
-        program[pc++] = currentval;
-        if (timeDiff > MAX) {
-            if (timeDiff & 1) {
-                program[pc] = timeDiff-1-LOOPOFFSET;
-                program[pc+1] = loopOdd;
-            } else {
-                program[pc] = timeDiff-LOOPOFFSET;
-                program[pc+1] = loopEven;
-            }
-        } else {
-            program[pc+1] = stableOpcode(timeDiff);
-        }
-        pc += 4;                // leave room for nextPC, nextInstr, stable, loopcount
-        
-        // Now patch into previous instruction
-        program[indexForOPCandDP] = changeOpcode(shortOnes);
-        program[indexForOPCandDP+1] = makeAddress(program, pc) - 256;            
-        indexForOPCandDP = pc - 2;
-        shortOnes = 0;
-    } else {
-        while(timeDiff > 0) {
-            shortOnes++;
-            program[pc++] = currentval;
-            timeDiff--;
-        }
-    }
-    return {indexForOPCandDP, pc, shortOnes};
-}
+#define LOOPODDOFFSET  5
+#define LOOPEVENOFFSET 6
 
 
 #ifdef unsafearrays
@@ -93,11 +57,15 @@ void pwmControl1(chanend c, chanend toPWM) {
     int shortOnes = 0;
     int portval = 0;
     struct pwmpoint points[8];
-    int multiplierTable[16] = {0x01010101, 0x01010100, 0x01010000, 0x01000000,
-                              0x00010101, 0x00010100, 0x00010000, 0xDEADBEEF,
-                              0x00000101, 0x00000100, 0xDEADBEEF, 0xDEADBEEF,
-                              0x00000001, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF
-                              };
+    int multiplierOneTable[4] = {
+        0x01010101, 0x01010100, 0x01010000, 0x01000000,
+    };
+    int multiplierTable[16] = {
+        0x00000000, 0x00000001, 0x00000101, 0x00010101,
+        0xDEADBEEF, 0xDEADBEEF, 0x00000100, 0x00010100,
+        0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0x00010000,
+        0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF,
+    };
     unsigned programSpace[256];
 
     c :> currenttime;
@@ -117,23 +85,53 @@ void pwmControl1(chanend c, chanend toPWM) {
             }
         }
         t :> t2;
-        mysort2(points);      // Can be optimised by using two-stage heapsort.
+        mysort2(points);
         t :> t3;
         for(int currentpoint = 0; currentpoint != 8; currentpoint++) {
             unsigned nexttime = points[currentpoint].time;
             int diff = (nexttime >> 2) - (currenttime >> 2); // todo: wrap
+//            printf("Current %d next %d: whole words diff %d, remnants left %d, remnants to do %d (cur %02x)\n",
+//                   currenttime, nexttime, diff, currenttime&3, nexttime&3, currentByte);
             if (diff != 0) {
-                portval |= currentByte * multiplierTable[currenttime & 3];
-                {indexForOPCandDP, pc, shortOnes} = dispatchWord(programSpace, indexForOPCandDP, pc, portval, 1, shortOnes);
-                if (diff != 1) {                           // todo: wrap
-                    {indexForOPCandDP, pc, shortOnes} = dispatchWord(programSpace, indexForOPCandDP, pc, currentByte * 0x01010101, diff, shortOnes);
+                diff--;
+                portval |= currentByte * multiplierOneTable[currenttime & 3];
+                shortOnes++;
+                programSpace[pc++] = portval;
+//                printf("Whole word: %08x\n", portval);
+                if (diff >= 4) {
+                    programSpace[pc++] = currentByte * 0x01010101;
+                    if (diff >= MAX) {
+                        if (diff & 1) {
+                            programSpace[pc] = diff-LOOPODDOFFSET;
+                            programSpace[pc+1] = loopOdd;
+                        } else {
+                            programSpace[pc] = diff-LOOPEVENOFFSET;
+                            programSpace[pc+1] = loopEven;
+                        }
+                    } else {
+                        programSpace[pc+1] = stableOpcode(diff);
+                    }
+                    pc += 4;    // leave room for nextPC, nextInstr, stable, loopcount
+                    
+                    // Now patch into previous instruction
+                    programSpace[indexForOPCandDP] = changeOpcode(shortOnes);
+                    programSpace[indexForOPCandDP+1] = makeAddress(programSpace, pc) - 256;            
+                    indexForOPCandDP = pc - 2;
+                    shortOnes = 0;
+                } else {
+                    shortOnes+=diff;
+                    while(diff > 0) {
+                        programSpace[pc++] = currentByte * 0x01010101;
+                        diff--;
+                    }
                 }
-                currenttime = nexttime&~3;
-                portval = currentByte * multiplierTable[ (nexttime & 3) << 2];
+                portval = currentByte * multiplierTable[(nexttime & 3)];
             } else {
-                portval |= currentByte * multiplierTable[(currenttime & 3) | (nexttime & 3) << 2];
+                int x = multiplierTable[(currenttime & 3) << 2 | (nexttime & 3)];
+                portval |= currentByte * x;
             }
-            currentByte ^= 1<<points[currentpoint].value;
+            currenttime = nexttime;
+            currentByte ^= points[currentpoint].value;
         }
 
 
