@@ -46,6 +46,15 @@ static void explain(unsigned addr, unsigned w) {
 #define LOOPODDOFFSET  5
 #define LOOPEVENOFFSET 6
 
+const int multiplierOneTable[4] = {
+    0x01010101, 0x01010100, 0x01010000, 0x01000000,
+};
+const int multiplierTable[16] = {
+    0x00000000, 0x00000001, 0x00000101, 0x00010101,
+    0xDEADBEEF, 0xDEADBEEF, 0x00000100, 0x00010100,
+    0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0x00010000,
+    0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF,
+};
 
 #ifdef unsafearrays
 #pragma unsafe arrays    
@@ -56,25 +65,19 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
     int first = 1, currentByte = 0;
     timer t;
     int ot, t1, t2,t3,t4;
-    int shortOnes = 0;
     int portval = 0;
     struct pwmpoint points[8];
-    int multiplierOneTable[4] = {
-        0x01010101, 0x01010100, 0x01010000, 0x01000000,
-    };
-    int multiplierTable[16] = {
-        0x00000000, 0x00000001, 0x00000101, 0x00010101,
-        0xDEADBEEF, 0xDEADBEEF, 0x00000100, 0x00010100,
-        0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0x00010000,
-        0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF,
-    };
     unsigned programSpace[256];
+    unsigned startPC;
+    int ct3;
 
     c :> currenttime;
     programSpace[0] = 0;
     programSpace[1] = currenttime;
     indexForOPCandDP = 2;
     pc = 4;
+    startPC = pc;
+    ct3 = 0;
 
     while(1) {
         ot = t1;
@@ -97,10 +100,9 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
             if (diff != 0) {
                 diff--;
                 portval |= currentByte * multiplierOneTable[currenttime & 3];
-                shortOnes++;
                 programSpace[pc++] = portval;
-//                printf("Whole word: %08x\n", portval);
                 if (diff >= 4) {
+                    int nWords = pc - startPC;
                     programSpace[pc++] = currentByte * 0x01010101;
                     if (diff >= MAX) {
                         if (diff & 1) {
@@ -116,10 +118,10 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
                     pc += 4;    // leave room for nextPC, nextInstr, stable, loopcount
                     
                     // Now patch into previous instruction
-                    programSpace[indexForOPCandDP] = changeOpcode(shortOnes);
-                    programSpace[indexForOPCandDP+1] = makeAddress(programSpace, pc) - 256;            
+                    programSpace[indexForOPCandDP] = changeOpcode(nWords);
+                    programSpace[indexForOPCandDP+1] = makeAddress(programSpace, pc) - 256;
                     indexForOPCandDP = pc - 2;
-                    shortOnes = 0;
+                    startPC = pc;
                 } else {
 #if 1
                     int theWord;
@@ -129,17 +131,15 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
                         programSpace[pc++] = theWord;
                         programSpace[pc++] = theWord;
                         programSpace[pc++] = theWord;
-                        shortOnes+=3;
                         break;
                     case 2:
                         theWord = currentByte * 0x01010101;
                         programSpace[pc++] = theWord;
                         programSpace[pc++] = theWord;
-                        shortOnes+=2;
                         break;
                     case 1:
-                        programSpace[pc++] = currentByte * 0x01010101;
-                        shortOnes++;
+                        theWord = currentByte * 0x01010101;
+                        programSpace[pc++] = theWord;
                         break;
                     case 0:
                         break;
@@ -148,7 +148,6 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
                         break;
                     }
 #else
-                    shortOnes+=diff;
                     while(diff > 0) {
                         programSpace[pc++] = currentByte * 0x01010101;
                         diff--;
