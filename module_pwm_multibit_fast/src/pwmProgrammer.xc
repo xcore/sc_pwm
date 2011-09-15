@@ -60,21 +60,22 @@ const int multiplierTable[16] = {
 #pragma unsafe arrays    
 #endif
 void pwmControl1(streaming chanend c, chanend toPWM) {
-    unsigned pc, indexForOPCandDP;
+    unsigned pc;
     unsigned currenttime;
-    int first = 1, currentByte = 0;
+    unsigned  first = 1, currentByte = 0;
     timer t;
     int ot, t1, t2,t3,t4;
-    int portval = 0;
+    unsigned int portval = 0;
     struct pwmpoint points[8];
     unsigned programSpace[256];
     unsigned startPC;
     unsigned int ct3;
 
+    int addressOffset = makeAddress(programSpace, 0) - 256;
+
     c :> currenttime;
     programSpace[0] = 0;
     programSpace[1] = currenttime;
-    indexForOPCandDP = 2;
     pc = 4;
     startPC = pc;
     ct3 = 0;
@@ -96,87 +97,74 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
         for(int currentpoint = 0; currentpoint != 8; currentpoint++) {
             unsigned nexttime = points[currentpoint].time;
             unsigned int nt3 = nexttime & 3;
-            int diff, theWord;
+            int diff;
             nexttime -= nt3;
-            diff = nexttime - currenttime;
-//            printf("Current %d next %d: whole words diff %d, remnants left %d, remnants to do %d (cur %02x)\n",
-//                   currenttime, nexttime, diff, currenttime&3, nexttime&3, currentByte);
-            switch(diff) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-            {
+            diff = nexttime - currenttime;      // diff is guaranteed a multiple of 4.
+            if (diff != 0) {
+                diff = (diff >> 2) - 1;
+                portval |= currentByte * multiplierOneTable[ct3];
+                programSpace[pc++] = portval;
+                if (diff >= MAX) {
+                    int nWords = pc - startPC;
+                    programSpace[pc] = currentByte * 0x01010101;
+                    if (diff & 1) {
+                        programSpace[pc+1] = diff-LOOPODDOFFSET;
+                        programSpace[pc+2] = loopOdd;
+                    } else {
+                        programSpace[pc+1] = diff-LOOPEVENOFFSET;
+                        programSpace[pc+2] = loopEven;
+                    }
+                    pc += 5;    // leave room for nextPC, nextInstr, stable, loopcount
+                    
+                    // Now patch into previous instruction
+                    programSpace[startPC-2] = changeOpcode(nWords);
+                    programSpace[startPC-1] = pc*4 + addressOffset;
+                    startPC = pc;
+                } else if (diff >= 4) {
+                    int nWords = pc - startPC;
+                    programSpace[pc] = currentByte * 0x01010101;
+                    programSpace[pc+2] = stableOpcode(diff);
+                    pc += 5;    // leave room for nextPC, nextInstr, stable, loopcount
+                    
+                    // Now patch into previous instruction
+                    programSpace[startPC-2] = changeOpcode(nWords);
+                    programSpace[startPC-1] = pc*4 + addressOffset;
+                    startPC = pc;
+                } else {
+                    switch(diff) {
+                    case 3:
+                        portval = currentByte * 0x01010101;
+                        programSpace[pc++] = portval;
+                        programSpace[pc++] = portval;
+                        programSpace[pc++] = portval;
+                        break;
+                    case 2:
+                        portval = currentByte * 0x01010101;
+                        programSpace[pc++] = portval;
+                        programSpace[pc++] = portval;
+                        break;
+                    case 1:
+                        portval = currentByte * 0x01010101;
+                        programSpace[pc++] = portval;
+                        break;
+                    case 0:
+                        break;
+                    default:
+//                        __builtin_unreachable();
+                        break;
+                    }
+                }
+                portval = currentByte * multiplierTable[nt3];
+            } else {
                 int x = multiplierTable[ct3 << 2 | nt3];
                 portval |= currentByte * x;
-            }
-                break;
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-                portval |= currentByte * multiplierOneTable[ct3];
-                programSpace[pc++] = portval;
-                portval = currentByte * multiplierTable[nt3];
-                break;
-            case 8:
-                portval |= currentByte * multiplierOneTable[ct3];
-                programSpace[pc++] = portval;
-                theWord = currentByte * 0x01010101;
-                programSpace[pc++] = theWord;
-                portval = currentByte * multiplierTable[nt3];
-                break;
-            case 12:
-                portval |= currentByte * multiplierOneTable[ct3];
-                programSpace[pc++] = portval;
-                theWord = currentByte * 0x01010101;
-                programSpace[pc++] = theWord;
-                programSpace[pc++] = theWord;
-                portval = currentByte * multiplierTable[nt3];
-                break;
-            case 16:
-                portval |= currentByte * multiplierOneTable[ct3];
-                programSpace[pc++] = portval;
-                theWord = currentByte * 0x01010101;
-                programSpace[pc++] = theWord;
-                programSpace[pc++] = theWord;
-                programSpace[pc++] = theWord;
-                portval = currentByte * multiplierTable[nt3];
-                break;
-            default:
-//                        __builtin_unreachable();
-                portval |= currentByte * multiplierOneTable[ct3];
-                programSpace[pc++] = portval;
-                diff = (diff >> 2) - 1;
-                {
-                int nWords = pc - startPC;
-                programSpace[pc++] = currentByte * 0x01010101;
-                if (diff >= MAX) {
-                    if (diff & 1) {
-                        programSpace[pc] = diff-LOOPODDOFFSET;
-                        programSpace[pc+1] = loopOdd;
-                    } else {
-                        programSpace[pc] = diff-LOOPEVENOFFSET;
-                        programSpace[pc+1] = loopEven;
-                    }
-                } else {
-                    programSpace[pc+1] = stableOpcode(diff);
-                }
-                pc += 4;    // leave room for nextPC, nextInstr, stable, loopcount
-                
-                // Now patch into previous instruction
-                programSpace[indexForOPCandDP] = changeOpcode(nWords);
-                programSpace[indexForOPCandDP+1] = makeAddress(programSpace, pc) - 256;
-                indexForOPCandDP = pc - 2;
-                startPC = pc;
-                portval = currentByte * multiplierTable[nt3];
-                }
-                break;
             }
             currenttime = nexttime;
             ct3 = nt3;
             currentByte ^= points[currentpoint].value;
         }
+
+
 
         t :> t4;
         if (first == 3) {
