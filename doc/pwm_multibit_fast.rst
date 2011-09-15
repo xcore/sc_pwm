@@ -16,16 +16,10 @@ Status
 
 This is a proof of concept. For completion a couple of things need doing:
 
-#. Make the sort function "wrap" tolerant (using ``(a-b)<0`` rather than
-   ``a<b``)
-
 #. Exhaustive testing of the sorting function.
 
 #. Put synchronisation in place between two threads. This can take the form
    of a timer or a timed port.
-
-#. Make the time difference function wrap tolerant (in pwmProgrammer.xc,
-   find the todo)
 
 #. Extensive testing of the PWM function
 

@@ -69,7 +69,7 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
     struct pwmpoint points[8];
     unsigned programSpace[256];
     unsigned startPC;
-    int ct3;
+    unsigned int ct3;
 
     c :> currenttime;
     programSpace[0] = 0;
@@ -90,16 +90,20 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
             }
 //        }
         t :> t2;
+        first++;
         sortPoints(points);
         t :> t3;
         for(int currentpoint = 0; currentpoint != 8; currentpoint++) {
             unsigned nexttime = points[currentpoint].time;
-            int diff = (nexttime >> 2) - (currenttime >> 2); // todo: wrap
+            unsigned int nt3 = nexttime & 3;
+            int diff;
+            nexttime -= nt3;
+            diff = nexttime - currenttime;
 //            printf("Current %d next %d: whole words diff %d, remnants left %d, remnants to do %d (cur %02x)\n",
 //                   currenttime, nexttime, diff, currenttime&3, nexttime&3, currentByte);
             if (diff != 0) {
-                diff--;
-                portval |= currentByte * multiplierOneTable[currenttime & 3];
+                diff = (diff >> 2) - 1;
+                portval |= currentByte * multiplierOneTable[ct3];
                 programSpace[pc++] = portval;
                 if (diff >= 4) {
                     int nWords = pc - startPC;
@@ -154,19 +158,19 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
                     }
 #endif
                 }
-                portval = currentByte * multiplierTable[(nexttime & 3)];
+                portval = currentByte * multiplierTable[nt3];
             } else {
-                int x = multiplierTable[(currenttime & 3) << 2 | (nexttime & 3)];
+                int x = multiplierTable[ct3 << 2 | nt3];
                 portval |= currentByte * x;
             }
             currenttime = nexttime;
+            ct3 = nt3;
             currentByte ^= points[currentpoint].value;
         }
 
 
 
         t :> t4;
-        first++;
         if (first == 3) {
 #if 0
             for(int i = 0; i < pc; i++) {
