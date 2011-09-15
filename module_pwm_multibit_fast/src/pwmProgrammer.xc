@@ -51,9 +51,9 @@ const int multiplierOneTable[4] = {
 };
 const int multiplierTable[16] = {
     0x00000000, 0x00000001, 0x00000101, 0x00010101,
-    0xDEADBEEF, 0xDEADBEEF, 0x00000100, 0x00010100,
-    0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0x00010000,
-    0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF,
+    0xDEADBEEF, 0x00000000, 0x00000100, 0x00010100,
+    0xDEADBEEF, 0xDEADBEEF, 0x00000000, 0x00010000,
+    0xDEADBEEF, 0xDEADBEEF, 0xDEADBEEF, 0x00000000,
 };
 
 #ifdef unsafearrays
@@ -96,9 +96,9 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
         t :> t3;
         for(int currentpoint = 0; currentpoint != 8; currentpoint++) {
             unsigned nexttime = points[currentpoint].time;
-            unsigned int nt3 = nexttime & 3;
-            int diff;
-            nexttime -= nt3;
+            unsigned nt3 = nexttime & 3;
+            unsigned diff;
+            nexttime -= nt3;                    // nexttime is guaranteed a multiple of 4.
             diff = nexttime - currenttime;      // diff is guaranteed a multiple of 4.
             if (diff != 0) {
                 diff = (diff >> 2) - 1;
