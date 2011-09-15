@@ -8,6 +8,5 @@ struct pwmpoint {
     int time, value;
 };
 
-extern void mysort(struct pwmpoint points[]);
-extern void mysort2(struct pwmpoint points[]);
+extern void sortPoints(struct pwmpoint points[8]);
 extern int makeAddress(unsigned int program[], unsigned int pc);

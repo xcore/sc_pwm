@@ -23,6 +23,7 @@ static inline int changeOpcode(int K) {
     return changeZero - (K << 2);
 }
 
+#if 0
 static void explain(unsigned addr, unsigned w) {
     printf("%08x  %08x ", addr, w);
     if (w > stableZero - 20 && w <= stableZero) {
@@ -39,6 +40,7 @@ static void explain(unsigned addr, unsigned w) {
     }
     printf("\n");
 }
+#endif
 
 #define MAX 8
 #define LOOPODDOFFSET  5
@@ -48,7 +50,7 @@ static void explain(unsigned addr, unsigned w) {
 #ifdef unsafearrays
 #pragma unsafe arrays    
 #endif
-void pwmControl1(chanend c, chanend toPWM) {
+void pwmControl1(streaming chanend c, chanend toPWM) {
     unsigned pc, indexForOPCandDP;
     unsigned currenttime;
     int first = 1, currentByte = 0;
@@ -79,13 +81,13 @@ void pwmControl1(chanend c, chanend toPWM) {
         t :> t1;
         printf("%d: in (%d) sort (%d) build (%d)\n", t1-ot, t2-ot, t3-t2, t4-t3);
         t :> t1;
-        slave {
+//        slave {
             for(int i = 0; i < 8; i++) {
                 c :> points[i].time;
             }
-        }
+//        }
         t :> t2;
-        mysort2(points);
+        sortPoints(points);
         t :> t3;
         for(int currentpoint = 0; currentpoint != 8; currentpoint++) {
             unsigned nexttime = points[currentpoint].time;
@@ -119,11 +121,39 @@ void pwmControl1(chanend c, chanend toPWM) {
                     indexForOPCandDP = pc - 2;
                     shortOnes = 0;
                 } else {
+#if 1
+                    int theWord;
+                    switch(diff) {
+                    case 3:
+                        theWord = currentByte * 0x01010101;
+                        programSpace[pc++] = theWord;
+                        programSpace[pc++] = theWord;
+                        programSpace[pc++] = theWord;
+                        shortOnes+=3;
+                        break;
+                    case 2:
+                        theWord = currentByte * 0x01010101;
+                        programSpace[pc++] = theWord;
+                        programSpace[pc++] = theWord;
+                        shortOnes+=2;
+                        break;
+                    case 1:
+                        programSpace[pc++] = currentByte * 0x01010101;
+                        shortOnes++;
+                        break;
+                    case 0:
+                        break;
+                    default:
+//                        __builtin_unreachable();
+                        break;
+                    }
+#else
                     shortOnes+=diff;
                     while(diff > 0) {
                         programSpace[pc++] = currentByte * 0x01010101;
                         diff--;
                     }
+#endif
                 }
                 portval = currentByte * multiplierTable[(nexttime & 3)];
             } else {
@@ -152,7 +182,7 @@ void pwmControl1(chanend c, chanend toPWM) {
 
 extern void doPWM8(buffered out port:32 p8, chanend toPWM);
 
-void pwmWide1(buffered out port:32 p8, chanend c) {
+void pwmWide1(buffered out port:32 p8, streaming chanend c) {
     chan toPWM;
     par {
         doPWM8(p8, toPWM);

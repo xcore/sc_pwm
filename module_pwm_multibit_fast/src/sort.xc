@@ -9,11 +9,13 @@
 
 // TODO: wrap.
 
+#define before(a,b) (((int)a-(int)b) < 0)
+
 #define DOMIDDLE(o, t0, t1, v0, v1) \
-                    if (t0 < t1) { \
+                   if (before(t0, t1)) {                    \
                         o[1].time = t0; o[1].value = 1<<v0; \
-                        o[2].time = t1; o[2].value = 1<<v1; \                     
-                    } else { \
+                        o[2].time = t1; o[2].value = 1<<v1; \
+                    } else {                                \
                         o[2].time = t0; o[2].value = 1<<v0; \
                         o[1].time = t1; o[1].value = 1<<v1; \
                     }
@@ -21,12 +23,12 @@
 #ifdef unsafearrays
 #pragma unsafe arrays    
 #endif
-void halfsort(int t0, int t1, int t2, int t3, struct pwmpoint o[]) {
-    if (t0 < t1) {
-        if (t2 < t3) {
-            if (t0 < t2) {           // t0 smallest
+static void halfsort(int t0, int t1, int t2, int t3, struct pwmpoint o[]) {
+    if (before(t0, t1)) {
+        if (before(t2, t3)) {
+            if (before(t0, t2)) {           // t0 smallest
                 o[0].time = t0; o[0].value = 1<<0;
-                if (t1 > t3) {           // t1 biggest
+                if (before(t3, t1)) {           // t1 biggest
                     o[3].time = t1; o[3].value = 1<<1;
                     DOMIDDLE(o, t2, t3, 2, 3);
                 } else {                 // t3 biggest
@@ -35,7 +37,7 @@ void halfsort(int t0, int t1, int t2, int t3, struct pwmpoint o[]) {
                 }
             } else {                 // t2 smallest
                 o[0].time = t2; o[0].value = 1<<2;
-                if (t1 > t3) {           // t1 biggest
+                if (before(t3, t1)) {           // t1 biggest
                     o[3].time = t1; o[3].value = 1<<1;
                     DOMIDDLE(o, t0, t3, 0, 3);
                 } else {                 // t3 biggest
@@ -44,9 +46,9 @@ void halfsort(int t0, int t1, int t2, int t3, struct pwmpoint o[]) {
                 }
             }
         } else {
-            if (t0 < t3) {           // t0 smallest
+            if (before(t0, t3)) {           // t0 smallest
                 o[0].time = t0; o[0].value = 1<<0;
-                if (t1 > t2) {           // t1 biggest
+                if (before(t2, t1)) {           // t1 biggest
                     o[3].time = t1; o[3].value = 1<<1;
                     DOMIDDLE(o, t2, t3, 2, 3);
                 } else {                 // t2 biggest
@@ -55,7 +57,7 @@ void halfsort(int t0, int t1, int t2, int t3, struct pwmpoint o[]) {
                 }
             } else {                 // t3 smallest
                 o[0].time = t3; o[0].value = 1<<3;
-                if (t1 > t2) {           // t1 biggest
+                if (before(t2, t1)) {           // t1 biggest
                     o[3].time = t1; o[3].value = 1<<1;
                     DOMIDDLE(o, t0, t2, 0, 2);
                 } else {                 // t2 biggest
@@ -65,10 +67,10 @@ void halfsort(int t0, int t1, int t2, int t3, struct pwmpoint o[]) {
             }
         }
     } else {
-        if (t0 < t3) {
-            if (t2 < t0) {           // t2 smallest
+        if (before(t0, t3)) {
+            if (before(t2, t0)) {           // t2 smallest
                 o[0].time = t2; o[0].value = 1<<2;
-                if (t1 > t3) {           // t1 biggest
+                if (before(t3, t1)) {           // t1 biggest
                     o[3].time = t1; o[3].value = 1<<1;
                     DOMIDDLE(o, t0, t3, 0, 3);
                 } else {                 // t3 biggest
@@ -77,7 +79,7 @@ void halfsort(int t0, int t1, int t2, int t3, struct pwmpoint o[]) {
                 }
             } else {                 // t0 smallest
                 o[0].time = t0; o[0].value = 1<<0;
-                if (t1 > t3) {           // t1 biggest
+                if (before(t3, t1)) {           // t1 biggest
                     o[3].time = t1; o[3].value = 1<<1;
                     DOMIDDLE(o, t2, t3, 2, 3);
                 } else {                 // t3 biggest
@@ -86,9 +88,9 @@ void halfsort(int t0, int t1, int t2, int t3, struct pwmpoint o[]) {
                 }
             }
         } else {
-            if (t2 < t3) {           // t2 smallest
+            if (before(t2,t3)) {           // t2 smallest
                 o[0].time = t2; o[0].value = 1<<2;
-                if (t1 > t0) {           // t1 biggest
+                if (before(t0,t1)) {           // t1 biggest
                     o[3].time = t1; o[3].value = 1<<1;
                     DOMIDDLE(o, t0, t3, 0, 3);
                 } else {                 // t0 biggest
@@ -97,7 +99,7 @@ void halfsort(int t0, int t1, int t2, int t3, struct pwmpoint o[]) {
                 }
             } else {                 // t3 smallest
                 o[0].time = t3; o[0].value = 1<<3;
-                if (t1 > t0) {           // t1 biggest
+                if (before(t0,t1)) {           // t1 biggest
                     o[3].time = t1; o[3].value = 1<<1;
                     DOMIDDLE(o, t2, t0, 2, 0);
                 } else {                 // t0 biggest
@@ -112,7 +114,7 @@ void halfsort(int t0, int t1, int t2, int t3, struct pwmpoint o[]) {
 #ifdef unsafearrays
 #pragma unsafe arrays    
 #endif
-void mysort2(struct pwmpoint x[8]) {
+void sortPoints(struct pwmpoint x[8]) {
     struct pwmpoint yl[5];
     struct pwmpoint yr[5];
     int l = 0, r = 0;
@@ -123,8 +125,9 @@ void mysort2(struct pwmpoint x[8]) {
     yr[4].time = yl[3].time+1;
     tl = yl[0].time;
     tr = yr[0].time;
+#pragma loop unroll
     for(int w = 0; w < 8; w++) {
-        if (tl < tr) {
+        if (before(tl, tr)) {
             x[w].time = yl[l].time;
             x[w].value = yl[l].value;
             l++;
