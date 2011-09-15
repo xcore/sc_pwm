@@ -96,79 +96,87 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
         for(int currentpoint = 0; currentpoint != 8; currentpoint++) {
             unsigned nexttime = points[currentpoint].time;
             unsigned int nt3 = nexttime & 3;
-            int diff;
+            int diff, theWord;
             nexttime -= nt3;
             diff = nexttime - currenttime;
 //            printf("Current %d next %d: whole words diff %d, remnants left %d, remnants to do %d (cur %02x)\n",
 //                   currenttime, nexttime, diff, currenttime&3, nexttime&3, currentByte);
-            if (diff != 0) {
-                diff = (diff >> 2) - 1;
-                portval |= currentByte * multiplierOneTable[ct3];
-                programSpace[pc++] = portval;
-                if (diff >= 4) {
-                    int nWords = pc - startPC;
-                    programSpace[pc++] = currentByte * 0x01010101;
-                    if (diff >= MAX) {
-                        if (diff & 1) {
-                            programSpace[pc] = diff-LOOPODDOFFSET;
-                            programSpace[pc+1] = loopOdd;
-                        } else {
-                            programSpace[pc] = diff-LOOPEVENOFFSET;
-                            programSpace[pc+1] = loopEven;
-                        }
-                    } else {
-                        programSpace[pc+1] = stableOpcode(diff);
-                    }
-                    pc += 4;    // leave room for nextPC, nextInstr, stable, loopcount
-                    
-                    // Now patch into previous instruction
-                    programSpace[indexForOPCandDP] = changeOpcode(nWords);
-                    programSpace[indexForOPCandDP+1] = makeAddress(programSpace, pc) - 256;
-                    indexForOPCandDP = pc - 2;
-                    startPC = pc;
-                } else {
-#if 1
-                    int theWord;
-                    switch(diff) {
-                    case 3:
-                        theWord = currentByte * 0x01010101;
-                        programSpace[pc++] = theWord;
-                        programSpace[pc++] = theWord;
-                        programSpace[pc++] = theWord;
-                        break;
-                    case 2:
-                        theWord = currentByte * 0x01010101;
-                        programSpace[pc++] = theWord;
-                        programSpace[pc++] = theWord;
-                        break;
-                    case 1:
-                        theWord = currentByte * 0x01010101;
-                        programSpace[pc++] = theWord;
-                        break;
-                    case 0:
-                        break;
-                    default:
-//                        __builtin_unreachable();
-                        break;
-                    }
-#else
-                    while(diff > 0) {
-                        programSpace[pc++] = currentByte * 0x01010101;
-                        diff--;
-                    }
-#endif
-                }
-                portval = currentByte * multiplierTable[nt3];
-            } else {
+            switch(diff) {
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            {
                 int x = multiplierTable[ct3 << 2 | nt3];
                 portval |= currentByte * x;
+            }
+                break;
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+                portval |= currentByte * multiplierOneTable[ct3];
+                programSpace[pc++] = portval;
+                portval = currentByte * multiplierTable[nt3];
+                break;
+            case 8:
+                portval |= currentByte * multiplierOneTable[ct3];
+                programSpace[pc++] = portval;
+                theWord = currentByte * 0x01010101;
+                programSpace[pc++] = theWord;
+                portval = currentByte * multiplierTable[nt3];
+                break;
+            case 12:
+                portval |= currentByte * multiplierOneTable[ct3];
+                programSpace[pc++] = portval;
+                theWord = currentByte * 0x01010101;
+                programSpace[pc++] = theWord;
+                programSpace[pc++] = theWord;
+                portval = currentByte * multiplierTable[nt3];
+                break;
+            case 16:
+                portval |= currentByte * multiplierOneTable[ct3];
+                programSpace[pc++] = portval;
+                theWord = currentByte * 0x01010101;
+                programSpace[pc++] = theWord;
+                programSpace[pc++] = theWord;
+                programSpace[pc++] = theWord;
+                portval = currentByte * multiplierTable[nt3];
+                break;
+            default:
+//                        __builtin_unreachable();
+                portval |= currentByte * multiplierOneTable[ct3];
+                programSpace[pc++] = portval;
+                diff = (diff >> 2) - 1;
+                {
+                int nWords = pc - startPC;
+                programSpace[pc++] = currentByte * 0x01010101;
+                if (diff >= MAX) {
+                    if (diff & 1) {
+                        programSpace[pc] = diff-LOOPODDOFFSET;
+                        programSpace[pc+1] = loopOdd;
+                    } else {
+                        programSpace[pc] = diff-LOOPEVENOFFSET;
+                        programSpace[pc+1] = loopEven;
+                    }
+                } else {
+                    programSpace[pc+1] = stableOpcode(diff);
+                }
+                pc += 4;    // leave room for nextPC, nextInstr, stable, loopcount
+                
+                // Now patch into previous instruction
+                programSpace[indexForOPCandDP] = changeOpcode(nWords);
+                programSpace[indexForOPCandDP+1] = makeAddress(programSpace, pc) - 256;
+                indexForOPCandDP = pc - 2;
+                startPC = pc;
+                portval = currentByte * multiplierTable[nt3];
+                }
+                break;
             }
             currenttime = nexttime;
             ct3 = nt3;
             currentByte ^= points[currentpoint].value;
         }
-
-
 
         t :> t4;
         if (first == 3) {
