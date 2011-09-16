@@ -107,7 +107,7 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
                 if (diff >= MAX) {
                     int nWords = pc - startPC;
                     programSpace[pc] = currentByte * 0x01010101;
-                    if (diff & 1) {
+                    if (diff & 1) {                 // todo: move this to pwm.S
                         programSpace[pc+1] = diff-LOOPODDOFFSET;
                         programSpace[pc+2] = loopOdd;
                     } else {
