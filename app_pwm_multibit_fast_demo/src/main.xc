@@ -7,23 +7,34 @@
 
 #include <xs1.h>
 
-buffered out port:32 p8a = XS1_PORT_8A;
+clock clk = XS1_CLKBLK_2;
+buffered out port:32 pwmPort = XS1_PORT_8A;
+in port syncPort = XS1_PORT_16A;
 
+#pragma unsafe arrays
 void signalgenerator(streaming chanend c) {
     int differences[40] = {17, 1, 1, 1, 1, 1, 1, 1,
-                           8004, 15, 2, 19, 30, 40, 50, 60,
-                           8004, 64, 64, 64, 64, 64, 64, 64,
-                           8004, 24, 24, 24, 24, 24, 24, 24,
-                           8001, 1000, 2000, 1000, 1000, 2000, 2000, 1000};
-    int now = 0;
-    c <: 0xFF;     // Initial value
-    c <: 12;    // Initial time.
-    for(int j = 0; j < 5; j++) {
+                           4, 15, 2, 19, 30, 40, 50, 60,
+                           4, 64, 64, 64, 64, 64, 64, 64,
+                           4, 24, 24, 24, 24, 24, 24, 24,
+                           1, 500, 1000, 1000, 1000, 1000, 1000, 1000};
+    int now;
+    int pwmCycle = 8000;
+    c :> now;
+    now += 20000;
+    c <: 0x00;     // Initial value
+    c <: now;    // Initial time.
+    while(1) {
+        for(int j = 0; j < 5; j++) {
+            int t = now;
 //        master  {
             for(int i = 0; i < 8; i++) {
-                now += differences[i + j*8];
-                c <: now; 
-//            }
+                t += differences[i + j*8];
+                c <: t; 
+            }
+            now += pwmCycle;
+            c <: now;
+//        }
         }
     }
 }
@@ -35,6 +46,17 @@ void burn(void) {
 #endif
 }
 
+void pwmRunner(streaming chanend c) {
+    unsigned clockCount;
+    stop_clock(clk);
+    configure_out_port_no_ready(pwmPort, clk, 0);
+    configure_in_port_no_ready(syncPort, clk);
+    start_clock(clk);
+    syncPort :> void @ clockCount;
+    c <: clockCount;
+    pwmWide1(pwmPort, syncPort, c);
+}
+
 int main (void) {
     streaming chan c;
     par {
@@ -44,7 +66,7 @@ int main (void) {
         burn();
         burn();
         signalgenerator(c);
-        pwmWide1(p8a, c);
+        pwmRunner(c);
     }
     return 0;
 }

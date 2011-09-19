@@ -3,4 +3,4 @@
 // University of Illinois/NCSA Open Source License posted in
 // LICENSE.txt and at <http://github.xcore.com/>
 
-void pwmWide1(buffered out port:32 p, streaming chanend c);
+void pwmWide1(buffered out port:32 p, in port syncport, streaming chanend c);

@@ -37,6 +37,9 @@ doPWM8:
     outct res[r1], 0              // Inform control thread that we are ready
     in r2, res[r1]
     outct res[r1], 0              // Give control thread permission to run ahead 0.5 cycle
+    outct res[r1], 0              // Give control thread permission to run ahead 0.5 cycle
+    outct res[r1], 0              // Give control thread permission to run ahead 0.5 cycle
+    outct res[r1], 0              // Give control thread permission to run ahead 0.5 cycle
     set dp, r2
     bu setTime
 
