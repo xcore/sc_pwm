@@ -61,7 +61,7 @@ const int multiplierTable[16] = {
 #ifdef unsafearrays
 #pragma unsafe arrays    
 #endif
-void pwmControl1(streaming chanend c, chanend toPWM) {
+void pwmControl1(streaming chanend c, streaming chanend toPWM) {
     unsigned pc;
     unsigned currenttime;
     unsigned currentByte = 0;
@@ -83,11 +83,6 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
     startPC = pc;
     ct3 = 0;
 
-#if 0
-    for(int i = 0; i < pc; i++) {
-        explain(makeAddress(programSpace, i), programSpace[i]);
-    }
-#endif
     toPWM <: makeAddress(programSpace, 0) - 240;
 
     while(1) {
@@ -175,10 +170,10 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
     }
 }
 
-extern void doPWM8(buffered out port:32 p8, chanend toPWM);
+extern void doPWM8(buffered out port:32 p8, streaming chanend toPWM);
 
 void pwmWide1(buffered out port:32 p8, streaming chanend c) {
-    chan toPWM;
+    streaming chan toPWM;
     par {
         doPWM8(p8, toPWM);
         pwmControl1(c, toPWM);
