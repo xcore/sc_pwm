@@ -17,13 +17,9 @@ extern int loopOdd;
 extern int loopAround;
 
 
-static inline int stableOpcode(int K) {
-    return stableZero - (K << 1);
-}
+#define stableOpcode(diff)         (stableZero - ((diff) << 1))
 
-static inline int changeOpcode(int K) {
-    return changeZero - (K << 2);
-}
+#define changeOpcode(numBytes)     (changeZero - (numBytes))
 
 #if 0
 static void explain(int i, unsigned addr, unsigned w, int pc) {
@@ -76,9 +72,8 @@ void pwmControl1(in port syncport, streaming chanend c, streaming chanend toPWM)
     unsigned int synctime, newsynctime, oldsynctime;
     unsigned currentByte;
     int addressOffset;
-//    int first = 0;
 
-    int numWords = 0;
+    int numBytes = 4;
     int t1, t2;
     timer t;
     struct pwmpoint points[8];
@@ -91,7 +86,7 @@ void pwmControl1(in port syncport, streaming chanend c, streaming chanend toPWM)
     programSpace[0] = currentByte * 0x01010101;
     programSpace[1] = currenttime;
     pc = 4;
-    startPC = pc;
+    startPC = pc-1;
     ct3 = 0;
 
     schkct(toPWM, 0);                             // Wait for PWM thread to be ready.
@@ -121,28 +116,33 @@ void pwmControl1(in port syncport, streaming chanend c, streaming chanend toPWM)
                 programSpace[pc++] = portval;
                 if (diff >= MAX) {
                     programSpace[pc] = currentByte * 0x01010101;
-                    programSpace[pc+1] = diff;
-                    programSpace[pc+2] = loopAround;
-                    pc += 5;    // leave room for nextPC, nextInstr, stable, loopcount
+                    pc++;
+                    programSpace[pc] = diff;
+                    pc++;
+                    programSpace[pc] = loopAround;
+                    pc++;
+                    programSpace[pc] = changeOpcode(numBytes);
+                    pc += 2;    // leave room for nextPC, nextInstr, stable, loopcount
                     
                     // Now patch into previous instruction
-                    programSpace[startPC-2] = changeOpcode(numWords+1);
-                    programSpace[startPC-1] = pc*4 + addressOffset;
-                    startPC = pc;
-                    numWords = 0;
+                    programSpace[startPC] = pc*4 + addressOffset;
+                    startPC = pc-1;
+                    numBytes = 4;
                     if (pc >= PROGRAMSPACESIZE - MAXHALFCYCLE) {
                         pc = 0;
                     }
                 } else if (diff >= 4) {
                     programSpace[pc] = currentByte * 0x01010101;
-                    programSpace[pc+2] = stableOpcode(diff);
-                    pc += 5;    // leave room for nextPC, nextInstr, stable, loopcount
+                    pc += 2;
+                    programSpace[pc] = stableOpcode(diff);
+                    pc++;
+                    programSpace[pc] = changeOpcode(numBytes);
+                    pc += 2;    // leave room for nextPC, nextInstr, stable, loopcount
                     
                     // Now patch into previous instruction
-                    programSpace[startPC-2] = changeOpcode(numWords+1);
-                    programSpace[startPC-1] = pc*4 + addressOffset;
-                    numWords = 0;
-                    startPC = pc;
+                    programSpace[startPC] = pc*4 + addressOffset;
+                    numBytes = 4;
+                    startPC = pc-1;
                 } else {
                     switch(diff) {
                     case 3:
@@ -150,21 +150,21 @@ void pwmControl1(in port syncport, streaming chanend c, streaming chanend toPWM)
                         programSpace[pc++] = portval;
                         programSpace[pc++] = portval;
                         programSpace[pc++] = portval;
-                        numWords += 4;
+                        numBytes += 16;
                         break;
                     case 2:
                         portval = currentByte * 0x01010101;
                         programSpace[pc++] = portval;
                         programSpace[pc++] = portval;
-                        numWords += 3;
+                        numBytes += 12;
                         break;
                     case 1:
                         portval = currentByte * 0x01010101;
                         programSpace[pc++] = portval;
-                        numWords += 2;
+                        numBytes += 8;
                         break;
                     case 0:
-                        numWords += 1;
+                        numBytes += 4;
                         break;
                     default:
 //                        __builtin_unreachable();
@@ -181,16 +181,11 @@ void pwmControl1(in port syncport, streaming chanend c, streaming chanend toPWM)
             currentByte ^= points[currentpoint].value;
         }
         t :> t2;
-        printf("%d\n", t2-t1);
+//        printf("%d\n", t2-t1);
 #pragma xta endpoint "loop"
         syncport @ oldsynctime :> void;
         oldsynctime = synctime;
         synctime = newsynctime;
-#if 0
-        if (first++ == 9) {
-            explainAll(programSpace, PROGRAMSPACESIZE, pc);
-        }
-#endif
     }
 }
 

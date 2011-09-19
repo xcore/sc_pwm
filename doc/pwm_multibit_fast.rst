@@ -65,25 +65,25 @@ output.
 
 The instructions are::
 
-   setTime  NextPC, NextInstr, Time, Value
-   changeN  NextPC, NextInstr, loopEven, Counter, Value, Value*N
-   changeN  NextPC, NextInstr, loopOdd, Counter, Value, Value*N
-   changeN  NextPC, NextInstr, stableK, dontcare, Value, Value*N
+   setTime  NextPC, ThisInstr, Time, Value
+   changeN  NextPC, ThisInstr, loopAround, Counter, Value, Value*N
+   changeN  NextPC, ThisInstr, stableK, dontcare, Value, Value*N
 
-Each instruction contains both a next instruction, and a next program
-counter. The next instruction will be executed, and then the next program
-counter is used by the next instruction to retrieve the subsequent
-instruction.
-
-For example, the ``stable`` instruction informs the PWM thread that all
-signals should be kept stable for N clock ticks. Only a fixed set of stable
-instructions are supported: stable3...stable8.
+Each instruction contains a pointer to the code for this instruction, and a next program
+counter. At the end of an instruction, the next program counter is
+extracted, and that is used to retrieve the code address for the next
+instruction. 
 
 The ``change`` instruction informs the PWM thread that a group of values is
-provided that needs to be supplied in succession, after that, the signal is
-stable for K+2 steps. Only a limited set of change instructions are
-supported: change64...change1. Note that a series of changes must always be
-followed by a stable signal
+provided that needs to be supplied in succession. After that, the signal
+will either be stable for a period of up to K steps (using stableK) or for
+any length of time (using loopAround). Note that a series of changes must always be
+followed by a stable signal. The nextPC of a change instruction always
+points to a change instruction.
+
+The ``stable`` instruction can only be part of a change instruction informs
+the PWM thread that all signals should be kept stable for N clock ticks.
+Only a fixed set of stable instructions are supported: stable4...stable16.
 
 Because the shortest stable signal after a change instruction is 5 clocks,
 anything that should be stable for 4 clocks or less needs to be created by a

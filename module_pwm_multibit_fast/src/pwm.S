@@ -36,10 +36,6 @@ doPWM8:
     stw dp, sp[1]
     outct res[r1], 0              // Inform control thread that we are ready
     in r2, res[r1]
-    outct res[r1], 0              // Give control thread permission to run ahead 0.5 cycle
-    outct res[r1], 0              // Give control thread permission to run ahead 0.5 cycle
-    outct res[r1], 0              // Give control thread permission to run ahead 0.5 cycle
-    outct res[r1], 0              // Give control thread permission to run ahead 0.5 cycle
     set dp, r2
     bu setTime
 
@@ -47,7 +43,7 @@ doReturn:
     ldw dp, sp[1]
     retsp 4
     
-    
+    .align 4
 change39:    
     ldw r3, dp[20]
     out res[r0], r3
@@ -194,9 +190,9 @@ stable5:
     out res[r0], r3
 stable4:  
     out res[r0], r3
-    ldw r2, dp[62]
-    out res[r0], r3
     ldw dp, dp[63]
+    out res[r0], r3
+    ldw r2, dp[62]
     out res[r0], r3
     bau r2
 
@@ -220,9 +216,9 @@ dostableloop:
     out res[r0], r3
     bt r11, dostableloop
     out res[r0], r3
-    ldw r2, dp[62]
-    out res[r0], r3
     ldw dp, dp[63]
+    out res[r0], r3
+    ldw r2, dp[62]
     out res[r0], r3
     bau r2
 
@@ -240,9 +236,9 @@ setTime:
     setpt res[r0], r2
     out res[r0], r3
     out res[r0], r3
-    ldw r2, dp[62]
-    out res[r0], r3
     ldw dp, dp[63]
+    out res[r0], r3
+    ldw r2, dp[62]
     out res[r0], r3
     bau r2
 
