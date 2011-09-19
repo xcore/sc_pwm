@@ -34,9 +34,10 @@ loopAround: .word stableloop
 doPWM8:
     entsp 4
     stw dp, sp[1]
-    outct res[r1], 0              // Inform control thread that we are ready
+    outct res[r1], 1
+    chkct res[r1], 1
     in r2, res[r1]
-    outct res[r1], 0              // Give control thread permission to run ahead 0.5 cycle
+    outct res[r1], 1
     set dp, r2
     bu setTime
 
