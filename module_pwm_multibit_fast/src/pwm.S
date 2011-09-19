@@ -11,12 +11,10 @@
     .align 4
     .globl stableZero
     .globl changeZero
-    .globl loopEven
-    .globl loopOdd
+    .globl loopAround
 stableZero: .word stable4 + 8
 changeZero: .word change1 + 4
-loopEven: .word stableloopeven
-loopOdd: .word stableloopodd
+loopAround: .word stableloop
 
     .text
     
@@ -162,6 +160,16 @@ change1:
     ldw r2, dp[61]
     bau r2
 
+stable15: 
+    out res[r0], r1
+stable14: 
+    out res[r0], r1
+stable13: 
+    out res[r0], r1
+stable12: 
+    out res[r0], r1
+stable11: 
+    out res[r0], r1
 stable10: 
     out res[r0], r1
 stable9:  
@@ -182,16 +190,25 @@ stable4:
     out res[r0], r1
     bau r2
 
-stableloopeven:  
+stableloop:  
     out res[r0], r1
-stableloopodd:  
     out res[r0], r1
-    ldw r11, dp[60]
-stableloop:
+    ldw r2, dp[60]
     out res[r0], r1
-    sub r11, r11, 2
+    sub r11, r2, 10
     out res[r0], r1
-    bt r11, stableloop
+    zext r2, 1
+    out res[r0], r1
+    bf  r2, skipone
+    out res[r0], r1
+skipone:    
+    out res[r0], r1
+    shr r11, r11, 1
+dostableloop:
+    out res[r0], r1
+    sub r11, r11, 1
+    out res[r0], r1
+    bt r11, dostableloop
     out res[r0], r1
     ldw r2, dp[62]
     out res[r0], r1

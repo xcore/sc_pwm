@@ -13,6 +13,7 @@ extern int changeZero;
 extern int stableZero;
 extern int loopEven;
 extern int loopOdd;
+extern int loopAround;
 
 
 static inline int stableOpcode(int K) {
@@ -32,6 +33,9 @@ static void explain(unsigned addr, unsigned w) {
     if (w > changeZero - 80 && w <= changeZero) {
         printf("  Change%d", (changeZero-w)>>2);
     } 
+    if (w == loopAround) {
+        printf("  Loop Around");
+    }
     if (w == loopEven) {
         printf("  Loop Even");
     }
@@ -42,9 +46,7 @@ static void explain(unsigned addr, unsigned w) {
 }
 #endif
 
-#define MAX 8
-#define LOOPODDOFFSET  5
-#define LOOPEVENOFFSET 6
+#define MAX 16
 
 const int multiplierOneTable[4] = {
     0x01010101, 0x01010100, 0x01010000, 0x01000000,
@@ -82,9 +84,10 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
 
     while(1) {
         ot = t1;
+#pragma xta endpoint "loop"
         t :> t1;
-        printf("%d: in (%d) sort (%d) build (%d)\n", t1-ot, t2-ot, t3-t2, t4-t3);
-        t :> t1;
+//        printf("%d: in (%d) sort (%d) build (%d)\n", t1-ot, t2-ot, t3-t2, t4-t3);
+//        t :> t1;
 //        slave {
             for(int i = 0; i < 8; i++) {
                 c :> points[i].time;
@@ -107,13 +110,8 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
                 if (diff >= MAX) {
                     int nWords = pc - startPC;
                     programSpace[pc] = currentByte * 0x01010101;
-                    if (diff & 1) {                 // todo: move this to pwm.S
-                        programSpace[pc+1] = diff-LOOPODDOFFSET;
-                        programSpace[pc+2] = loopOdd;
-                    } else {
-                        programSpace[pc+1] = diff-LOOPEVENOFFSET;
-                        programSpace[pc+2] = loopEven;
-                    }
+                    programSpace[pc+1] = diff;
+                    programSpace[pc+2] = loopAround;
                     pc += 5;    // leave room for nextPC, nextInstr, stable, loopcount
                     
                     // Now patch into previous instruction
