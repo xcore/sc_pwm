@@ -36,6 +36,23 @@ Current performance using 62.5 MIPS threads (8 threads at 500 MHz) is:
 
 * PWM thread requires no more than 62.5 MIPS to keep running without gaps.
 
+Usage
+-----
+
+Call ``pwmWide1()`` with two arguments: an 8-bit buffered port (32-bits
+transfer width), and a channel end. Over the channel end, output
+the initial port value, and the time that the first output should happen;
+this is the value in counter ticks on the port, and should be at least one
+PWM cycle in the future. Then in a ``master`` transaction, output eight
+values signalling when pins 1-8 should change. Values should be output as
+32-bit integer times, counting in 100 Mhz. The wire will change when the
+last 16-bits of the 32-bit value match the port counter.
+
+By keeping the 8-bit port synchronised with all other PWM ports and other
+signals that should be synchronous (such as ADC sampling), the PWM
+component can be made to run synchronous with the algorithm and other I/O.
+
+
 Instruction Set
 ---------------
 

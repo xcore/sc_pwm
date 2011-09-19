@@ -61,10 +61,10 @@ const int multiplierTable[16] = {
 #ifdef unsafearrays
 #pragma unsafe arrays    
 #endif
-void pwmControl1(streaming chanend c, chanend toPWM) {
+void pwmControl1(streaming chanend c, streaming chanend toPWM) {
     unsigned pc;
     unsigned currenttime;
-    unsigned  first = 1, currentByte = 0;
+    unsigned currentByte = 0;
     timer t;
     int ot, t1, t2,t3,t4;
     unsigned int portval = 0;
@@ -75,26 +75,28 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
 
     int addressOffset = makeAddress(programSpace, 0) - 256;
 
+    c :> currentByte;
     c :> currenttime;
-    programSpace[0] = 0;
+    programSpace[0] = currentByte * 0x01010101;
     programSpace[1] = currenttime;
     pc = 4;
     startPC = pc;
     ct3 = 0;
 
+    toPWM <: makeAddress(programSpace, 0) - 240;
+
     while(1) {
         ot = t1;
 #pragma xta endpoint "loop"
         t :> t1;
-//        printf("%d: in (%d) sort (%d) build (%d)\n", t1-ot, t2-ot, t3-t2, t4-t3);
-//        t :> t1;
+        printf("%d: in (%d) sort (%d) build (%d)\n", t1-ot, t2-ot, t3-t2, t4-t3);
+        t :> t1;
 //        slave {
             for(int i = 0; i < 8; i++) {
                 c :> points[i].time;
             }
 //        }
         t :> t2;
-        first++;
         sortPoints(points);
         t :> t3;
         for(int currentpoint = 0; currentpoint != 8; currentpoint++) {
@@ -165,22 +167,13 @@ void pwmControl1(streaming chanend c, chanend toPWM) {
 
 
         t :> t4;
-        if (first == 3) {
-#if 0
-            for(int i = 0; i < pc; i++) {
-                explain(makeAddress(programSpace, i), programSpace[i]);
-            }
-#endif
-            toPWM <: makeAddress(programSpace, 0) - 240;
-            first = 0;
-        }
     }
 }
 
-extern void doPWM8(buffered out port:32 p8, chanend toPWM);
+extern void doPWM8(buffered out port:32 p8, streaming chanend toPWM);
 
 void pwmWide1(buffered out port:32 p8, streaming chanend c) {
-    chan toPWM;
+    streaming chan toPWM;
     par {
         doPWM8(p8, toPWM);
         pwmControl1(c, toPWM);
