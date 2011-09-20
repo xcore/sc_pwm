@@ -128,12 +128,12 @@ void sortPoints(struct pwmpoint x[8]) {
 #pragma loop unroll
     for(int w = 0; w < 8; w++) {
         if (before(tl, tr)) {
-            x[w].time = yl[l].time;
+            x[w].time = tl;
             x[w].value = yl[l].value;
             l++;
             tl = yl[l].time;
         } else {
-            x[w].time = yr[r].time;
+            x[w].time = tr;
             x[w].value = yr[r].value<<4;
             r++;
             tr = yr[r].time;
