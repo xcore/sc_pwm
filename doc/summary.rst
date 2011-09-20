@@ -6,7 +6,7 @@ It is kept high for a fraction *f* of the time, and hence when passed
 through a low pass filter the signal will appear as an analogue signal with
 a value if *f*.
 
-Important characteristics of a PWM unit are the following:
+Important characteristics of a PWM signal are the following:
 
 * The period - PWM with a long period can only drive signals with a low
   frequency. PWM with a short period can drive signals at a high frequency,
@@ -33,13 +33,16 @@ Important characteristics of a PWM unit are the following:
   control), two PWM channels are required per halfbridge. In this case, one
   signal will change from high to low (closing a FET), then a short period
   later the other signal will change (opening the complementary FET). The
-  time inbetween the changes is the *dead* time that no FET is driven; it
+  time in between the changes is the *dead* time that no FET is driven; it
   is required to prevent the two FETs shorting the power supply.
 
 On top of the PWM component, something needs to compute the time periods.
 This component needs to take a required analogue value, and truncate/round
 this to the nearest integer PWM value, possibly using dithering and
-fractional counters to reduce the effects of rounding.
+fractional counters to reduce the effects of rounding. Typically, this
+software is provided by the integrator. They have algorithms with known
+harmonic distortion, and can write it so that PWM and other activities
+(such as ADCs) are executed synchronously.
 
 A standard XMOS PWM component is limited to a granularity of 10 ns,
 although 2 ns granularity is possible at a cost of a higher number of
@@ -58,16 +61,21 @@ but the centers do not need to be aligned. The jitter is 150 ps (???). The
 number of channels that can be driven depends on the number of threads.
 Assuming eight threads on a 500 MHz part:
 
-+---------+----------+----------------+--------------------------------------+
-| Threads | Channels | Period         | Status                               |
-+---------+----------+----------------+--------------------------------------+
-| 2       | 8        | 25 us (40 KHz) | Implemented, not tested exhaustively |
-+---------+----------+----------------+--------------------------------------+
-| 3       | 16       | 50 us (20 KHz) | Minor tweaks to codebase required    |
-+---------+----------+----------------+--------------------------------------+
-| 4       | 24       | 75 us (13 KHz) | Minor tweaks to codebase required    |
-+---------+----------+----------------+--------------------------------------+
-| 5       | 32       | 100 us (10 KHz)| Minor tweaks to codebase required    |
-+---------+----------+----------------+--------------------------------------+
++---------+--------+----------+----------------+--------------------------------------+
+| Threads | Memory | Channels | Period         | Status                               |
++---------+--------+----------+----------------+--------------------------------------+
+| 2       | 4 KB   | 8        | 25 us (40 KHz) | Implemented, not tested exhaustively |
++---------+--------+----------+----------------+--------------------------------------+
+| 3       | 5 KB   | 16       | 50 us (20 KHz) | Minor tweaks to codebase required    |
++---------+--------+----------+----------------+--------------------------------------+
+| 4       | 6 KB   | 24       | 75 us (13 KHz) | Minor tweaks to codebase required    |
++---------+--------+----------+----------------+--------------------------------------+
+| 5       | 6 KB   | 24       | 50 us (20 KHz) | Minor tweaks to codebase required    |
++---------+--------+----------+----------------+--------------------------------------+
+| 5       | 7 KB   | 32       | 100 us (10 KHz)| Minor tweaks to codebase required    |
++---------+--------+----------+----------------+--------------------------------------+
+| 6       | 7 KB   | 32       | 50 us (20 KHz) | Minor tweaks to codebase required    |
++---------+--------+----------+----------------+--------------------------------------+
 
-
+The PWM channels are all on 8-bit ports, so the bottom part will use all
+four 8-bit ports on a core. 
