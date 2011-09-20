@@ -61,21 +61,23 @@ but the centers do not need to be aligned. The jitter is 150 ps (???). The
 number of channels that can be driven depends on the number of threads.
 Assuming eight threads on a 500 MHz part:
 
-+---------+--------+----------+----------------+--------------------------------------+
-| Threads | Memory | Channels | Period         | Status                               |
-+---------+--------+----------+----------------+--------------------------------------+
-| 2       | 4 KB   | 8        | 25 us (40 KHz) | Implemented, not tested exhaustively |
-+---------+--------+----------+----------------+--------------------------------------+
-| 3       | 5 KB   | 16       | 50 us (20 KHz) | Minor tweaks to codebase required    |
-+---------+--------+----------+----------------+--------------------------------------+
-| 4       | 6 KB   | 24       | 75 us (13 KHz) | Minor tweaks to codebase required    |
-+---------+--------+----------+----------------+--------------------------------------+
-| 5       | 6 KB   | 24       | 50 us (20 KHz) | Minor tweaks to codebase required    |
-+---------+--------+----------+----------------+--------------------------------------+
-| 5       | 7 KB   | 32       | 100 us (10 KHz)| Minor tweaks to codebase required    |
-+---------+--------+----------+----------------+--------------------------------------+
-| 6       | 7 KB   | 32       | 50 us (20 KHz) | Minor tweaks to codebase required    |
-+---------+--------+----------+----------------+--------------------------------------+
++---------------------------+--------------------+--------------------------------------+
+| Functionality provided    | Resources required | Status                               | 
++----------+----------------+---------+----------+                                      |
+| Channels | Period         | Threads | Memory   |                                      |
++----------+----------------+---------+----------+--------------------------------------+
+| 8        | 25 us (40 KHz) | 2       | 4 KB     | Implemented, not tested exhaustively |
++----------+----------------+---------+----------+--------------------------------------+
+| 16       | 50 us (20 KHz) | 3       | 5 KB     | Minor tweaks to codebase required    |
++----------+----------------+---------+----------+--------------------------------------+
+| 24       | 75 us (13 KHz) | 4       | 6 KB     | Minor tweaks to codebase required    |
++----------+----------------+---------+----------+--------------------------------------+
+| 24       | 50 us (20 KHz) | 5       | 6 KB     | Minor tweaks to codebase required    |
++----------+----------------+---------+----------+--------------------------------------+
+| 32       | 100 us (10 KHz)| 5       | 7 KB     | Minor tweaks to codebase required    |
++----------+----------------+---------+----------+--------------------------------------+
+| 32       | 50 us (20 KHz) | 6       | 7 KB     | Minor tweaks to codebase required    |
++----------+----------------+---------+----------+--------------------------------------+
 
 The PWM channels are all on 8-bit ports, so the bottom part will use all
 four 8-bit ports on a core. 
