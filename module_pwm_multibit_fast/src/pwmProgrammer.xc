@@ -104,6 +104,7 @@ void pwmControl1(in port syncport, streaming chanend c, streaming chanend toPWM)
             c :> newsynctime ;
 //        }
         sortPoints(points);
+#pragma loop unroll
         for(int currentpoint = 0; currentpoint != 8; currentpoint++) {
             unsigned nexttime = points[currentpoint].time;
             unsigned nt3 = nexttime & 3;
@@ -181,7 +182,7 @@ void pwmControl1(in port syncport, streaming chanend c, streaming chanend toPWM)
             currentByte ^= points[currentpoint].value;
         }
         t :> t2;
-//        printf("%d\n", t2-t1);
+        printf("%d\n", t2-t1);
 #pragma xta endpoint "loop"
         syncport @ oldsynctime :> void;
         oldsynctime = synctime;

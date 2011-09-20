@@ -13,8 +13,8 @@ in port syncPort = XS1_PORT_16A;
 
 #pragma unsafe arrays
 void signalgenerator(streaming chanend c) {
-    int differences[40] = {17, 1, 1, 1, 1, 1, 1, 1,
-                           4, 15, 2, 19, 30, 40, 50, 60,
+    int differences[40] = {7, 1, 1, 1, 1, 1, 1, 1,
+                           4, 3, 3, 3, 3, 3, 3, 3,
                            4, 64, 64, 64, 64, 64, 64, 64,
                            4, 24, 24, 24, 24, 24, 24, 24,
                            1, 500, 1000, 1000, 1000, 1000, 1000, 1000};
