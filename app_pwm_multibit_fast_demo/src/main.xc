@@ -13,11 +13,13 @@ in port syncPort = XS1_PORT_16A;
 
 #pragma unsafe arrays
 void signalgenerator(streaming chanend c) {
-    int differences[40] = {7, 1, 1, 1, 1, 1, 1, 1,
+    int differences[48] = {7, 1, 1, 1, 1, 1, 1, 1,
                            4, 3, 3, 3, 3, 3, 3, 3,
                            4, 64, 64, 64, 64, 64, 64, 64,
                            4, 24, 24, 24, 24, 24, 24, 24,
-                           1, 500, 1000, 1000, 1000, 1000, 1000, 1000};
+                           1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,
+                           1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,
+    };
     int now;
     int pwmCycle = 8000;
     c :> now;
@@ -25,7 +27,7 @@ void signalgenerator(streaming chanend c) {
     c <: 0x00;     // Initial value
     c <: now;    // Initial time.
     while(1) {
-        for(int j = 0; j < 5; j++) {
+        for(int j = 0; j < 6; j++) {
             int t = now;
 //        master  {
             for(int i = 0; i < 8; i++) {
