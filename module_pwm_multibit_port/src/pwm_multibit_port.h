@@ -11,7 +11,8 @@ void pwmMultiBitPort(
     out buffered port:32 p, 
     unsigned int portWidth,
     unsigned int resolution, 
-    unsigned int timeStep);
+    unsigned int timeStep,
+    unsigned int edge);
 
 void pwmMultiBitPortSetDutyCycle(
     chanend c, 

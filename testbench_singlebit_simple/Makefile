@@ -6,3 +6,6 @@ test: bin/simchecker
 bin/simchecker: src/simchecker.c
 	if [ ! -d bin ]; then mkdir bin; fi
 	c++ -o bin/simchecker -m32 -I $(installpath)/include src/simchecker.c $(installpath)/lib/libxsidevice.so 
+
+clean:
+	rm -rf bin
