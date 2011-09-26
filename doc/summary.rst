@@ -61,7 +61,7 @@ module_pwm_singlebit_port
 TBC
 
 This module is designed for many PWM channels with a granularity
-of 3 us (or higher), and a period of 6 us (166 KHz) or slower. There is no
+of 200 ns (or higher), and a period of 2 MHz or slower. There is no
 minimum or maximum modulation.
 Assuming eight threads on a 500 MHz part:
 
@@ -72,7 +72,7 @@ Assuming eight threads on a 500 MHz part:
 +----------+----------+-------------+-------------+---------+----------+-------------+
 | 1-13     | 2000 KHz |      200 ns | 1-13        | 1       | 8 KB     | Implemented |
 +----------+----------+-------------+-------------+---------+----------+-------------+
-| 14-16    | 2000 KHz |      400 ns | 14-16       | 1       | 8 KB     | Implemented |
+| 14-16    | 1000 KHz |      400 ns | 14-16       | 1       | 8 KB     | Implemented |
 +----------+----------+-------------+-------------+---------+----------+-------------+
 
 This module performs a simple mapping to compute the PWM cycle time, and
@@ -84,7 +84,7 @@ module_pwm_multibit_port
 TBC
 
 This module is designed for many PWM channels with a granularity
-of 3 us (or higher), and a period of 6 us (166 KHz) or slower. There is no
+of 3000 ns (or higher), and a period of 166 KHz or slower. There is no
 minimum or maximum modulation.
 Assuming eight threads on a 500 MHz part:
 
@@ -166,6 +166,12 @@ Assuming eight threads on a 500 MHz part:
 | 32       | 10 KHz   | 10 ns       | 4           | 5       | 7 KB     | Minor tweaks to codebase required    |
 +----------+----------+-------------+-------------+---------+----------+--------------------------------------+
 | 32       | 20 KHz   | 10 ns       | 1           | 6       | 7 KB     | Minor tweaks to codebase required    |
++----------+----------+-------------+-------------+---------+----------+                                      |
+| Channels | Max freq | Granularity |16-bit ports | Threads | Memory   |                                      |
++----------+----------+-------------+-------------+---------+----------+--------------------------------------+
+| 16       | 10 KHz   | 40 ns       | 1           | 2       | 4 KB     | Not Implemented                      |
++----------+----------+-------------+-------------+---------+----------+--------------------------------------+
+| 32       | 10 KHz   | 40 ns       | 2           | 3       | 5 KB     | Not Implemented                      |
 +----------+----------+-------------+-------------+---------+----------+--------------------------------------+
 
 On a 400 MHz part, this software can achieve at best 20 ns granularity.
