@@ -4,7 +4,7 @@ PWM software
 PWM, or Pulse Width Modulation, repeatedly asserts and deasserts a signal.
 It is kept high for a fraction *f* of the time, and hence when passed
 through a low pass filter the signal will appear as an analogue signal with
-a value if *f*.
+a value of *f*.
 
 Important characteristics of a PWM signal are the following:
 
@@ -51,12 +51,47 @@ quality audio needs 2ns or better.
 module_pwm_singlebit_port
 -------------------------
 
+
 TBC
+
+This module is designed for many PWM channels with a granularity
+of 3 us (or higher), and a period of 6 us (166 KHz) or slower. There is no
+minimum or maximum modulation.
+Assuming eight threads on a 500 MHz part:
+
++-----------------------------------------+--------------------+-------------+
+| Functionality provided                  | Resources required | Status      | 
++----------+----------------+-------------+---------+----------+             |
+| Channels | Period         | Granularity | Threads | Memory   |             |
++----------+----------------+-------------+---------+----------+-------------+
+| 1-13     | 500 ns (2 MHz) |      200 ns | 1       | 8 KB     | Implemented |
++----------+----------------+-------------+---------+----------+-------------+
+| 14-16    | 500 ns (2 MHz) |      400 ns | 1       | 8 KB     | Implemented |
++----------+----------------+-------------+---------+----------+-------------+
+
+This module performs a simple mapping to compute the PWM cycle time, and
+runs PWM signals asynchronous.
 
 module_pwm_multibit_port
 ------------------------
 
 TBC
+
+This module is designed for many PWM channels with a granularity
+of 3 us (or higher), and a period of 6 us (166 KHz) or slower. There is no
+minimum or maximum modulation.
+Assuming eight threads on a 500 MHz part:
+
++---------------------------+--------------------+-------------+
+| Functionality provided    | Resources required | Status      | 
++----------+----------------+---------+----------+             |
+| Channels | Period         | Threads | Memory   |             |
++----------+----------------+---------+----------+-------------+
+| 8        | 6 us (166 KHz) | 1       | 7 KB     | Implemented |
++----------+----------------+---------+----------+-------------+
+
+This module performs a simple mapping to compute the PWM cycle time, and
+runs PWM signals asynchronous.
 
 
 module_pwm_singlebit_simple
@@ -92,16 +127,6 @@ are required for other purposes, then the multibit module below allows
 This module does not provide a mechanism to compute where to put the PWM
 edges, as it is assumed that a higher level control loop will provide those
 values and keep them in sync with external activities such as sampling ADCs.
-
-module_pwm_singlebit_hires
---------------------------
-
-This module is designed to drive a small numnber of *synchronous*
-hi-resolution PWM channels with a granularity
-of 2.5 or 2 ns, with a
-minimum up-time and down-time of 160 ns.
-
-TBC
 
 module_pwm_multibit_fast
 ------------------------
