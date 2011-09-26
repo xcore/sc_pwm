@@ -59,6 +59,50 @@ module_pwm_multibit_port
 TBC
 
 
+module_pwm_singlebit_simple
+---------------------------
+
+This module is designed for many *synchronous* PWM channels with a granularity
+of 10 ns (or higher). The PWM period and the minimum up and down time both
+depend on the number of PWM channels. The signals must have identical periods,
+and the centers must be aligned. The jitter is 150 ps (???). The
+number of channels that can be driven depends on the number of 1-bit ports
+available. This module requires a single thread and around 300 bytes of
+memory.
+
+Assuming eight threads on a 500 MHz part:
+
++----------------------------------+--------------+--------------------------------------+
+| Functionality provided           | 1-bit ports  | Status                               | 
++----------+----------+------------+              |                                      |
+| Channels | Max Freq | Min up     |              |                                      |
++----------+----------+------------+--------------+--------------------------------------+
+| 1        | 2 MHz    | 2 ns       | 1            | Implemented, not tested exhaustively |
++----------+----------+------------+--------------+--------------------------------------+
+| 2        | 1 MHz    | 130 ns     | 2            | Implemented, not tested exhaustively |
++----------+----------+------------+--------------+--------------------------------------+
+| N        | 2/N MHz  |(N-1)*130 ns| N            | Implemented, not tested exhaustively |
++----------+----------+------------+--------------+--------------------------------------+
+
+This module is designed to support applications such as motor control,
+where many PWM channels are required with a high resolution. If 1-bit ports
+are required for other purposes, then the multibit module below allows
+8-bit ports to be used at the expense of an extra thread.
+
+This module does not provide a mechanism to compute where to put the PWM
+edges, as it is assumed that a higher level control loop will provide those
+values and keep them in sync with external activities such as sampling ADCs.
+
+module_pwm_singlebit_hires
+--------------------------
+
+This module is designed to drive a small numnber of *synchronous*
+hi-resolution PWM channels with a granularity
+of 2.5 or 2 ns, with a
+minimum up-time and down-time of 160 ns.
+
+TBC
+
 module_pwm_multibit_fast
 ------------------------
 
