@@ -70,9 +70,9 @@ Assuming eight threads on a 500 MHz part:
 +----------+----------+-------------+-------------+---------+----------+             |
 | Channels | Max freq | Granularity | 1-bit ports | Threads | Memory   |             |
 +----------+----------+-------------+-------------+---------+----------+-------------+
-| 1-13     |    2 MHz |      200 ns | 1-13        | 1       | 8 KB     | Implemented |
+| 1-13     | 2000 KHz |      200 ns | 1-13        | 1       | 8 KB     | Implemented |
 +----------+----------+-------------+-------------+---------+----------+-------------+
-| 14-16    |    2 MHz |      400 ns | 14-16       | 1       | 8 KB     | Implemented |
+| 14-16    | 2000 KHz |      400 ns | 14-16       | 1       | 8 KB     | Implemented |
 +----------+----------+-------------+-------------+---------+----------+-------------+
 
 This module performs a simple mapping to compute the PWM cycle time, and
@@ -124,11 +124,11 @@ Assuming eight threads on a 500 MHz part:
 +----------+----------+-------------+------------+-------------+---------+----------+                                      |
 | Channels | Max freq | Granularity | Min up time| 1-bit ports | Threads | Memory   |                                      |
 +----------+----------+-------------+------------+-------------+---------+----------+--------------------------------------+
-| 1        | 2 MHz    |       10 ns | 2 ns       | 1           | 1       | 500 B    | Implemented, not tested exhaustively |
+| 1        | 2000 KHz |       10 ns | 2 ns       | 1           | 1       | 0.6 KB   | Implemented, not tested exhaustively |
 +----------+----------+-------------+------------+-------------+---------+----------+--------------------------------------+
-| 2        | 1 MHz    |       10 ns | 130 ns     | 2           | 1       | 500 B    | Implemented, not tested exhaustively |
+| 2        | 1000 KHz |       10 ns | 130 ns     | 2           | 1       | 0.6 KB   | Implemented, not tested exhaustively |
 +----------+----------+-------------+------------+-------------+---------+----------+--------------------------------------+
-| N        | 2/N MHz  |       10 ns |(N-1)*130 ns| N           | 1       | 500 B    | Implemented, not tested exhaustively |
+| N        |2000/N KHz|       10 ns |(N-1)*130 ns| N           | 1       | 0.6 KB   | Implemented, not tested exhaustively |
 +----------+----------+-------------+------------+-------------+---------+----------+--------------------------------------+
 
 This module is designed to support applications such as motor control,
