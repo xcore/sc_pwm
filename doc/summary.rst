@@ -20,11 +20,18 @@ Important characteristics of a PWM signal are the following:
 * The period - PWM with a long period can only drive signals with a low
   frequency. PWM with a short period can drive signals at a high frequency,
   but since the drive transistors switch more often the efficiency is
-  reduced. Typical periods are 50 us (20 KHz).
+  reduced. Typical periods are 50 us, and they are typically reported as a
+  frequency, ie 20 KHz.
 
 * The granularity of the signal. In a software defined PWM, the time that
   the signal stays high is an integral number of *clock-ticks*. The period
   of this clock governs how fine a step can be made. 
+
+* The "number of bits". This is related to the period and the granularity:
+  2^bits x granularity = period. For example, a period of 50 us (20 Khz)
+  with 12 bits of precision requires a granularity of 50/2^12 = 12.5 ns.
+  Conversely, a granularity of 100 ns at a period of 50 us results in nine
+  bits of precision (100 x 2^9 = 50 us).
 
 * Synchronisity - whether all PWM signals have the same period and are in
   sync with each other.
@@ -51,7 +58,6 @@ quality audio needs 2ns or better.
 module_pwm_singlebit_port
 -------------------------
 
-
 TBC
 
 This module is designed for many PWM channels with a granularity
@@ -59,15 +65,15 @@ of 3 us (or higher), and a period of 6 us (166 KHz) or slower. There is no
 minimum or maximum modulation.
 Assuming eight threads on a 500 MHz part:
 
-+-----------------------------------------+----------------------------------+-------------+
-| Functionality provided                  | Resources required               | Status      |
-+----------+----------------+-------------+-------------+---------+----------+             |
-| Channels | Period         | Granularity | 1-bit ports | Threads | Memory   |             |
-+----------+----------------+-------------+-------------+---------+----------+-------------+
-| 1-13     | 500 ns (2 MHz) |      200 ns | 1-13        | 1       | 8 KB     | Implemented |
-+----------+----------------+-------------+-------------+---------+----------+-------------+
-| 14-16    | 500 ns (2 MHz) |      400 ns | 14-16       | 1       | 8 KB     | Implemented |
-+----------+----------------+-------------+-------------+---------+----------+-------------+
++-----------------------------------+----------------------------------+-------------+
+| Functionality provided            | Resources required               | Status      |
++----------+----------+-------------+-------------+---------+----------+             |
+| Channels | Max freq | Granularity | 1-bit ports | Threads | Memory   |             |
++----------+----------+-------------+-------------+---------+----------+-------------+
+| 1-13     |    2 MHz |      200 ns | 1-13        | 1       | 8 KB     | Implemented |
++----------+----------+-------------+-------------+---------+----------+-------------+
+| 14-16    |    2 MHz |      400 ns | 14-16       | 1       | 8 KB     | Implemented |
++----------+----------+-------------+-------------+---------+----------+-------------+
 
 This module performs a simple mapping to compute the PWM cycle time, and
 runs PWM signals asynchronous.
@@ -82,19 +88,19 @@ of 3 us (or higher), and a period of 6 us (166 KHz) or slower. There is no
 minimum or maximum modulation.
 Assuming eight threads on a 500 MHz part:
 
-+-----------------------------------------+----------------------------------+-------------+
-| Functionality provided                  | Resources required               | Status      |
-+----------+----------------+-------------+-------------+---------+----------+             |
-| Channels | Period         | Granularity | 8-bit ports | Threads | Memory   |             |
-+----------+----------------+-------------+-------------+---------+----------+-------------+
-| 8        | 6 us (166 KHz) |        3 us | 1           | 1       | 7 KB     | Implemented |
-+----------+----------------+-------------+-------------+---------+----------+-------------+
-| 16       | 6 us (166 KHz) |        3 us | 2           | 2       | 8 KB     | Implemented |
-+----------+----------------+-------------+-------------+---------+----------+-------------+
-| 24       | 6 us (166 KHz) |        3 us | 3           | 3       | 9 KB     | Implemented |
-+----------+----------------+-------------+-------------+---------+----------+-------------+
-| 32       | 6 us (166 KHz) |        3 us | 4           | 4       | 10 KB    | Implemented |
-+----------+----------------+-------------+-------------+---------+----------+-------------+
++------------------------------------+----------------------------------+-------------+
+| Functionality provided             | Resources required               | Status      |
++----------+-----------+-------------+-------------+---------+----------+             |
+| Channels | Max freq  | Granularity | 8-bit ports | Threads | Memory   |             |
++----------+-----------+-------------+-------------+---------+----------+-------------+
+| 8        |   166 KHz |     3000 ns | 1           | 1       | 7 KB     | Implemented |
++----------+-----------+-------------+-------------+---------+----------+-------------+
+| 16       |   166 KHz |     3000 ns | 2           | 2       | 8 KB     | Implemented |
++----------+-----------+-------------+-------------+---------+----------+-------------+
+| 24       |   166 KHz |     3000 ns | 3           | 3       | 9 KB     | Implemented |
++----------+-----------+-------------+-------------+---------+----------+-------------+
+| 32       |   166 KHz |     3000 ns | 4           | 4       | 10 KB    | Implemented |
++----------+-----------+-------------+-------------+---------+----------+-------------+
 
 This module performs a simple mapping to compute the PWM cycle time, and
 runs PWM signals asynchronous.
@@ -113,17 +119,17 @@ available.
 
 Assuming eight threads on a 500 MHz part:
 
-+----------------------------------+----------------------------------+--------------------------------------+
-| Functionality provided           | Resources required               | Status                               | 
-+----------+----------+------------+-------------+---------+----------+                                      |
-| Channels | Max Freq | Min up     | 1-bit ports | Threads | Memory   |                                      |
-+----------+----------+------------+-------------+---------+----------+--------------------------------------+
-| 1        | 2 MHz    | 2 ns       | 1           | 1       | 500 B    | Implemented, not tested exhaustively |
-+----------+----------+------------+-------------+---------+----------+--------------------------------------+
-| 2        | 1 MHz    | 130 ns     | 2           | 1       | 500 B    | Implemented, not tested exhaustively |
-+----------+----------+------------+-------------+---------+----------+--------------------------------------+
-| N        | 2/N MHz  |(N-1)*130 ns| N           | 1       | 500 B    | Implemented, not tested exhaustively |
-+----------+----------+------------+-------------+---------+----------+--------------------------------------+
++------------------------------------------------+----------------------------------+--------------------------------------+
+| Functionality provided                         | Resources required               | Status                               | 
++----------+----------+-------------+------------+-------------+---------+----------+                                      |
+| Channels | Max freq | Granularity | Min up time| 1-bit ports | Threads | Memory   |                                      |
++----------+----------+-------------+------------+-------------+---------+----------+--------------------------------------+
+| 1        | 2 MHz    |       10 ns | 2 ns       | 1           | 1       | 500 B    | Implemented, not tested exhaustively |
++----------+----------+-------------+------------+-------------+---------+----------+--------------------------------------+
+| 2        | 1 MHz    |       10 ns | 130 ns     | 2           | 1       | 500 B    | Implemented, not tested exhaustively |
++----------+----------+-------------+------------+-------------+---------+----------+--------------------------------------+
+| N        | 2/N MHz  |       10 ns |(N-1)*130 ns| N           | 1       | 500 B    | Implemented, not tested exhaustively |
++----------+----------+-------------+------------+-------------+---------+----------+--------------------------------------+
 
 This module is designed to support applications such as motor control,
 where many PWM channels are required with a high resolution. If 1-bit ports
@@ -144,23 +150,23 @@ but the centers do not need to be aligned. The jitter is 150 ps (???). The
 number of channels that can be driven depends on the number of threads.
 Assuming eight threads on a 500 MHz part:
 
-+-----------------------------------------+----------------------------------+--------------------------------------+
-| Functionality provided                  | Resources required               | Status                               | 
-+----------+----------------+-------------+-------------+---------+----------+                                      |
-| Channels | Period         | Granularity | 8-bit ports | Threads | Memory   |                                      |
-+----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
-| 8        | 25 us (40 KHz) | 10 ns       | 1           | 2       | 4 KB     | Implemented, not tested exhaustively |
-+----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
-| 16       | 50 us (20 KHz) | 10 ns       | 2           | 3       | 5 KB     | Minor tweaks to codebase required    |
-+----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
-| 24       | 75 us (13 KHz) | 10 ns       | 3           | 4       | 6 KB     | Minor tweaks to codebase required    |
-+----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
-| 24       | 50 us (20 KHz) | 10 ns       | 4           | 5       | 6 KB     | Minor tweaks to codebase required    |
-+----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
-| 32       | 100 us (10 KHz)| 10 ns       | 4           | 5       | 7 KB     | Minor tweaks to codebase required    |
-+----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
-| 32       | 50 us (20 KHz) | 10 ns       | 1           | 6       | 7 KB     | Minor tweaks to codebase required    |
-+----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
++-----------------------------------+----------------------------------+--------------------------------------+
+| Functionality provided            | Resources required               | Status                               | 
++----------+----------+-------------+-------------+---------+----------+                                      |
+| Channels | Max freq | Granularity | 8-bit ports | Threads | Memory   |                                      |
++----------+----------+-------------+-------------+---------+----------+--------------------------------------+
+| 8        | 40 KHz   | 10 ns       | 1           | 2       | 4 KB     | Implemented, not tested exhaustively |
++----------+----------+-------------+-------------+---------+----------+--------------------------------------+
+| 16       | 20 KHz   | 10 ns       | 2           | 3       | 5 KB     | Minor tweaks to codebase required    |
++----------+----------+-------------+-------------+---------+----------+--------------------------------------+
+| 24       | 13 KHz   | 10 ns       | 3           | 4       | 6 KB     | Minor tweaks to codebase required    |
++----------+----------+-------------+-------------+---------+----------+--------------------------------------+
+| 24       | 20 KHz   | 10 ns       | 4           | 5       | 6 KB     | Minor tweaks to codebase required    |
++----------+----------+-------------+-------------+---------+----------+--------------------------------------+
+| 32       | 10 KHz   | 10 ns       | 4           | 5       | 7 KB     | Minor tweaks to codebase required    |
++----------+----------+-------------+-------------+---------+----------+--------------------------------------+
+| 32       | 20 KHz   | 10 ns       | 1           | 6       | 7 KB     | Minor tweaks to codebase required    |
++----------+----------+-------------+-------------+---------+----------+--------------------------------------+
 
 On a 400 MHz part, this software can achieve at best 20 ns granularity.
 
