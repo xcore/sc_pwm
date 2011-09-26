@@ -59,15 +59,15 @@ of 3 us (or higher), and a period of 6 us (166 KHz) or slower. There is no
 minimum or maximum modulation.
 Assuming eight threads on a 500 MHz part:
 
-+-----------------------------------------+--------------------+-------------+
-| Functionality provided                  | Resources required | Status      | 
-+----------+----------------+-------------+---------+----------+             |
-| Channels | Period         | Granularity | Threads | Memory   |             |
-+----------+----------------+-------------+---------+----------+-------------+
-| 1-13     | 500 ns (2 MHz) |      200 ns | 1       | 8 KB     | Implemented |
-+----------+----------------+-------------+---------+----------+-------------+
-| 14-16    | 500 ns (2 MHz) |      400 ns | 1       | 8 KB     | Implemented |
-+----------+----------------+-------------+---------+----------+-------------+
++-----------------------------------------+----------------------------------+-------------+
+| Functionality provided                  | Resources required               | Status      |
++----------+----------------+-------------+-------------+---------+----------+             |
+| Channels | Period         | Granularity | 1-bit ports | Threads | Memory   |             |
++----------+----------------+-------------+-------------+---------+----------+-------------+
+| 1-13     | 500 ns (2 MHz) |      200 ns | 1-13        | 1       | 8 KB     | Implemented |
++----------+----------------+-------------+-------------+---------+----------+-------------+
+| 14-16    | 500 ns (2 MHz) |      400 ns | 14-16       | 1       | 8 KB     | Implemented |
++----------+----------------+-------------+-------------+---------+----------+-------------+
 
 This module performs a simple mapping to compute the PWM cycle time, and
 runs PWM signals asynchronous.
@@ -82,13 +82,19 @@ of 3 us (or higher), and a period of 6 us (166 KHz) or slower. There is no
 minimum or maximum modulation.
 Assuming eight threads on a 500 MHz part:
 
-+---------------------------+--------------------+-------------+
-| Functionality provided    | Resources required | Status      | 
-+----------+----------------+---------+----------+             |
-| Channels | Period         | Threads | Memory   |             |
-+----------+----------------+---------+----------+-------------+
-| 8        | 6 us (166 KHz) | 1       | 7 KB     | Implemented |
-+----------+----------------+---------+----------+-------------+
++-----------------------------------------+----------------------------------+-------------+
+| Functionality provided                  | Resources required               | Status      |
++----------+----------------+-------------+-------------+---------+----------+             |
+| Channels | Period         | Granularity | 8-bit ports | Threads | Memory   |             |
++----------+----------------+-------------+-------------+---------+----------+-------------+
+| 8        | 6 us (166 KHz) |        3 us | 1           | 1       | 7 KB     | Implemented |
++----------+----------------+-------------+-------------+---------+----------+-------------+
+| 16       | 6 us (166 KHz) |        3 us | 2           | 2       | 8 KB     | Implemented |
++----------+----------------+-------------+-------------+---------+----------+-------------+
+| 24       | 6 us (166 KHz) |        3 us | 3           | 3       | 9 KB     | Implemented |
++----------+----------------+-------------+-------------+---------+----------+-------------+
+| 32       | 6 us (166 KHz) |        3 us | 4           | 4       | 10 KB    | Implemented |
++----------+----------------+-------------+-------------+---------+----------+-------------+
 
 This module performs a simple mapping to compute the PWM cycle time, and
 runs PWM signals asynchronous.
@@ -98,26 +104,26 @@ module_pwm_singlebit_simple
 ---------------------------
 
 This module is designed for many *synchronous* PWM channels with a granularity
-of 10 ns (or higher). The PWM period and the minimum up and down time both
-depend on the number of PWM channels. The signals must have identical periods,
+of 10 ns (or higher). The PWM period depends on the number of channels.
+Unlike any of the other PWM modules, the minimum up and down time both
+depend on the number of PWM channels. The channels must have identical periods,
 and the centers must be aligned. The jitter is 150 ps (???). The
 number of channels that can be driven depends on the number of 1-bit ports
-available. This module requires a single thread and around 300 bytes of
-memory.
+available.
 
 Assuming eight threads on a 500 MHz part:
 
-+----------------------------------+--------------+--------------------------------------+
-| Functionality provided           | 1-bit ports  | Status                               | 
-+----------+----------+------------+              |                                      |
-| Channels | Max Freq | Min up     |              |                                      |
-+----------+----------+------------+--------------+--------------------------------------+
-| 1        | 2 MHz    | 2 ns       | 1            | Implemented, not tested exhaustively |
-+----------+----------+------------+--------------+--------------------------------------+
-| 2        | 1 MHz    | 130 ns     | 2            | Implemented, not tested exhaustively |
-+----------+----------+------------+--------------+--------------------------------------+
-| N        | 2/N MHz  |(N-1)*130 ns| N            | Implemented, not tested exhaustively |
-+----------+----------+------------+--------------+--------------------------------------+
++----------------------------------+----------------------------------+--------------------------------------+
+| Functionality provided           | Resources required               | Status                               | 
++----------+----------+------------+-------------+---------+----------+                                      |
+| Channels | Max Freq | Min up     | 1-bit ports | Threads | Memory   |                                      |
++----------+----------+------------+-------------+---------+----------+--------------------------------------+
+| 1        | 2 MHz    | 2 ns       | 1           | 1       | 500 B    | Implemented, not tested exhaustively |
++----------+----------+------------+-------------+---------+----------+--------------------------------------+
+| 2        | 1 MHz    | 130 ns     | 2           | 1       | 500 B    | Implemented, not tested exhaustively |
++----------+----------+------------+-------------+---------+----------+--------------------------------------+
+| N        | 2/N MHz  |(N-1)*130 ns| N           | 1       | 500 B    | Implemented, not tested exhaustively |
++----------+----------+------------+-------------+---------+----------+--------------------------------------+
 
 This module is designed to support applications such as motor control,
 where many PWM channels are required with a high resolution. If 1-bit ports
@@ -138,27 +144,25 @@ but the centers do not need to be aligned. The jitter is 150 ps (???). The
 number of channels that can be driven depends on the number of threads.
 Assuming eight threads on a 500 MHz part:
 
-+---------------------------+--------------------+--------------------------------------+
-| Functionality provided    | Resources required | Status                               | 
-+----------+----------------+---------+----------+                                      |
-| Channels | Period         | Threads | Memory   |                                      |
-+----------+----------------+---------+----------+--------------------------------------+
-| 8        | 25 us (40 KHz) | 2       | 4 KB     | Implemented, not tested exhaustively |
-+----------+----------------+---------+----------+--------------------------------------+
-| 16       | 50 us (20 KHz) | 3       | 5 KB     | Minor tweaks to codebase required    |
-+----------+----------------+---------+----------+--------------------------------------+
-| 24       | 75 us (13 KHz) | 4       | 6 KB     | Minor tweaks to codebase required    |
-+----------+----------------+---------+----------+--------------------------------------+
-| 24       | 50 us (20 KHz) | 5       | 6 KB     | Minor tweaks to codebase required    |
-+----------+----------------+---------+----------+--------------------------------------+
-| 32       | 100 us (10 KHz)| 5       | 7 KB     | Minor tweaks to codebase required    |
-+----------+----------------+---------+----------+--------------------------------------+
-| 32       | 50 us (20 KHz) | 6       | 7 KB     | Minor tweaks to codebase required    |
-+----------+----------------+---------+----------+--------------------------------------+
++-----------------------------------------+----------------------------------+--------------------------------------+
+| Functionality provided                  | Resources required               | Status                               | 
++----------+----------------+-------------+-------------+---------+----------+                                      |
+| Channels | Period         | Granularity | 8-bit ports | Threads | Memory   |                                      |
++----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
+| 8        | 25 us (40 KHz) | 10 ns       | 1           | 2       | 4 KB     | Implemented, not tested exhaustively |
++----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
+| 16       | 50 us (20 KHz) | 10 ns       | 2           | 3       | 5 KB     | Minor tweaks to codebase required    |
++----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
+| 24       | 75 us (13 KHz) | 10 ns       | 3           | 4       | 6 KB     | Minor tweaks to codebase required    |
++----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
+| 24       | 50 us (20 KHz) | 10 ns       | 4           | 5       | 6 KB     | Minor tweaks to codebase required    |
++----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
+| 32       | 100 us (10 KHz)| 10 ns       | 4           | 5       | 7 KB     | Minor tweaks to codebase required    |
++----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
+| 32       | 50 us (20 KHz) | 10 ns       | 1           | 6       | 7 KB     | Minor tweaks to codebase required    |
++----------+----------------+-------------+-------------+---------+----------+--------------------------------------+
 
-The PWM channels are all on 8-bit ports, so the bottom part will use all
-four 8-bit ports on a core. On a 400 MHz part, this software can achieve at
-best 20 ns granularity.
+On a 400 MHz part, this software can achieve at best 20 ns granularity.
 
 This module is designed to support applications such as motor control,
 where many PWM channels are required with a high resolution. This can
