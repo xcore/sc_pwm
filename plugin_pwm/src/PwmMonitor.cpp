@@ -181,7 +181,7 @@ void PwmMonitor::reportStatus() {
 				duty_cycle = (((float)count_high/period)*100.00);
 			}
 		}
-		fprintf(dbfp,"%.0f% \n",fabs(duty_cycle));
+		fprintf(dbfp,"%.0f%% \n",fabs(duty_cycle));
 		//if(check_all_high) printf("all High\n");
 		//if(!check_all_low) printf("all Low\n");
 		//printf("out of loop\n");

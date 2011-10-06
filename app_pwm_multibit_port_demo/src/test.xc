@@ -76,7 +76,7 @@ void client(chanend c) {
     while (1) {
         t when timerafter (time) :> void;
         updateValues(values, direction);
-        pwmMultiBitPortSetDutyCycle(c, values, PORT_WIDTH);
+            pwmMultiBitPortSetDutyCycle(c, values, PORT_WIDTH);
         time += PERIOD;
     }
 }
@@ -88,16 +88,16 @@ int main() {
     	on stdcore[0] : setLedColourRed();
 
         on stdcore[0] : client(c[0]);
-        on stdcore[0] : pwmMultiBitPort(c[0], clk0, clockLed0, PORT_WIDTH, RESOLUTION, TIMESTEP);
+            on stdcore[0] : pwmMultiBitPort(c[0], clk0, clockLed0, PORT_WIDTH, RESOLUTION, TIMESTEP, 1);
 
         on stdcore[1] : client(c[1]);
-        on stdcore[1] : pwmMultiBitPort(c[1], clk1, clockLed1, PORT_WIDTH, RESOLUTION, TIMESTEP);
+            on stdcore[1] : pwmMultiBitPort(c[1], clk1, clockLed1, PORT_WIDTH, RESOLUTION, TIMESTEP, 1);
 
         on stdcore[2] : client(c[2]);
-        on stdcore[2] : pwmMultiBitPort(c[2], clk2, clockLed2, PORT_WIDTH, RESOLUTION, TIMESTEP);
+            on stdcore[2] : pwmMultiBitPort(c[2], clk2, clockLed2, PORT_WIDTH, RESOLUTION, TIMESTEP, 1);
 
         on stdcore[3] : client(c[3]);
-        on stdcore[3] : pwmMultiBitPort(c[3], clk3, clockLed3, PORT_WIDTH, RESOLUTION, TIMESTEP);
+            on stdcore[3] : pwmMultiBitPort(c[3], clk3, clockLed3, PORT_WIDTH, RESOLUTION, TIMESTEP, 1);
     }
     return 0;
 }
