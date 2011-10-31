@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <xs1.h>
 #include <stdio.h>
+
 #include "pwm_singlebit_port.h"
 
 #define MAX_NUM_PORTS 16
@@ -44,9 +45,10 @@ void pwmSingleBitPort(
     t :> time;
     time += period;
     while (1) {
+#pragma ordered
     	select {
         // A new set of duty cycle values are avaliable.
-        #pragma xta endpoint "updateDutyCycle"
+#pragma xta endpoint "updateDutyCycle"
         case slave { 
             int i = 0;
             do { 
@@ -57,7 +59,7 @@ void pwmSingleBitPort(
             break;
 
         // Handles the pwm output.
-        #pragma xta endpoint "handlePwm"
+#pragma xta endpoint "handlePwm"
         case t when timerafter (time) :> void:
             if (numTicks == resolution)
                 numTicks = 0;
@@ -67,7 +69,7 @@ void pwmSingleBitPort(
                 unsigned int value = dutyCycle[i];
 
                 if(edge == 1) {
-		    // Leading edge PWM
+                	// Leading edge PWM
                 	if(value <= numTicks){
                 		p[i] <: 0x0;
                 	} else if(value >= (numTicks + 32)){
@@ -76,7 +78,7 @@ void pwmSingleBitPort(
                 		p[i] <: ((1 << (value & 0x1f)) - 1);
                 	}
                 } else if(edge == 2){
-		    // Trailing edge PWM
+                	// Trailing edge PWM
                 	value_te = resolution - value;
                 	if(value_te >= (numTicks + 32)){
                 		p[i] <: 0x0;
