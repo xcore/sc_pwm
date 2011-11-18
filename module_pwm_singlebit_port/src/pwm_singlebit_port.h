@@ -14,6 +14,14 @@ void pwmSingleBitPort(
     unsigned int timeStep,
     unsigned int edge);
 
+void pwmSingleBitPortTrigger(
+    chanend c_adc_trig, chanend c, clock clk,
+    out buffered port:32 p[],
+    unsigned int numPorts,
+    unsigned int resolution,
+    unsigned int timeStep,
+    unsigned int edge);
+
 void pwmSingleBitPortSetDutyCycle(
     chanend c, 
     unsigned int dutyCycle[], 
