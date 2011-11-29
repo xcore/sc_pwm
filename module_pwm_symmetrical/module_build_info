@@ -1,0 +1,2 @@
+DEPENDENT_MODULES = module_pwm_common
+OPTIONAL_HEADERS += pwm_config.h
