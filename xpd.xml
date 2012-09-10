@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<xpd>
+    <components>
+        <component name = "module_pwm_tutorial_example" buildresults_path = "module_pwm_tutorial_example/.module_pwm_tutorial_example.buildresults.xml" scope = "Experimental" path = "module_pwm_tutorial_example" metainfo_path = "module_pwm_tutorial_example/module_pwm_tutorial_example.metainfo" type = "component" id = "module_pwm_tutorial_example" description = "Software Block: module_pwm_tutorial_example"></component>
+    </components>
+    <exclude_dir>module_pwm_common</exclude_dir>
+    <exclude_dir>module_pwm_multibit_port</exclude_dir>
+    <exclude_dir>module_pwm_singlebit_port</exclude_dir>
+    <exclude_dir>module_pwm_symmetrical</exclude_dir>
+    <exclude_dir>module_pwm_multibit_fast</exclude_dir> 
+    <exclude_dir>module_pwm_singlebit_bldc</exclude_dir>   
+    <exclude_dir>module_pwm_singlebit_simple</exclude_dir>
+    <exclude_dir>app_pwm_multibit_fast_demo</exclude_dir>   
+    <exclude_dir>app_pwm_multibit_port_test</exclude_dir>    
+    <exclude_dir>app_pwm_singlebit_port_test</exclude_dir>  
+    <exclude_dir>app_pwm_multibit_port_demo</exclude_dir>   
+    <exclude_dir>app_pwm_singlebit_port_demo</exclude_dir>  
+    <exclude_dir>app_pwm_singlebit_simple_demo</exclude_dir>
+    <location>git@github.com:xcore/sc_pwm.git</location>
+    <name>sc_pwm</name>
+    <maintainer>djpwilk</maintainer>
+    <partnumber>XM-001842-DH</partnumber>
+    <subpartnumber>XM-001843-SM</subpartnumber>
+    <vendor>XMOS</vendor>
+    <xpd_version>1.0</xpd_version>
+</xpd>
+
+
