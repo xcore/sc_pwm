@@ -24,14 +24,14 @@ XCC_FLAGS = -g -O3 -DNUM_PORTS=$(NUM_PORTS)
 
 # The USED_MODULES variable lists other module used by the application. 
 
-USED_MODULES = module_pwm_singlebit_port.1v0
+USED_MODULES = module_pwm_singlebit_port
 
 #=============================================================================
 
 .PHONY : test time
 
 EXECUTABLE=bin/XC-1A/app_pwm_singlebit_port_test.xe
-#TIMINGSCRIPT=../module_pwm_singlebit_port.1v0/src/pwm.py
+#TIMINGSCRIPT=../module_pwm_singlebit_port/src/pwm.py
 #TRACING=--trace-to trace.txt --vcd-tracing '-o trace.vcd -ports-detailed'
 
 PWM_PLUGIN = ../plugin_pwm/bin/PWM.dll
@@ -67,11 +67,10 @@ endif
 time:
 	xta load $(EXECUTABLE) source $(TIMINGSCRIPT) 4 10 -exit
 
+
 #=============================================================================
 # The following part of the Makefile includes the common build infrastructure
 # for compiling XMOS applications. You should not need to edit below here.
 
-
-# Use the latest 1v* version of module_xmos_common
--include ../module_xmos_common/build/Makefile.common
--include ../../xcommon/module_xcommon/build/Makefile.common
+XMOS_MAKE_PATH ?= ../..
+include $(XMOS_MAKE_PATH)/xcommon/module_xcommon/build/Makefile.common

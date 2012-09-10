@@ -24,11 +24,10 @@ XCC_FLAGS = -g -O2
 
 USED_MODULES = module_pwm_multibit_fast
 
+
 #=============================================================================
 # The following part of the Makefile includes the common build infrastructure
 # for compiling XMOS applications. You should not need to edit below here.
 
-
-# Use the latest 1v* version of module_xmos_common
--include ../module_xmos_common/build/Makefile.common
--include ../../xcommon/module_xcommon/build/Makefile.common
+XMOS_MAKE_PATH ?= ../..
+include $(XMOS_MAKE_PATH)/xcommon/module_xcommon/build/Makefile.common

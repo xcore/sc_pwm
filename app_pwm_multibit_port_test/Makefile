@@ -22,7 +22,7 @@ XCC_FLAGS = -g -DPORT_WIDTH=$(PORT_WIDTH) -DTIMESTEP=$(TIMESTEP) -O3
 
 # The USED_MODULES variable lists other module used by the application. 
 
-USED_MODULES = module_pwm_multibit_port.1v0
+USED_MODULES = module_pwm_multibit_port
 
 #=============================================================================
 
@@ -62,11 +62,10 @@ test:
 time:
 	xta load $(EXECUTABLE) source $(TIMINGSCRIPT) $(PORT_WIDTH) $(TIMESTEP) -exit
 
+
 #=============================================================================
 # The following part of the Makefile includes the common build infrastructure
 # for compiling XMOS applications. You should not need to edit below here.
 
-
-# Use the latest 1v* version of module_xmos_common
--include ../module_xcommon/build/Makefile.common
--include ../../xcommon/module_xcommon/build/Makefile.common
+XMOS_MAKE_PATH ?= ../..
+include $(XMOS_MAKE_PATH)/xcommon/module_xcommon/build/Makefile.common
