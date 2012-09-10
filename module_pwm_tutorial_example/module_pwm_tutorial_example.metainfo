@@ -1,0 +1,62 @@
+-------------------------------------------------------------------------------
+-- Descriptive metadata
+-------------------------------------------------------------------------------
+
+componentName = "xTimeComposer Tutorial Component"
+componentFullName = "Simple PWM driver component designed for xTimeComposer Tutorial"
+alternativeNames = { }
+componentDescription = ""
+componentVersion = "1v0"
+
+-------------------------------------------------------------------------------
+-- Parameter descriptions.
+-------------------------------------------------------------------------------
+
+configPoints =
+{
+}
+
+derivedValues = {}
+
+ports = {
+  p_ledport_gpio_slice = {
+    short   = "PWM output",
+    long    = "External Clock Source Input",
+    help    = "",
+    width   = 4,
+  }
+}
+
+channels = {
+  c_pwm_duty = {
+    short = "TX channel",
+    long  = "Channel for the client to send duty cycle changes to PWM driver",
+    help  = "",
+  }
+}        
+
+function getConfigStatus()
+  local status = "Valid Configuration"
+  local issues = {}
+  table.insert(issues, { issues = "This component is intended for xTimeComposerTutorials only, not production designs"}
+  return status, issues
+end
+            
+-------------------------------------------------------------------------------
+-- Source generation functions
+-------------------------------------------------------------------------------
+
+generatedCode = {
+  includes = { 
+    "pwm_tutorial_example.h"
+  },
+  globals = [[
+    port ledport${swblock.id} = XS1_PORT_4A;
+  ]],
+  body = [[
+    pwm_tutorial_example(${swblock.ports.p_ledport_gpio_slice}, ${swblock.chanends.c_pwm_duty});
+  ]]
+}
+
+
+
