@@ -9,6 +9,14 @@
         </component>
     </components>
     <description>Various PWM driver components for single bit and multi bit ports</description>
+    <location>git@github.com:xcore/sc_pwm.git</location>
+    <name>sc_pwm</name>
+    <maintainer>djpwilk</maintainer>
+    <partnumber>XM-001842-DH</partnumber>
+    <subpartnumber>XM-001843-SM</subpartnumber>
+    <vendor>XMOS</vendor>
+    <xcore_repo>sc_pwm.git</xcore_repo>
+    <xpd_version>1.0</xpd_version>
     <xsoftip_exclude>module_pwm_common</xsoftip_exclude>
     <xsoftip_exclude>module_pwm_multibit_port</xsoftip_exclude>
     <xsoftip_exclude>module_pwm_singlebit_port</xsoftip_exclude>
@@ -23,12 +31,7 @@
     <xsoftip_exclude>app_pwm_singlebit_port_demo</xsoftip_exclude>
     <xsoftip_exclude>app_pwm_singlebit_simple_demo</xsoftip_exclude>
     <xsoftip_exclude>app_pwm_tutorial_example</xsoftip_exclude>
-    <location>git@github.com:xcore/sc_pwm.git</location>
-    <name>sc_pwm</name>
-    <maintainer>djpwilk</maintainer>
-    <partnumber>XM-001842-DH</partnumber>
-    <subpartnumber>XM-001843-SM</subpartnumber>
-    <vendor>XMOS</vendor>
-    <xcore_repo>sc_pwm.git</xcore_repo>
-    <xpd_version>1.0</xpd_version>
+    <xsoftip_exclude>testbench_multibit_fast</xsoftip_exclude>
+    <xsoftip_exclude>testbench_singlebit_simple</xsoftip_exclude>
+    <xsoftip_exclude>plugin_pwm</xsoftip_exclude>
 </xpd>
