@@ -22,6 +22,7 @@
     <exclude_dir>app_pwm_multibit_port_demo</exclude_dir>
     <exclude_dir>app_pwm_singlebit_port_demo</exclude_dir>
     <exclude_dir>app_pwm_singlebit_simple_demo</exclude_dir>
+    <exclude_dir>app_pwm_tutorial_example</exclude_dir>
     <location>git@github.com:xcore/sc_pwm.git</location>
     <name>sc_pwm</name>
     <maintainer>djpwilk</maintainer>
