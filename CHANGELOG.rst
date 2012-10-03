@@ -1,18 +1,7 @@
-XCORE.com PWM CHANGELOG
-=======================
+sc_pwm Change Log
+=================
 
-:Version:   unreleased
-
-Firmware
-=======
-
-module_pwm_singlebit_port
--------------------------
-
-   * Initial feature complete implementation and verification
-
-module_pwm_multibit_port
-------------------------
-
-   * Initial feature complete implementation and verification
+1.0.0
+-----
+  * Initial release
 
