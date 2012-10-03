@@ -1,7 +1,7 @@
 XSoftIP Multi-UART Module
 =========================
 
-:scope: Example
+:scope: Experimental
 :description: Simple PWM driver component designed for xTimeComposer Tutorial
 :keywords: PWM, tutorial, LED
 :boards: XA-SK-GPIO
