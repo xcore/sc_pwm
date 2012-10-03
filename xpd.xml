@@ -13,6 +13,7 @@
     <name>sc_pwm</name>
     <maintainer>djpwilk</maintainer>
     <partnumber>XM-001842-DH</partnumber>
+    <release parenthash = "2f7213dfb0234a7cda88d5b3584e301e4d9edcb3" version = "1.0.0alpha0"></release>
     <subpartnumber>XM-001843-SM</subpartnumber>
     <vendor>XMOS</vendor>
     <xcore_repo>sc_pwm.git</xcore_repo>
