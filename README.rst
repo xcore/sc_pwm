@@ -1,10 +1,9 @@
 XCORE.com Multi Channel PWM SOFTWARE COMPONENT
 ..............................................
 
-:Latest release: 1.0.0alpha0
+:Latest release: 1.0.0alpha1
 :Maintainer: djpwilk
 :Description: Various PWM driver components for single bit and multi bit ports
-
 
 
 :Maintainer:  Gopal Lakshmanagowda (github: nlgk2001)
