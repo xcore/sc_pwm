@@ -1,7 +1,7 @@
-XSoftIP Multi-UART Module
-=========================
+Tutorial Example LED PWM Driver Component
+=========================================
 
-:scope: Experimental
+:scope: Example
 :description: Simple PWM driver component designed for xTimeComposer Tutorial
 :keywords: PWM, tutorial, LED
 :boards: XA-SK-GPIO
