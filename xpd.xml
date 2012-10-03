@@ -9,20 +9,20 @@
         </component>
     </components>
     <description>Various PWM driver components for single bit and multi bit ports</description>
-    <exclude_dir>module_pwm_common</exclude_dir>
-    <exclude_dir>module_pwm_multibit_port</exclude_dir>
-    <exclude_dir>module_pwm_singlebit_port</exclude_dir>
-    <exclude_dir>module_pwm_symmetrical</exclude_dir>
-    <exclude_dir>module_pwm_multibit_fast</exclude_dir>
-    <exclude_dir>module_pwm_singlebit_bldc</exclude_dir>
-    <exclude_dir>module_pwm_singlebit_simple</exclude_dir>
-    <exclude_dir>app_pwm_multibit_fast_demo</exclude_dir>
-    <exclude_dir>app_pwm_multibit_port_test</exclude_dir>
-    <exclude_dir>app_pwm_singlebit_port_test</exclude_dir>
-    <exclude_dir>app_pwm_multibit_port_demo</exclude_dir>
-    <exclude_dir>app_pwm_singlebit_port_demo</exclude_dir>
-    <exclude_dir>app_pwm_singlebit_simple_demo</exclude_dir>
-    <exclude_dir>app_pwm_tutorial_example</exclude_dir>
+    <xsoftip_exclude>module_pwm_common</xsoftip_exclude>
+    <xsoftip_exclude>module_pwm_multibit_port</xsoftip_exclude>
+    <xsoftip_exclude>module_pwm_singlebit_port</xsoftip_exclude>
+    <xsoftip_exclude>module_pwm_symmetrical</xsoftip_exclude>
+    <xsoftip_exclude>module_pwm_multibit_fast</xsoftip_exclude>
+    <xsoftip_exclude>module_pwm_singlebit_bldc</xsoftip_exclude>
+    <xsoftip_exclude>module_pwm_singlebit_simple</xsoftip_exclude>
+    <xsoftip_exclude>app_pwm_multibit_fast_demo</xsoftip_exclude>
+    <xsoftip_exclude>app_pwm_multibit_port_test</xsoftip_exclude>
+    <xsoftip_exclude>app_pwm_singlebit_port_test</xsoftip_exclude>
+    <xsoftip_exclude>app_pwm_multibit_port_demo</xsoftip_exclude>
+    <xsoftip_exclude>app_pwm_singlebit_port_demo</xsoftip_exclude>
+    <xsoftip_exclude>app_pwm_singlebit_simple_demo</xsoftip_exclude>
+    <xsoftip_exclude>app_pwm_tutorial_example</xsoftip_exclude>
     <location>git@github.com:xcore/sc_pwm.git</location>
     <name>sc_pwm</name>
     <maintainer>djpwilk</maintainer>
