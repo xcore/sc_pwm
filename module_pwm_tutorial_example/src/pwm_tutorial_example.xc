@@ -6,7 +6,7 @@
 #include <xs1.h>
 
 #pragma unsafe arrays
-void pwm_tutorial_example ( chanend c, port p) {
+void pwm_tutorial_example ( chanend c, out port p) {
   unsigned int duty;
   unsigned int period;
   unsigned int now;
@@ -19,7 +19,7 @@ void pwm_tutorial_example ( chanend c, port p) {
   p <: 0;
 
   //get the current port time
-  p :> void @ now; 
+  p <: 0 @ now; 
 
   while(1) {
     //obtain time of PWM falling edge
