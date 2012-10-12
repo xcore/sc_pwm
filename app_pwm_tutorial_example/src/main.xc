@@ -54,7 +54,7 @@ int main() {
 
     par {
         on stdcore[1] : client(c);
-        on stdcore[1] : pwm_tutorial_example(c, ledport);
+        on stdcore[1] : pwm_tutorial_example(c, ledport, 4);
     }
     return 0;
 }
