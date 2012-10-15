@@ -14,7 +14,7 @@
     <maintainer>djpwilk</maintainer>
     <partnumber>XM-001842-DH</partnumber>
     <release parenthash = "2f7213dfb0234a7cda88d5b3584e301e4d9edcb3" version = "1.0.0alpha0" githash = "56b734e3ac6af178ff0692238c7f2e391b0d3765"></release>
-    <release parenthash = "0e91ddce77b61f061bcbdc44710400d55a13cf1b" version = "1.0.0alpha1"></release>
+    <release parenthash = "0e91ddce77b61f061bcbdc44710400d55a13cf1b" version = "1.0.0alpha1" githash = "4e7eafbbbc0c48b75184b5cee64bec1990117d31"></release>
     <subpartnumber>XM-001843-SM</subpartnumber>
     <vendor>XMOS</vendor>
     <xcore_repo>sc_pwm.git</xcore_repo>
