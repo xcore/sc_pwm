@@ -54,7 +54,7 @@ generatedCode = {
     out port p_led = ${swblock.ports.p_ledport_gpio_slice};
   ]],
   body = [[
-    pwm_tutorial_example(${swblock.chanends.c_pwm_duty}, p_led);
+    pwm_tutorial_example(${swblock.chanends.c_pwm_duty}, p_led, 4);
   ]]
 }
 
