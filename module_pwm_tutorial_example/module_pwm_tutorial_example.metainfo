@@ -21,7 +21,7 @@ derivedValues = {}
 ports = {
   p_ledport_gpio_slice = {
     short   = "PWM output",
-    long    = "External Clock Source Input",
+    long    = "Pulse Width Modulation output 4-bit port",
     help    = "",
     width   = 4,
   }
