@@ -36,4 +36,5 @@
     <xsoftip_exclude>testbench_multibit_fast</xsoftip_exclude>
     <xsoftip_exclude>testbench_singlebit_simple</xsoftip_exclude>
     <xsoftip_exclude>plugin_pwm</xsoftip_exclude>
+    <xsoftip_exclude>app_pwm_tutorial_simulator</xsoftip_exclude>
 </xpd>
