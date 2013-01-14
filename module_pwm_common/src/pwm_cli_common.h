@@ -21,6 +21,15 @@
 
 #include "pwm_common.h"
 
+/******************************************************************************/
+/** Converts structure reference to address.
+ * \param ctrl_ps // Pointer to PWM control structure
+ * \return Address
+ */
+unsigned long get_struct_address( // Converts structure reference to address
+	REFERENCE_PARAM(t_pwm_control, ctrl) // PWM control structure
+); // Return address
+/******************************************************************************/
 // Calculate timings for PWM output
 void calculate_data_out( unsigned value, REFERENCE_PARAM(t_out_data,pwm_out_data) );
 
@@ -35,14 +44,14 @@ void calculate_data_out_ref( unsigned value,
 inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM(t_out_data,pwm_out_data) )
 {
 	pwm_out_data.cat = DOUBLE;
-	pwm_out_data.out0 = 0xFFFFFFFF;
-	pwm_out_data.out1 = 0x7FFFFFFF;
-	pwm_out_data.inv_out0 = 0xFFFFFFFF;
-	pwm_out_data.inv_out1 = 0x7FFFFFFF;
-	pwm_out_data.ts0 = (value >> 1);
-	pwm_out_data.ts1 = (value >> 1)-31;
-	pwm_out_data.inv_ts0 = ((value+PWM_DEAD_TIME) >> 1);
-	pwm_out_data.inv_ts1 = ((value+PWM_DEAD_TIME) >> 1) - 31;
+	pwm_out_data.hi_out0 = 0xFFFFFFFF;
+	pwm_out_data.hi_out1 = 0x7FFFFFFF;
+	pwm_out_data.lo_out0 = 0xFFFFFFFF;
+	pwm_out_data.lo_out1 = 0x7FFFFFFF;
+	pwm_out_data.hi_ts0 = (value >> 1);
+	pwm_out_data.hi_ts1 = (value >> 1)-31;
+	pwm_out_data.lo_ts0 = ((value+PWM_DEAD_TIME) >> 1);
+	pwm_out_data.lo_ts1 = ((value+PWM_DEAD_TIME) >> 1) - 31;
 }
 #endif
 

@@ -20,23 +20,18 @@
  *  This server includes a port which triggers the ADC measurement
  *
  *  \param c_pwm the control channel for setting PWM values
+ *  \param p32_pwm_hi the array of PWM ports (HI side)
+ *  \param p32_pwm_lo the array of PWM ports (LO side)
  *  \param c_adc_trig the control channel for triggering the ADC
- *  \param dummy_port a dummy port used for precise timing of the ADC trigger
- *  \param p_pwm the array of PWM ports
- *  \param p_pwm_inv the array of inverted PWM ports
- *  \param clk a clock for generating accurate PWM timing
+ *  \param p16_adc_sync a dummy port used for precise timing of the ADC trigger
+ *  \param pwm_clk a clock for generating accurate PWM timing
  */
-void do_pwm_inv_triggered( chanend c_pwm, chanend c_adc_trig, in port dummy_port, buffered out port:32 p_pwm[],  buffered out port:32 p_pwm_inv[], clock clk);
-
-
-
-/** \brief Implementation of the centre aligned inverted pair PWM server
- *
- *  \param c_pwm the control channel for setting PWM values
- *  \param p_pwm the array of PWM ports
- *  \param p_pwm_inv the array of inverted PWM ports
- *  \param clk a clock for generating accurate PWM timing
- */
-void do_pwm_inv( chanend c_pwm, buffered out port:32 p_pwm[],  buffered out port:32 p_pwm_inv[], clock clk);
-
+void do_pwm_inv_triggered( 
+	chanend c_pwm, 
+	buffered out port:32 p32_pwm_hi[],  
+	buffered out port:32 p32_pwm_lo[], 
+	chanend? c_adc_trig, // Optional ADC trigger channel 
+	in port? p16_adc_sync, // Optional ADC trigger channel  
+	clock pwm_clk
+);
 

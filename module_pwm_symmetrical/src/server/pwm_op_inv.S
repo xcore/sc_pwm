@@ -42,13 +42,13 @@
 .cc_top pwm_op_inv.func, pwm_op_inv
 .text
 
-// r0 - buf
-// r1 - p_pwm,
-// r2 - p_pwm_inv,
+// r0 - buf_id [0,1]
+// r1 - p32_pwm_hi,
+// r2 - p32_pwm_lo,
 // r3 - channel,
 // sp[14] - address of shared memory buffer
 // sp[15] - adc trigger channel
-// sp[16] - dummy port for adc trigger
+// sp[16] - dummy port for adc synchronisation
 pwm_op_inv:
 	entsp 13
 
@@ -61,9 +61,9 @@ pwm_op_inv:
 	stw r9, sp[6]
 	stw r10, sp[7]
 
-	stw r0, sp[8]	// buf
-	stw r1, sp[9]	// p_pwm
-	stw r2, sp[10]  // p_pwm_inv
+	stw r0, sp[8]	// buf_id [0,1]
+	stw r1, sp[9]	// p32_pwm_hi
+	stw r2, sp[10]  // p32_pwm_lo
 	stw r3, sp[11]  // channel
 
 	/*
@@ -75,14 +75,14 @@ pwm_op_inv:
 	 *
 	 * r10 loaded by PWM mode
 	 */
-	mov r8, r1  // p_pwm
-	mov r7, r0  // buf
+	mov r8, r1  // p32_pwm_hi
+	mov r7, r0  // buf_id [0,1]
 
 	/* load ports and data pointers */
 	//prep for reading port order array
 	ldw r11, sp[14]
 	ldc r0, 12
-	mul r0, r7, r0 // buf * 12
+	mul r0, r7, r0 // buf_id * 12
 	add r11, r0, r11 // now at top of correct chan_id_buf
 
 	// prep for reading data_out
@@ -90,7 +90,7 @@ pwm_op_inv:
 	ldc r2, OFFSET_OF_DATA_OUT
 	add r5, r5, r2
 	ldc r2, (SIZE_OF_T_DATA_OUT*3)
-	mul r7, r7, r2 // buf * r2
+	mul r7, r7, r2 // buf_id * r2
 	add r5, r5, r7 // now at top of correct array of structs
 
 	ldc r2, SIZE_OF_T_DATA_OUT
@@ -243,15 +243,15 @@ GO_UPDATE_M1:
 
 	stw r7, sp[13] // save TS
 
-	ldw r8, sp[9]   // p_pwm
-	mov r7, r0  // buf
+	ldw r8, sp[9]   // p32_pwm_hi
+	mov r7, r0  // buf_id [0,1]
 	stw r7, sp[12]
 
 	/* load ports and data pointers */
 	//prep for reading port order array
 	ldw r11, sp[14]
 	ldc r0, 12
-	mul r0, r7, r0 // buf * 12
+	mul r0, r7, r0 // buf_id * 12
 	add r11, r0, r11 // now at top of correct chan_id_buf
 
 	// prep for reading data_out
@@ -259,7 +259,7 @@ GO_UPDATE_M1:
     ldc r2, OFFSET_OF_DATA_OUT
     add r5, r5, r2
     ldc r2, (SIZE_OF_T_DATA_OUT*3)
-    mul r7, r7, r2 // buf * r2
+    mul r7, r7, r2 // buf_id * r2
     add r5, r5, r7 // now at top of correct array of structs
 
 	ldc r2, SIZE_OF_T_DATA_OUT
@@ -648,7 +648,7 @@ PWM_MODE_5_LOOP:
 	ldw r8, r5[1]
 	out res[r2], r8
 	ldw r8, r5[5]
-	out res[r11], r8
+	out res[r11], r8
 	// trigger adc
 	#if LOCK_ADC_TO_PWM
 	ldw r8, sp[16] // load port
@@ -879,7 +879,7 @@ GO_UPDATE_M7:
 	stw r7, sp[13]
 
 	// load up arrays
-	ldw r8, sp[9]   // p_pwm
+	ldw r8, sp[9]   // p32_pwm_hi
 	mov r7, r0  // buf
 	stw r7, sp[12]
 
@@ -887,7 +887,7 @@ GO_UPDATE_M7:
 	//prep for reading port order array
 	ldw r11, sp[14]
 	ldc r0, 12
-	mul r0, r7, r0 // buf * 12
+	mul r0, r7, r0 // buf_id * 12
 	add r11, r0, r11 // now at top of correct chan_id_buf
 
 	// prep for reading data_out
@@ -895,7 +895,7 @@ GO_UPDATE_M7:
     ldc r2, OFFSET_OF_DATA_OUT
     add r5, r5, r2
     ldc r2, (SIZE_OF_T_DATA_OUT*3)
-    mul r7, r7, r2 // buf * r2
+    mul r7, r7, r2 // buf_id * r2
     add r5, r5, r7 // now at top of correct array of structs
 
 	ldc r2, SIZE_OF_T_DATA_OUT

@@ -17,7 +17,18 @@
 #include "pwm_cli_common.h"
 #include "pwm_common.h"
 
-void pwm_share_control_buffer_address_with_server(chanend c, t_pwm_control* ctrl)
+/******************************************************************************/
+unsigned long get_struct_address( // Converts structure reference to address
+	t_pwm_control * ctrl_ps // Pointer to PWM control structure
+) // Return wrapped offset
+{
+	return (unsigned long)ctrl_ps; // Return Address
+} // get_struct_address
+/*****************************************************************************/
+void pwm_share_control_buffer_address_with_server(
+	chanend c, 
+	t_pwm_control * ctrl
+)
 {
   __asm__ volatile ("outct  res[%0], 0x1;"
 	  "chkct  res[%0], 0x1;"
@@ -25,12 +36,13 @@ void pwm_share_control_buffer_address_with_server(chanend c, t_pwm_control* ctrl
 	  "outct  res[%0], 0x1;"
 	  "chkct  res[%0], 0x1;"  :: "r"(c),"r"(ctrl));
   return;
-}
-
-/*
- * Used by INV and NOINV modes
- */
-void order_pwm( unsigned *mode, unsigned *chan_id, t_out_data *pwm_out_data)
+} // pwm_share_control_buffer_address_with_server
+/*****************************************************************************/
+void order_pwm(  // Used by INV and NOINV modes
+	unsigned * mode, 
+	unsigned * chan_id, 
+	t_out_data * pwm_out_data
+)
 {
 	unsigned chan_id_tmp;
 #ifndef PWM_CLIPPED_RANGE
@@ -222,15 +234,17 @@ void order_pwm( unsigned *mode, unsigned *chan_id, t_out_data *pwm_out_data)
 		return;
 	}
 #endif
-}
-
-
-void calculate_data_out( unsigned value, t_out_data *pwm_out_data )
+} // order_pwm 
+/*****************************************************************************/
+void calculate_data_out( 
+	unsigned value, 
+	t_out_data * pwm_out_data 
+)
 {
-	pwm_out_data->out1 = 0;
-	pwm_out_data->ts1 = 0;
-	pwm_out_data->inv_out1 = 0;
-	pwm_out_data->inv_ts1 = 0;
+	pwm_out_data->hi_out1 = 0;
+	pwm_out_data->hi_ts1 = 0;
+	pwm_out_data->lo_out1 = 0;
+	pwm_out_data->lo_ts1 = 0;
 
 	// very low values
 	if (value <= 31)
@@ -239,11 +253,11 @@ void calculate_data_out( unsigned value, t_out_data *pwm_out_data )
 		// compiler work around, bug 8218
 		/* pwm_out_data.out0 = ((1 << value)-1);  */
 		asm("mkmsk %0, %1"
-				: "=r"(pwm_out_data->out0)
+				: "=r"(pwm_out_data->hi_out0)
 				: "r"(value));
-		pwm_out_data->out0 <<= (value >> 1); // move it to the middle
+		pwm_out_data->hi_out0 <<= (value >> 1); // move it to the middle
 
-		pwm_out_data->ts0 = 16;
+		pwm_out_data->hi_ts0 = 16;
 		return;
 	}
 
@@ -258,11 +272,11 @@ void calculate_data_out( unsigned value, t_out_data *pwm_out_data )
 		// compiler work around, bug 8218
 		/* pwm_out_data.out0 = ((1 << value)-1);  */
 		asm("mkmsk %0, %1"
-				: "=r"(pwm_out_data->out0)
+				: "=r"(pwm_out_data->hi_out0)
 		  	    : "r"(tmp));
 
-		pwm_out_data->out0 <<= (32 - tmp);
-		pwm_out_data->ts0 = (PWM_MAX_VALUE >> 1) + ((PWM_MAX_VALUE - value) >> 1); // MAX + (num 0's / 2)
+		pwm_out_data->hi_out0 <<= (32 - tmp);
+		pwm_out_data->hi_ts0 = (PWM_MAX_VALUE >> 1) + ((PWM_MAX_VALUE - value) >> 1); // MAX + (num 0's / 2)
 		return;
 	}
 
@@ -280,7 +294,7 @@ void calculate_data_out( unsigned value, t_out_data *pwm_out_data )
 		// compiler work around, bug 8218
 		/* pwm_out_data.out0 = ((1 << (value >> 1))-1);  */
 		asm("mkmsk %0, %1"
-				: "=r"(pwm_out_data->out0)
+				: "=r"(pwm_out_data->hi_out0)
 				: "r"(tmp));
 
 
@@ -288,27 +302,33 @@ void calculate_data_out( unsigned value, t_out_data *pwm_out_data )
 
 		// compiler work around, bug 8218
 		asm("mkmsk %0, %1"
-				: "=r"(pwm_out_data->out1)
+				: "=r"(pwm_out_data->hi_out1)
 				: "r"(tmp));
 		/* pwm_out_data.out1 = ((1 << (value - (value >> 1)))-1);  */
 
-		pwm_out_data->ts0 = 32;
-		pwm_out_data->ts1 = 0;
+		pwm_out_data->hi_ts0 = 32;
+		pwm_out_data->hi_ts1 = 0;
 		return;
 	}
 
 	// midrange
 	pwm_out_data->cat = DOUBLE;
-	pwm_out_data->out0 = 0xFFFFFFFF;
-	pwm_out_data->out1 = 0x7FFFFFFF;
+	pwm_out_data->hi_out0 = 0xFFFFFFFF;
+	pwm_out_data->hi_out1 = 0x7FFFFFFF;
 
-	pwm_out_data->ts0 = (value >> 1);
-	pwm_out_data->ts1 = (value >> 1)-31;
+	pwm_out_data->hi_ts0 = (value >> 1);
+	pwm_out_data->hi_ts1 = (value >> 1)-31;
 
-}
-
-
-void calculate_data_out_ref( unsigned value, unsigned *ts0, unsigned *out0, unsigned *ts1, unsigned *out1, e_pwm_cat *cat )
+} // calculate_data_out 
+/*****************************************************************************/
+void calculate_data_out_ref( 
+	unsigned value, 
+	unsigned * ts0, 
+	unsigned * out0, 
+	unsigned * ts1, 
+	unsigned * out1, 
+	e_pwm_cat * cat 
+)
 {
 	*out1 = 0;
 	*ts1 = 0;
@@ -390,9 +410,6 @@ void calculate_data_out_ref( unsigned value, unsigned *ts0, unsigned *out0, unsi
 	*ts0 = (value >> 1);
 	*ts1 = (value >> 1)-31;
 
-}
-
-
-
-
-
+} // calculate_data_out_ref
+/*****************************************************************************/
+// pwm_cli_common.c

@@ -23,6 +23,9 @@
 
 #ifndef __ASSEMBLER__
 
+#define NUM_PWM_PHASES 3 // 3-phase PWM
+#define NUM_PWM_BUFS 2  // Double-buffered
+
 typedef enum PWM_OUTPUT_CAT
 {
 	LONG_SINGLE,
@@ -34,16 +37,16 @@ typedef enum PWM_OUTPUT_CAT
 typedef struct PWM_OUT_DATA
 {
 	/* N */
-	unsigned ts0;  // 0
-	unsigned out0; // 1
-	unsigned ts1;  // 2
-	unsigned out1; // 3
+	unsigned hi_ts0;  // 0
+	unsigned hi_out0; // 1
+	unsigned hi_ts1;  // 2
+	unsigned hi_out1; // 3
 
 	/* N' */
-	unsigned inv_ts0;  // 4
-	unsigned inv_out0; // 5
-	unsigned inv_ts1;  // 6
-	unsigned inv_out1; // 7
+	unsigned lo_ts0;  // 4
+	unsigned lo_out0; // 5
+	unsigned lo_ts1;  // 6
+	unsigned lo_out1; // 7
 
 	/* other info */
 	e_pwm_cat cat;
@@ -52,9 +55,9 @@ typedef struct PWM_OUT_DATA
 
 // Shared memory structure for the client->server
 typedef struct {
-	unsigned chan_id_buf[2][3];
-	unsigned mode_buf[2];
-	t_out_data pwm_out_data_buf[2][3];
+	unsigned chan_id_buf[NUM_PWM_BUFS][NUM_PWM_PHASES];
+	unsigned mode_buf[NUM_PWM_BUFS];
+	t_out_data pwm_out_data_buf[NUM_PWM_BUFS][NUM_PWM_PHASES];
 	unsigned pwm_cur_buf;
 } t_pwm_control;
 

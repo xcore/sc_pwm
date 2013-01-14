@@ -21,84 +21,69 @@
 
 #include "pwm_service_inv.h"
 
+extern unsigned pwm_op_inv( 
+	unsigned buf_id, 
+	buffered out port:32 p32_pwm_hi[], 
+	buffered out port:32 p32_pwm_lo[], 
+	chanend c_pwm, 
+	unsigned control, 
+	chanend? c_trig, 
+	in port? p16_adc_sync 
+);
+
+/*****************************************************************************/
+static void do_pwm_port_config( 
+	buffered out port:32 p32_pwm_hi[], 
+	buffered out port:32 p32_pwm_lo[], 
+	in port? p16_adc_sync, 
+	clock pwm_clk 
+)
+{
+	unsigned i;
+
+	for (i = 0; i < PWM_CHAN_COUNT; i++)
+	{
+		configure_out_port( p32_pwm_hi[i] ,pwm_clk ,0 ); // Set initial value of port to 0 (Switched Off) 
+		configure_out_port( p32_pwm_lo[i] ,pwm_clk ,0 ); // Set initial value of port to 0 (Switched Off)  
+		set_port_inv( p32_pwm_lo[i] );
+	}
 
 #if LOCK_ADC_TO_PWM
+	configure_in_port( p16_adc_sync ,pwm_clk );	// Dummy port used to send ADC synchronisation pulse
+#endif  // #if LOCK_ADC_TO_PWM
 
-extern unsigned pwm_op_inv( unsigned buf, buffered out port:32 p_pwm[], buffered out port:32 p_pwm_inv[], chanend c, unsigned control, chanend c_trig, in port dummy_port );
-
-static void do_pwm_port_config_inv_adc_trig( in port dummy, buffered out port:32 p_pwm[], buffered out port:32 p_pwm_inv[], clock clk )
+	start_clock( pwm_clk );
+} // do_pwm_port_config_inv_adc_trig
+/*****************************************************************************/
+void do_pwm_inv_triggered( 
+	chanend c_pwm, 
+	buffered out port:32 p32_pwm_hi[], 
+	buffered out port:32 p32_pwm_lo[], 
+	chanend? c_adc_trig, 
+	in port? p16_adc_sync, 
+	clock pwm_clk
+)
 {
-	unsigned i;
+	unsigned buf_id; // Double-buffer identifier [0,1]
+	unsigned mem_addr; // Shared memory address
 
-	for (i = 0; i < PWM_CHAN_COUNT; i++)
-	{
-		configure_out_port(p_pwm[i], clk, 0);
-		configure_out_port(p_pwm_inv[i], clk, 0);
-		set_port_inv(p_pwm_inv[i]);
-	}
 
-	/* dummy port used to send ADC trigger */
-	configure_in_port(dummy,clk);
+	c_pwm :> mem_addr;	// First read the shared memory buffer address from the client
 
-	start_clock(clk);
-}
+	do_pwm_port_config( p32_pwm_hi ,p32_pwm_lo ,p16_adc_sync ,pwm_clk ); // configure the ports
 
-void do_pwm_inv_triggered( chanend c_pwm, chanend c_adc_trig, in port dummy_port, buffered out port:32 p_pwm[], buffered out port:32 p_pwm_inv[], clock clk)
-{
+	c_pwm :> buf_id; // Wait for initial buffer id
 
-	unsigned buf, control;
-
-	/* First read the shared memory buffer address from the client */
-	c_pwm :> control;
-
-	/* configure the ports */
-	do_pwm_port_config_inv_adc_trig( dummy_port, p_pwm, p_pwm_inv, clk );
-
-	/* wait for initial update */
-	c_pwm :> buf;
-
+	// Loop forever
 	while (1)
 	{
-		buf = pwm_op_inv( buf, p_pwm, p_pwm_inv, c_pwm, control, c_adc_trig, dummy_port );
+#if LOCK_ADC_TO_PWM
+		buf_id = pwm_op_inv( buf_id, p32_pwm_hi, p32_pwm_lo, c_pwm, mem_addr, c_adc_trig, p16_adc_sync );
+#else //if LOCK_ADC_TO_PWM
+		buf_id = pwm_op_inv( buf_id ,p32_pwm_hi ,p32_pwm_lo ,c_pwm ,mem_addr ,null ,null );
+#endif  //else !LOCK_ADC_TO_PWM
 	}
 
-}
-#else
-
-extern unsigned pwm_op_inv( unsigned buf, buffered out port:32 p_pwm[], buffered out port:32 p_pwm_inv[], chanend c, unsigned control );
-
-static void do_pwm_port_config_inv(  buffered out port:32 p_pwm[], buffered out port:32 p_pwm_inv[], clock clk )
-{
-	unsigned i;
-
-	for (i = 0; i < PWM_CHAN_COUNT; i++)
-	{
-		configure_out_port(p_pwm[i], clk, 0);
-		configure_out_port(p_pwm_inv[i], clk, 0);
-		set_port_inv(p_pwm_inv[i]);
-	}
-
-	start_clock(clk);
-}
-
-void do_pwm_inv( chanend c_pwm, buffered out port:32 p_pwm[],  buffered out port:32 p_pwm_inv[], clock clk)
-{
-
-	unsigned buf, control;
-
-	/* First read the shared memory buffer address from the client */
-	c_pwm :> control;
-
-	/* configure the ports */
-	do_pwm_port_config_inv( p_pwm, p_pwm_inv, clk);
-
-	/* wait for initial update */
-	c_pwm :> buf;
-
-	while (1)
-	{
-		buf = pwm_op_inv( buf, p_pwm, p_pwm_inv, c_pwm, control );
-	}
-
-}
-#endif
+} // do_pwm_inv_triggered 
+/*****************************************************************************/
+// pwm_service_inv
