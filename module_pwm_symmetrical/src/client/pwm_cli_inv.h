@@ -25,5 +25,10 @@
  *  \param c the control channel for the PWM server
  *  \param value an array of three 24 bit values for the PWM server
  */
-void update_pwm_inv( t_pwm_control& ctrl, chanend c, unsigned value[]);
+void update_pwm_inv( 
+	ASM_CONTROL_TYP & asm_ctrl, 
+	PWM_CONTROL_TYP & pwm_ctrl, 
+	chanend c, 
+	unsigned value[]
+);
 

@@ -21,43 +21,7 @@
 
 #include "pwm_common.h"
 
-/******************************************************************************/
-/** Converts structure reference to address.
- * \param ctrl_ps // Pointer to PWM control structure
- * \return Address
- */
-unsigned long get_struct_address( // Converts structure reference to address
-	REFERENCE_PARAM(t_pwm_control, ctrl) // PWM control structure
-); // Return address
-/******************************************************************************/
-// Calculate timings for PWM output
-void calculate_data_out( unsigned value, REFERENCE_PARAM(t_out_data,pwm_out_data) );
-
-void calculate_data_out_ref( unsigned value,
-		REFERENCE_PARAM(unsigned,ts0),
-		REFERENCE_PARAM(unsigned,out0),
-		REFERENCE_PARAM(unsigned,ts1),
-		REFERENCE_PARAM(unsigned,out1),
-		REFERENCE_PARAM(e_pwm_cat,cat));
-
-#ifdef __XC__
-inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM(t_out_data,pwm_out_data) )
-{
-	pwm_out_data.cat = DOUBLE;
-	pwm_out_data.hi_out0 = 0xFFFFFFFF;
-	pwm_out_data.hi_out1 = 0x7FFFFFFF;
-	pwm_out_data.lo_out0 = 0xFFFFFFFF;
-	pwm_out_data.lo_out1 = 0x7FFFFFFF;
-	pwm_out_data.hi_ts0 = (value >> 1);
-	pwm_out_data.hi_ts1 = (value >> 1)-31;
-	pwm_out_data.lo_ts0 = ((value+PWM_DEAD_TIME) >> 1);
-	pwm_out_data.lo_ts1 = ((value+PWM_DEAD_TIME) >> 1) - 31;
-}
-#endif
-
-// Calculate required ordering of operation
-void order_pwm( REFERENCE_PARAM(unsigned,mode), unsigned chan_id[], t_out_data pwm_out_data[]);
-
+#ifdef MB // Depreciated
 
 /** \brief Share the control buffer address with the server
  *
@@ -67,6 +31,56 @@ void order_pwm( REFERENCE_PARAM(unsigned,mode), unsigned chan_id[], t_out_data p
  *  \param c The PWM control channel
  *  \param ctrl The shared PWM control data structure reference
  */
-void pwm_share_control_buffer_address_with_server(chanend c, REFERENCE_PARAM(t_pwm_control, ctrl));
+void pwm_share_control_buffer_address_with_server(chanend c, REFERENCE_PARAM( ASM_CONTROL_TYP ,asm_ctrl) );
+
+// Calculate required ordering of operation
+void order_pwm( REFERENCE_PARAM(unsigned,mode), unsigned chan_id[], PWM_OUTDATA_TYP pwm_out_data[]);
+
+#endif //MB~ Depreciated
+
+/******************************************************************************/
+/** Converts structure reference to address.
+ * \param ctrl_ps // Pointer to PWM control structure
+ * \return Address
+ */
+unsigned long get_struct_address( // Converts structure reference to address
+	REFERENCE_PARAM( ASM_CONTROL_TYP ,asm_ctrl ) // PWM control structure
+); // Return address
+/******************************************************************************/
+// Calculate timings for PWM output
+void calculate_data_out( unsigned value, REFERENCE_PARAM(PWM_OUTDATA_TYP,pwm_out_data) );
+
+void calculate_data_out_ref( unsigned value,
+		REFERENCE_PARAM(unsigned,ts0),
+		REFERENCE_PARAM(unsigned,out0),
+		REFERENCE_PARAM(unsigned,ts1),
+		REFERENCE_PARAM(unsigned,out1),
+		REFERENCE_PARAM(e_pwm_cat,cat));
+
+void calculate_all_data_out_ref( 
+		REFERENCE_PARAM( PWM_OUTDATA_TYP ,pwm_out_data ),
+		unsigned value,
+		unsigned dead_time
+);
+
+#ifdef __XC__
+inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PWM_OUTDATA_TYP ,pwm_out_data ) )
+{
+	pwm_out_data.typ = DOUBLE;
+
+	pwm_out_data.hi.edges[0].pattern = 0xFFFFFFFF;
+	pwm_out_data.hi.edges[1].pattern = 0x7FFFFFFF;
+	pwm_out_data.hi.edges[0].time = (value >> 1);
+	pwm_out_data.hi.edges[1].time = (value >> 1)-31;
+
+	pwm_out_data.lo.edges[0].pattern = 0xFFFFFFFF;
+	pwm_out_data.lo.edges[1].pattern = 0x7FFFFFFF;
+	pwm_out_data.lo.edges[0].time = ((value+PWM_DEAD_TIME) >> 1);
+	pwm_out_data.lo.edges[1].time = ((value+PWM_DEAD_TIME) >> 1) - 31;
+}
+#endif
+
+// Calculate required ordering of operation
+void order_new_pwm( REFERENCE_PARAM( PWM_CONTROL_TYP ,pwm_ctrl ) );
 
 #endif /* _PWM_CLI_COMMON__H_ */

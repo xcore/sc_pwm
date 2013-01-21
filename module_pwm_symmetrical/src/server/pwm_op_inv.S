@@ -45,15 +45,15 @@
 // r0 - buf_id [0,1]
 // r1 - p32_pwm_hi,
 // r2 - p32_pwm_lo,
-// r3 - channel,
-// sp[14] - address of shared memory buffer
-// sp[15] - adc trigger channel
-// sp[16] - dummy port for adc synchronisation
+// r3 - c_pwm,
+// sp[14] - mem_addr: address of shared memory buffer
+// sp[15] - c_adc_trig: ADC trigger channel
+// sp[16] - p16_adc_sync: dummy port for ADC synchronisation
 pwm_op_inv:
 	entsp 13
 
-	// callee save
-	stw r4, sp[1]
+	// Callee save: Store whatever in registers (reload on exit)
+	stw r4, sp[1] // Store r4 in sp[1]
 	stw r5, sp[2]
 	stw r6, sp[3]
 	stw r7, sp[4]
@@ -61,10 +61,10 @@ pwm_op_inv:
 	stw r9, sp[6]
 	stw r10, sp[7]
 
-	stw r0, sp[8]	// buf_id [0,1]
-	stw r1, sp[9]	// p32_pwm_hi
-	stw r2, sp[10]  // p32_pwm_lo
-	stw r3, sp[11]  // channel
+	stw r0, sp[8]		// sp[8] = buf_id [0,1]
+	stw r1, sp[9]		// sp[9] = p32_pwm_hi
+	stw r2, sp[10]  // sp[10] = p32_pwm_lo
+	stw r3, sp[11]  // sp[11] = c_pwm
 
 	/*
 	 * now arrange stuff:
@@ -75,83 +75,88 @@ pwm_op_inv:
 	 *
 	 * r10 loaded by PWM mode
 	 */
-	mov r8, r1  // p32_pwm_hi
-	mov r7, r0  // buf_id [0,1]
+	mov r8, r1  // r8 = p32_pwm_hi
+	mov r7, r0  // r7 =  buf_id (0 or 1)
 
 	/* load ports and data pointers */
-	//prep for reading port order array
-	ldw r11, sp[14]
-	ldc r0, 12
-	mul r0, r7, r0 // buf_id * 12
-	add r11, r0, r11 // now at top of correct chan_id_buf
 
-	// prep for reading data_out
-	ldw r5, sp[14]
-	ldc r2, OFFSET_OF_DATA_OUT
-	add r5, r5, r2
-	ldc r2, (SIZE_OF_T_DATA_OUT*3)
-	mul r7, r7, r2 // buf_id * r2
-	add r5, r5, r7 // now at top of correct array of structs
+	//prep for reading chan_id_buf
+	ldw r11, sp[14] 	// r11 = mem_addr
+	ldc r0, 12 				// r0 = 12 ( sizeof(unsigned) * NUM_PWM_PHASES : chan_id_buf line size)
+	mul r0, r7, r0 		// r0 = buf_id * 12  (Offset to correct line of chan_id_buf[])
+	add r11, r0, r11	// r11 = addr of start of correct chan_id_buf[]
 
-	ldc r2, SIZE_OF_T_DATA_OUT
-	ldw r0, r11[0] // chan_id_buf[0]
-	mul r3, r0, r2 // mult chan_id_buf[0] by SIZE_OF_T_DATA_OUT
-	add r3, r5, r3 // out_data0 assigned
-	ldw r0, r8[r0] // port 0 assigned
+	// prep for reading pwm_out_data_buf
+	ldw r5, sp[14]									// r5 = mem_addr
+	ldc r2, OFFSET_OF_DATA_OUT			// r2 = Offset to start of pwm_out_data_buf[][]
+	add r5, r5, r2  								// r5 = addr of start of pwm_out_data_buf[][]
+	ldc r2, (SIZE_OF_T_DATA_OUT*3)	// r2 = 120 = 40 * NUM_PWM_PHASES (pwm_out_data_buf line-size)
+	mul r7, r7, r2									// r7 = buf_id * r2 (Offset to correct line of pwm_out_data_buf[])
+	add r5, r5, r7 									// r5 = addr of start of correct pwm_out_data_buf[]
 
-	ldw r1, r11[1] // chan_id_buf[1]
-	mul r4, r1, r2 // mult chan_id_buf[1] by SIZE_OF_T_DATA_OUT
-	add r4, r5, r4 // out_data1 assigned
-	ldw r1, r8[r1] // port 1 assigned
+	ldc r2, SIZE_OF_T_DATA_OUT // r2 = 40
 
-	ldw r6, r11[2] // chan_id_buf[2]
-	mul r10, r6, r2 // mult chan_id_buf[2] by SIZE_OF_T_DATA_OUT
-	add r5, r5, r10 // out_data1 assigned
-	ldw r2, r8[r6] // port 2 assigned
+	/* load High-leg (V+) ports */
 
-	/* load inverted ports */
-	ldw r10, sp[10]
+	ldw r0, r11[0] // r0 = cur_id = chan_id_buf[0] // channel id for 1st Phase
+	mul r3, r0, r2 // r3 = cur_id * SIZE_OF_T_DATA_OUT // Offset to correct column of pwm_out_data_buf[]
+	add r3, r5, r3 // r3 = addr of 1st pwm_out_data_buf[][] cell
+	ldw r0, r8[r0] // r0 = p32_pwm_hi[cur_id] (current Hi-leg port) (1st port)
+
+	ldw r1, r11[1] // r1 = cur_id = chan_id_buf[1] // channel id for 2nd Phase
+	mul r4, r1, r2 // r4 = cur_id * SIZE_OF_T_DATA_OUT // Offset to correct column of pwm_out_data_buf[]
+	add r4, r5, r4 // r4 = addr of 2nd pwm_out_data_buf[][] cell
+	ldw r1, r8[r1] // r1 = p32_pwm_hi[cur_id] (current Hi-leg port) (2nd port)
+
+	ldw r6, r11[2] // r6 = cur_id = chan_id_buf[2] // channel id for 3rd Phase
+	mul r10, r6, r2 // r10 = cur_id * SIZE_OF_T_DATA_OUT // Offset to correct column of pwm_out_data_buf[] 
+	add r5, r5, r10 // r5 = addr of 3rd pwm_out_data_buf[][] cell 
+	ldw r2, r8[r6] // r2 = p32_pwm_hi[cur_id] (current Hi-leg port) (3rd port)
+
+	/* load Low-leg(V-) ports */
+	ldw r10, sp[10] // r10 = p32_pwm_lo[]
+
 	// inv port 0
-	ldw r6, r11[0]
-	ldw r6, r10[r6]
+	ldw r6, r11[0]		// r6 = cur_id = chan_id_buf[0]  (channel id for 1st Phase)
+	ldw r6, r10[r6]		// r6 = p32_pwm_lo[cur_id] (current Lo-leg port) (1st port)
 
 	// inv port 1
-	ldw r9, r11[1]
-	ldw r9, r10[r9]
+	ldw r9, r11[1]		// r9 = cur_id = chan_id_buf[1]  (channel id for 2nd Phase)
+	ldw r9, r10[r9]		// r9 = p32_pwm_lo[cur_id] (current Lo-leg port) (2nd port)
 
 	// inv port 2
-	ldw r11, r11[2]
-	ldw r11, r10[r11]
+	ldw r11, r11[2]		// r11 = cur_id = chan_id_buf[3]  (channel id for 3rd Phase)
+	ldw r11, r10[r11]	// r11 = p32_pwm_lo[cur_id] (current Lo-leg port) (3rd port)
 
 	// read mode
-	ldw r7, sp[8]
-	ldw r8, sp[14]
-	ldc r10, OFFSET_OF_MODE_BUF
-	add r8, r8, r10
-	ldaw r8, r8[r7]
-	ldw r10, r8[0]
+	ldw r7, sp[8]		// r7 = buf_id
+	ldw r8, sp[14]	// r8 = mem_addr
+	ldc r10, OFFSET_OF_MODE_BUF // r10 = 24 ( offset to mode_buf)
+	add r8, r8, r10	// r8 = addr of mod_buf[]
+	ldaw r8, r8[r7]	// r8 += r7 * sizeof(unsigned) (addr of mod_buf[buf_id])
+	ldw r10, r8[0]	// r10 = cur_mode
 
 	// get current time stamp
-	getts r7, res[r0]
+	getts r7, res[r0] // r7 = resource[1st port] // Time-stamp of previous transfer
 
-	ldc r8, INIT_SYNC_INCREMENT
-	add r7, r8, r7
+	ldc r8, INIT_SYNC_INCREMENT // r8 = 4096 (PWM_MAX_VALUE)
+	add r7, r8, r7  // r7 += PWM_MAX_VALUE (1st Port TS + 4096)
 
 	// check mode and branch as appropriate
-	eq r8, r10, 1
-	bt r8, PWM_MODE_1
-	eq r8, r10, 2
-	bt r8, PWM_MODE_2
-	eq r8, r10, 3
-	bt r8, PWM_MODE_3
-	eq r8, r10, 4
-	bt r8, PWM_MODE_4
-	eq r8, r10, 5
-	bt r8, PWM_MODE_5
-	eq r8, r10, 6
-	bt r8, PWM_MODE_6
-	eq r8, r10, 7
-	bt r8, PWM_MODE_7
+	eq r8, r10, D_PWM_MODE_0
+	bt r8, L_PWM_MODE_1
+	eq r8, r10, D_PWM_MODE_1
+	bt r8, L_PWM_MODE_2
+	eq r8, r10, D_PWM_MODE_2
+	bt r8, L_PWM_MODE_3
+	eq r8, r10, D_PWM_MODE_3
+	bt r8, L_PWM_MODE_4
+	eq r8, r10, D_PWM_MODE_4
+	bt r8, L_PWM_MODE_5
+	eq r8, r10, D_PWM_MODE_5
+	bt r8, L_PWM_MODE_6
+	eq r8, r10, D_PWM_MODE_6
+	bt r8, L_PWM_MODE_7
 
 PWM_STOP:
     ldc r8, 0
@@ -164,11 +169,11 @@ PWM_STOP:
     out res[r11], r7
 	bu	PWM_STOP
 
-PWM_MODE_1:
-	// load channel
+L_PWM_MODE_1:
+	// load c_pwm
 	ldw r10, sp[11]
 
-PWM_MODE_1_LOOP:
+L_PWM_MODE_1_LOOP:
 
 	// Channel 0
 	ldw r8, r3[0]
@@ -231,7 +236,7 @@ PWM_MODE_1_LOOP:
 	ldc r8, SYNC_INCREMENT
 	add r7, r8, r7
 
-	bu PWM_MODE_1
+	bu L_PWM_MODE_1
 	
 GO_UPDATE_M1:
 	// get mode
@@ -243,7 +248,7 @@ GO_UPDATE_M1:
 
 	stw r7, sp[13] // save TS
 
-	ldw r8, sp[9]   // p32_pwm_hi
+	ldw r8, sp[9]   // r8 = p32_pwm_hi[]
 	mov r7, r0  // buf_id [0,1]
 	stw r7, sp[12]
 
@@ -306,27 +311,28 @@ GO_UPDATE_M1:
 	add r7, r8, r7
 
 	// check mode and branch as appropriate
-	eq r8, r10, 1
-	bt r8, PWM_MODE_1
-	eq r8, r10, 2
-	bt r8, PWM_MODE_2
-	eq r8, r10, 3
-	bt r8, PWM_MODE_3
-	eq r8, r10, 4
-	bt r8, PWM_MODE_4
-	eq r8, r10, 5
-	bt r8, PWM_MODE_5
-	eq r8, r10, 6
-	bt r8, PWM_MODE_6
-	eq r8, r10, 7
-	bt r8, PWM_MODE_7
+	// check mode and branch as appropriate
+	eq r8, r10, D_PWM_MODE_0
+	bt r8, L_PWM_MODE_1
+	eq r8, r10, D_PWM_MODE_1
+	bt r8, L_PWM_MODE_2
+	eq r8, r10, D_PWM_MODE_2
+	bt r8, L_PWM_MODE_3
+	eq r8, r10, D_PWM_MODE_3
+	bt r8, L_PWM_MODE_4
+	eq r8, r10, D_PWM_MODE_4
+	bt r8, L_PWM_MODE_5
+	eq r8, r10, D_PWM_MODE_5
+	bt r8, L_PWM_MODE_6
+	eq r8, r10, D_PWM_MODE_6
+	bt r8, L_PWM_MODE_7
 	bu	PWM_STOP
 
-PWM_MODE_2:
-	// load channel
+L_PWM_MODE_2:
+	// load c_pwm
 	ldw r10, sp[11]
 
-PWM_MODE_2_LOOP:
+L_PWM_MODE_2_LOOP:
 
 	// Channel 0
 	ldw r8, r3[0]
@@ -403,13 +409,13 @@ PWM_MODE_2_LOOP:
 	mkmsk r8, 16
 	and r7, r8, r7
 	
-	bu PWM_MODE_2
+	bu L_PWM_MODE_2
 
-PWM_MODE_3:
-	// load channel
+L_PWM_MODE_3:
+	// load c_pwm
 	ldw r10, sp[11]
 
-PWM_MODE_3_LOOP:
+L_PWM_MODE_3_LOOP:
 
 	// Channel 0
 	ldw r8, r3[0]
@@ -498,13 +504,13 @@ PWM_MODE_3_LOOP:
 	mkmsk r8, 16
 	and r7, r8, r7
 	
-	bu PWM_MODE_3
+	bu L_PWM_MODE_3
 	
-PWM_MODE_4:
-	// load channel end
+L_PWM_MODE_4:
+	// load c_pwm end
 	ldw r10, sp[11]
 
-PWM_MODE_4_LOOP:
+L_PWM_MODE_4_LOOP:
 
 	// Channel 0
 	ldw r8, r3[0] // load time for A
@@ -606,13 +612,13 @@ PWM_MODE_4_LOOP:
 	mkmsk r8, 16
 	and r7, r8, r7
 
-	bu PWM_MODE_4
+	bu L_PWM_MODE_4
 
-PWM_MODE_5:
-	// load channel
+L_PWM_MODE_5:
+	// load c_pwm
 	ldw r10, sp[11]
 
-PWM_MODE_5_LOOP:
+L_PWM_MODE_5_LOOP:
 
 	// Channel 0
 	ldw r8, r3[0]
@@ -688,13 +694,13 @@ PWM_MODE_5_LOOP:
 	clre
 	mov r11, r8
 
-	bu PWM_MODE_5
+	bu L_PWM_MODE_5
 
-PWM_MODE_6:
-	// load channel
+L_PWM_MODE_6:
+	// load c_pwm
 	ldw r10, sp[11]
 
-PWM_MODE_6_LOOP:
+L_PWM_MODE_6_LOOP:
 
 	// Channel 0
 	ldw r8, r3[0]
@@ -783,13 +789,13 @@ PWM_MODE_6_LOOP:
 	clre
 	mov r11, r8
 
-	bu PWM_MODE_6
+	bu L_PWM_MODE_6
 
-PWM_MODE_7:
-	// load channel
+L_PWM_MODE_7:
+	// load c_pwm
 	ldw r10, sp[11]
 
-PWM_MODE_7_LOOP:
+L_PWM_MODE_7_LOOP:
 
 	// Channel 0
 	ldw r8, r3[0]
@@ -854,7 +860,7 @@ PWM_MODE_7_LOOP:
 	clre
 	mov r11, r8
 
-	bu PWM_MODE_7
+	bu L_PWM_MODE_7
 
 GO_UPDATE_M7:
 	// Channel 0
@@ -943,20 +949,21 @@ GO_UPDATE_M7:
 	add r7, r8, r7
 
 	// check mode and branch as appropriate
-	eq r8, r10, 1
-	bt r8, PWM_MODE_1
-	eq r8, r10, 2
-	bt r8, PWM_MODE_2
-	eq r8, r10, 3
-	bt r8, PWM_MODE_3
-	eq r8, r10, 4
-	bt r8, PWM_MODE_4
-	eq r8, r10, 5
-	bt r8, PWM_MODE_5
-	eq r8, r10, 6
-	bt r8, PWM_MODE_6
-	eq r8, r10, 7
-	bt r8, PWM_MODE_7
+	// check mode and branch as appropriate
+	eq r8, r10, D_PWM_MODE_0
+	bt r8, L_PWM_MODE_1
+	eq r8, r10, D_PWM_MODE_1
+	bt r8, L_PWM_MODE_2
+	eq r8, r10, D_PWM_MODE_2
+	bt r8, L_PWM_MODE_3
+	eq r8, r10, D_PWM_MODE_3
+	bt r8, L_PWM_MODE_4
+	eq r8, r10, D_PWM_MODE_4
+	bt r8, L_PWM_MODE_5
+	eq r8, r10, D_PWM_MODE_5
+	bt r8, L_PWM_MODE_6
+	eq r8, r10, D_PWM_MODE_6
+	bt r8, L_PWM_MODE_7
 	bu	PWM_STOP
 
 

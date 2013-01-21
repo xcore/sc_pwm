@@ -14,6 +14,7 @@
  **/                                   
 
 #include <xs1.h>
+#include <print.h>
 
 #ifdef __pwm_config_h_exists__
 #include "pwm_config.h"
@@ -41,7 +42,7 @@ static void do_pwm_port_config(
 {
 	unsigned i;
 
-	for (i = 0; i < PWM_CHAN_COUNT; i++)
+	for (i = 0; i < NUM_PWM_PHASES; i++)
 	{
 		configure_out_port( p32_pwm_hi[i] ,pwm_clk ,0 ); // Set initial value of port to 0 (Switched Off) 
 		configure_out_port( p32_pwm_lo[i] ,pwm_clk ,0 ); // Set initial value of port to 0 (Switched Off)  
@@ -82,7 +83,7 @@ void do_pwm_inv_triggered(
 #else //if LOCK_ADC_TO_PWM
 		buf_id = pwm_op_inv( buf_id ,p32_pwm_hi ,p32_pwm_lo ,c_pwm ,mem_addr ,null ,null );
 #endif  //else !LOCK_ADC_TO_PWM
-	}
+	} // while(1)
 
 } // do_pwm_inv_triggered 
 /*****************************************************************************/

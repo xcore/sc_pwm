@@ -20,55 +20,106 @@
 
 #include "pwm_cli_inv.h"
 
-extern inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM(t_out_data,pwm_out_data) );
+extern inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PWM_OUTDATA_TYP ,pwm_out_data ) );
 
-#pragma unsafe arrays
-void update_pwm_inv( t_pwm_control& ctrl, chanend c_pwm, unsigned value[])
+/*****************************************************************************/
+void write_output_data( // MB~ Until Assembler is rewritten, need to write to memory structure maintained by assembler
+	PWM_OUTDATA_TYP & pwm_data, // New PWM output data structure
+	ASM_OUTDATA_TYP & asm_data // Assembler compatible output data structure
+)
 {
-//MB~ printstr( "B:" ); printintln( ctrl.pwm_cur_buf );
- 
-	ctrl.pwm_cur_buf = 1 - ctrl.pwm_cur_buf; // Toggle double-buffer ready for next calculation
+	asm_data.hi_ts0 = pwm_data.hi.edges[0].time;
+	asm_data.hi_out0 = pwm_data.hi.edges[0].pattern;
+	asm_data.hi_ts1 = pwm_data.hi.edges[1].time;
+	asm_data.hi_out1 = pwm_data.hi.edges[1].pattern;
+
+	asm_data.lo_ts0 = pwm_data.lo.edges[0].time;
+	asm_data.lo_out0 = pwm_data.lo.edges[0].pattern;
+	asm_data.lo_ts1 = pwm_data.lo.edges[1].time;
+	asm_data.lo_out1 = pwm_data.lo.edges[1].pattern;
+
+	asm_data.cat = pwm_data.typ;
+	asm_data.value = pwm_data.width;
+} // write_output_data
+/*****************************************************************************/
+void write_pwm_data_to_mem( // MB~ Until Assembler is rewritten, need to write to memory structure maintained by assembler
+	PWM_CONTROL_TYP & pwm_ctrl, // New PWM control data structure
+	ASM_CONTROL_TYP & asm_ctrl // Assembler compatible PWM data structure
+)
+{
+	int buf_cnt; // counter for double-buffer
+	int phase_cnt; // counter for PWM phases
+
+
+	asm_ctrl.pwm_cur_buf = pwm_ctrl.cur_buf; // transfer current buffer id
+
+	for (buf_cnt=0; buf_cnt<NUM_PWM_BUFS; buf_cnt++)
+	{ 
+		asm_ctrl.mode_buf[buf_cnt] = pwm_ctrl.buf_data[buf_cnt].cur_mode; // transfer current mode
+
+		for (phase_cnt=0; phase_cnt<NUM_PWM_PHASES; phase_cnt++)
+		{
+		 	// transfer phase-data
+			asm_ctrl.chan_id_buf[buf_cnt][phase_cnt] = pwm_ctrl.buf_data[buf_cnt].phase_data[phase_cnt].ord_id;
+
+			write_output_data( pwm_ctrl.buf_data[buf_cnt].phase_data[phase_cnt].out_data ,asm_ctrl.pwm_out_data_buf[buf_cnt][phase_cnt] );
+		} // for phase_cnt
+	} // for buf_cnt
+} // write_pwm_data_to_mem
+/*****************************************************************************/
+#pragma unsafe arrays
+void update_pwm_inv( 
+	ASM_CONTROL_TYP & asm_ctrl, 
+	PWM_CONTROL_TYP & pwm_ctrl, 
+	chanend c_pwm, 
+	unsigned pwm_width[]
+)
+{
+//MB~Depreciated	unsigned minus_one = 1; // NB remains set if all PWM values are -1
+
+
+ 	pwm_ctrl.cur_buf = 1 - pwm_ctrl.cur_buf; // Toggle double-buffer ready for next calculation
 
 	/* calculate the required outputs */
 #pragma loop unroll
-	for (int i = 0; i < PWM_CHAN_COUNT; i++) {
-
-		// Initialise channel number
-		ctrl.chan_id_buf[ctrl.pwm_cur_buf][i] = i;
-
-#ifndef PWM_CLIPPED_RANGE
-		/* clamp to avoid issues with LONG_SINGLE */
-		if (value[i] > (PWM_MAX_VALUE - (32+PWM_DEAD_TIME))) {
-			value[i] = (PWM_MAX_VALUE - (32+PWM_DEAD_TIME));
-		}
-#endif
+	for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
+	{
+		pwm_ctrl.buf_data[pwm_ctrl.cur_buf].phase_data[phase_cnt].ord_id = phase_cnt; // Reset default phase order
 
 #ifdef PWM_CLIPPED_RANGE
-		calculate_data_out_quick(value[i], ctrl.pwm_out_data_buf[ctrl.pwm_cur_buf][i]);
+		calculate_data_out_quick( pwm_width[phase_cnt] ,pwm_ctrl.buf_data[pwm_ctrl.cur_buf].phase_data[phase_cnt].out_data );
 #else
-		calculate_data_out_ref( value[i],
-				ctrl.pwm_out_data_buf[ctrl.pwm_cur_buf][i].ts0,
-				ctrl.pwm_out_data_buf[ctrl.pwm_cur_buf][i].out0,
-				ctrl.pwm_out_data_buf[ctrl.pwm_cur_buf][i].ts1,
-				ctrl.pwm_out_data_buf[ctrl.pwm_cur_buf][i].out1,
-				ctrl.pwm_out_data_buf[ctrl.pwm_cur_buf][i].cat );
-		calculate_data_out_ref( (value[i]+PWM_DEAD_TIME),
-				ctrl.pwm_out_data_buf[ctrl.pwm_cur_buf][i].inv_ts0,
-				ctrl.pwm_out_data_buf[ctrl.pwm_cur_buf][i].inv_out0,
-				ctrl.pwm_out_data_buf[ctrl.pwm_cur_buf][i].inv_ts1,
-				ctrl.pwm_out_data_buf[ctrl.pwm_cur_buf][i].inv_out1,
-				ctrl.pwm_out_data_buf[ctrl.pwm_cur_buf][i].cat );
+		/* clamp to avoid issues with LONG_SINGLE */
+		if (pwm_width[phase_cnt] > PWM_LIM_VALUE) 
+		{
+			pwm_width[phase_cnt] = PWM_LIM_VALUE;
+		} // if (pwm_width[phase_cnt] > PWM_LIM_VALUE)
+
+		calculate_all_data_out_ref( pwm_ctrl.buf_data[pwm_ctrl.cur_buf].phase_data[phase_cnt].out_data 
+			,pwm_width[phase_cnt] ,PWM_DEAD_TIME );
 #endif
-	}
 
-	if (value[0] == -1 && value[1] == -1 && value[2] == -1) {
-		ctrl.mode_buf[ctrl.pwm_cur_buf] = -1;
-	} else {
+//MB~Depreciated		if (pwm_width[phase_cnt] != -1) minus_one = 0; // Clear minus_one flag
+	} // for phase_cnt
 
-		/* now order them and work out the mode */
-		order_pwm( ctrl.mode_buf[ctrl.pwm_cur_buf], ctrl.chan_id_buf[ctrl.pwm_cur_buf], ctrl.pwm_out_data_buf[ctrl.pwm_cur_buf] );
-	}
+	order_new_pwm( pwm_ctrl );
 
-	c_pwm <: ctrl.pwm_cur_buf;
-}
+#ifdef MB // Depreciated
+	// Check if minus_one flag still set. //MB~ Not sure what this is doing yet.
+	if (minus_one)
+	{
+		pwm_ctrl.buf_data[pwm_ctrl.cur_buf].cur_mode = -1;
+	} // if (minus_one)
+	else 
+	{
+		// now order them and work out the mode
+		order_new_pwm( pwm_ctrl );
+	} // else !(minus_one)
+#endif //MB~ Depreciated
 
+	write_pwm_data_to_mem( pwm_ctrl ,asm_ctrl ); // Write PWM data to shared memory (read by assembler)
+
+	c_pwm <: pwm_ctrl.cur_buf; // Signal PWM server that PWM data is ready to read
+} // update_pwm_inv 
+/*****************************************************************************/
+// pwm_cli_inv
