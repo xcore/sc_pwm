@@ -13,6 +13,8 @@
  *
  */
 
+#include <assert.h>
+
 #include <print.h>
 #ifdef __pwm_config_h_exists__
 #include "pwm_config.h"
@@ -70,7 +72,8 @@ void write_pwm_data_to_mem( // MB~ Until Assembler is rewritten, need to write t
 #pragma unsafe arrays
 void update_pwm_inv( 
 	ASM_CONTROL_TYP & asm_ctrl, 
-	PWM_CONTROL_TYP & pwm_ctrl, 
+	PWM_CONTROL_TYP & pwm_ctrl,
+	int xscope[],
 	chanend c_pwm, 
 	unsigned pwm_width[]
 )
@@ -92,6 +95,7 @@ void update_pwm_inv(
 		/* clamp to avoid issues with LONG_SINGLE */
 		if (pwm_width[phase_cnt] > PWM_LIM_VALUE) 
 		{
+			assert( 0 == 1); // MB~ Dbg: Don't think this happens any more
 			pwm_width[phase_cnt] = PWM_LIM_VALUE;
 		} // if (pwm_width[phase_cnt] > PWM_LIM_VALUE)
 
@@ -118,6 +122,12 @@ void update_pwm_inv(
 #endif //MB~ Depreciated
 
 	write_pwm_data_to_mem( pwm_ctrl ,asm_ctrl ); // Write PWM data to shared memory (read by assembler)
+{ //MB~ Dbg
+	xscope[0] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][2].hi_ts0;
+	xscope[1] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][2].lo_ts0;
+	xscope[2] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][2].hi_ts1;
+	xscope[3] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][2].lo_ts1;
+} //MB~ Dbg
 
 	c_pwm <: pwm_ctrl.cur_buf; // Signal PWM server that PWM data is ready to read
 } // update_pwm_inv 

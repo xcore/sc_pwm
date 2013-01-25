@@ -13,6 +13,8 @@
  *
  **/                                   
 
+#include <assert.h>
+
 #include <xs1.h>
 #include <print.h>
 
@@ -79,10 +81,11 @@ void do_pwm_inv_triggered(
 	while (1)
 	{
 #if LOCK_ADC_TO_PWM
-		buf_id = pwm_op_inv( buf_id, p32_pwm_hi, p32_pwm_lo, c_pwm, mem_addr, c_adc_trig, p16_adc_sync );
+		buf_id = pwm_op_inv( buf_id, p32_pwm_hi, p32_pwm_lo, c_pwm, mem_addr, c_adc_trig, p16_adc_sync ); // Never exits
 #else //if LOCK_ADC_TO_PWM
-		buf_id = pwm_op_inv( buf_id ,p32_pwm_hi ,p32_pwm_lo ,c_pwm ,mem_addr ,null ,null );
+		buf_id = pwm_op_inv( buf_id ,p32_pwm_hi ,p32_pwm_lo ,c_pwm ,mem_addr ,null ,null ); // Never Exits
 #endif  //else !LOCK_ADC_TO_PWM
+		assert( 0 == 1); // ERROR: Unreachable code
 	} // while(1)
 
 } // do_pwm_inv_triggered 

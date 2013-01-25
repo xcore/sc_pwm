@@ -493,7 +493,7 @@ void calculate_all_data_out_ref( // Calculate all PWM Pulse data for balanced li
 	unsigned dead_time // PWM dead-time
 )
 {
-	//  WARNING: The both legs of the balanced line must NOT be switched at the same time. Therefore add dead-time to low leg.
+	//  WARNING: Both legs of the balanced line must NOT be switched at the same time. Therefore add dead-time to low leg.
 
 	// Calculate PWM Pulse data for high leg (V+) of balanced line
 	calculate_leg_data_out_ref( &(outdata_ps->hi) ,&(outdata_ps->typ) ,value );
@@ -709,7 +709,6 @@ void order_new_pwm(  // Used by INV and NOINV modes
 
 #endif //  else #ifdef PWM_CLIPPED_RANGE
 
-	pwm_ctrl_ps->tmp[pwm_buf_data_ps->cur_mode]++; //MB~ Dbg
 } // order_new_pwm 
 /*****************************************************************************/
 // pwm_cli_common.c

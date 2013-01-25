@@ -142,7 +142,7 @@ typedef struct PWM_BUFFER_TAG
 typedef struct PWM_CONTROL_TAG
 {
 	PWM_BUFFER_TYP buf_data[NUM_PWM_BUFS]; // Array of buffer-data structures, one for each buffer
-	unsigned tmp[8]; // Debug
+	unsigned tmp; // Debug
 	unsigned cur_buf; // current double-buffer id
 } PWM_CONTROL_TYP;
 
