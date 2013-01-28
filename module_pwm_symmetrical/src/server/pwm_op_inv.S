@@ -68,9 +68,9 @@ pwm_op_inv:
 
 
 	// Get initial time stamp. NB This assumes 1st buf_id = 0
-	ldw r11, sp[14] 	// r11 = mem_addr
-	ldw r11, r11[0] // r11 = cur_id = chan_id_buf[0] // channel id for 1st Phase
-	ldw r11, r1[r11] // r11 = p32_pwm_hi[cur_id] (current Hi-leg 1st port)
+	ldw r8, sp[14] 	// r8 = mem_addr
+	ldw r6, r8[0] // r6 = cur_id = chan_id_buf[0] // channel id for 1st Phase
+	ldw r11, r1[r6] // r11 = p32_pwm_hi[cur_id] (current Hi-leg 1st port)
 
 	getts r9, res[r11] // r9 = resource[1stPort].time // Time-stamp of previous transfer or current port-time
 
@@ -187,7 +187,7 @@ L_PWM_STOP:
 L_MODE_0: // 3xSINGLE
 	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
 
-	bl No_LS_new_data_test  // test if new data arrived if No LONG_SINGLE
+	bl No_LS_new_data_test  // Jump if new data arrived if No LONG_SINGLE
 
 	bu L_MODE_0 // repeat old Mode_0 data
 	
@@ -208,7 +208,7 @@ L_MODE_1: // 2xSINGLE + DOUBLE
 	ldw r11, r3[7] // r11 = lo_out0 (Load Lo-Leg Output Value)
 	out res[r6], r11 // resource[Lo_Leg 1stPort].val = r11 (Load output value into Lo-Leg 1stPort)
 
-	bl No_LS_new_data_test  // test if new data arrived if No LONG_SINGLE
+	bl No_LS_new_data_test  // Jump if new data arrived if No LONG_SINGLE
 
 	bu L_MODE_1 // repeat old Mode_1 data
 
@@ -243,7 +243,7 @@ L_MODE_2: // SINGLE + 2xDOUBLE
 	ldw r11, r3[7] // r11 = lo_out0 (Load Lo-Leg Output Value)
 	out res[r6], r11 // resource[Lo_Leg 1stPort].val = r11 (Load output value into Lo-Leg 1stPort)
 
-	bl No_LS_new_data_test  // test if new data arrived if No LONG_SINGLE
+	bl No_LS_new_data_test  // Jump if new data arrived if No LONG_SINGLE
 	
 	bu L_MODE_2 // repeat old Mode_2 data
 	
@@ -316,14 +316,15 @@ L_MODE_3: // 3xDOUBLE
 	ldw r11, r3[7]
 	out res[r6], r11
 
-	bl No_LS_new_data_test  // test if new data arrived if No LONG_SINGLE
+	bl No_LS_new_data_test  // Jump if new data arrived if No LONG_SINGLE
 
 	bu L_MODE_3 // repeat old Mode_3 data
 
 L_MODE_4: // LONG + 2xSINGLE
 	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
 
- 	bl long_single_new_data_test // test if new data arrived if LONG_SINGLE
+	ldap r11, L_ONE_LONG			// r11 = PC + 2xL_ONE_LONG (Load jump address)
+ 	bl long_single_new_data_test // Jump if new data arrived if LONG_SINGLE
 
 	bu L_MODE_4 // repeat old Mode_4 data
 
@@ -344,7 +345,8 @@ L_MODE_5: // LONG + SINGLE + DOUBLE
 	ldw r11, r4[7]
 	out res[r7], r11
 
- 	bl long_single_new_data_test // test if new data arrived if LONG_SINGLE
+	ldap r11, L_ONE_LONG			// r11 = PC + 2xL_ONE_LONG (Load jump address)
+ 	bl long_single_new_data_test // Jump if new data arrived if LONG_SINGLE
 
 	bu L_MODE_5 // repeat old Mode_5 data
 
@@ -379,14 +381,16 @@ L_MODE_6: // LONG + 2xDOUBLE
 	ldw r11, r4[7]
 	out res[r7], r11
 
- 	bl long_single_new_data_test // test if new data arrived if LONG_SINGLE
+	ldap r11, L_ONE_LONG			// r11 = PC + 2xL_ONE_LONG (Load jump address)
+ 	bl long_single_new_data_test // Jump if new data arrived if LONG_SINGLE
 
 	bu L_MODE_6 // repeat old Mode_6 data
 
 L_MODE_7: // 2xLONG + SINGLE
 	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
 
- 	bl long_single2_new_data_test // test if new data arrived if 2xLONG_SINGLE
+	ldap r11, L_TWO_LONG			// r11 = PC + 2xL_TWO_LONG (Load jump address)
+ 	bl long_single_new_data_test // Jump if new data arrived if 2xLONG_SINGLE
 
 	bu L_MODE_7 // repeat old Mode_7 data
 
@@ -407,16 +411,20 @@ L_MODE_8: // 2xLONG + DOUBLE
 	ldw r11, r5[7] // r11 = lo_out1 (Load Output Value for edge_1 of Lo-leg 3rdPort)
 	out res[r8], r11
 
- 	bl long_single2_new_data_test // test if new data arrived if 2xLONG_SINGLE
+	ldap r11, L_TWO_LONG			// r11 = PC + 2xL_TWO_LONG (Load jump address)
+ 	bl long_single_new_data_test // Jump if new data arrived if 2xLONG_SINGLE
 
 	bu L_MODE_8 // repeat old Mode_8 data
 
 L_MODE_9: // 3xLONG
 	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
 
- 	bl long_single3_new_data_test // test if new data arrived if 3xLONG_SINGLE
+	ldap r11, L_THREE_LONG			// r11 = PC + 2xL_THREE_LONG (Load jump address)
+ 	bl long_single_new_data_test // Jump if new data arrived if 3xLONG_SINGLE
 
 	bu L_MODE_9 // repeat old Mode_9 data
+
+/*......................... End of Switch(Cur_mode) .........................*/
 
 L_THREE_LONG: // Load 3rd Port with zero, for 3xLONG_SINGLE 
 	// Expected registers values on entry:
@@ -430,7 +438,7 @@ L_THREE_LONG: // Load 3rd Port with zero, for 3xLONG_SINGLE
 	// r7: p32_pwm_lo[1] Lo-leg of 2ndPort
 	// r8: p32_pwm_lo[2] Lo-leg of 3rdPort
 	// r9: Time-stamp of previous transfer on 1stPort
-	// r10: USUALLY c_pwm
+	// r10: c_pwm
 
 	// Edge_0 Channel_2 Hi-Leg
 	ldw r11, r5[0]	// r11 = hi_ts1 (time-stamp for edge_0 of Hi-leg 3rdPort)
@@ -482,8 +490,9 @@ L_ONE_LONG: // Load 1st Port with zero, for one LONG_SINGLE
 	out res[r6], r11		// resource[Lo_Leg 1stPort].val = 0 (Load Zero into Hi-Leg 1stPort)
 
 L_WAIT_NO_LONG: // Wait for new data to arrive
+	// Expected registers values on entry:
+	// r10: c_pwm
 
-//MB~	ldw r10, sp[11] // r10 = sp[11] (chanend c_pwm) MB~ do this earlier
 	chkct res[r10], 0x1	// discard resource[c_pwm].token if equal to  1  
 	outct res[r10], 0x1	// output token of value 1 on channel c_pwm
 	in r0, res[r10]			// r0 = c_pwm data (Wait until new buf_id ready on c_pwm -- NB signals next data ready)
@@ -560,7 +569,6 @@ load_word1_data:
 	in r11, res[r11] // r11 = resource[p16_adc_sync].val (Wait until time to input data)
 	outct res[r10], XS1_CT_END // resource[c_adc_trig].val = XS1_CT_END ( send adc trig token)
 	#endif
-	ldw r10, sp[11] // r10 = c_pwm (load chanend c_pwm ready for return)
 
 	// Expected registers values on exit:
 	// r0: p32_pwm_hi[0] Hi-leg of 1st Port
@@ -578,54 +586,18 @@ load_word1_data:
 	retsp 0;
 // load_word1_data
 /*****************************************************************************/
-long_single3_new_data_test:  // test if new data arrived, if 3xLONG_SINGLE
+long_single_new_data_test:  // Test if new data arrived, for AT LEAST 'One LONG_SINGLE'
 
 	// update SYNC timestamp
-	ldc r11, SYNC_INCREMENT	// r11 = PWM_MAX_VALUE = 4096
-	add r9, r11, r9					// r9 += 4096 ( Increment Time-stamp of previous transfer )
+	ldc r10, SYNC_INCREMENT	// r10 = PWM_MAX_VALUE = 4096
+	add r9, r10, r9					// r9 += 4096 ( Increment Time-stamp of previous transfer )
 
-	ldap r11, L_THREE_LONG			// r11 = PC + 2xL_THREE_LONG (Load jump address)
-	setv res[r10], r11				// resource[c_pwm].vect = L_THREE_LONG (Use Relative address)
+	ldw r10, sp[11]						// r10 = sp[11] (chanend c_pwm)
+
+	setv res[r10], r11				// resource[c_pwm].vect = label (Use Relative address)
 	eeu res[r10]							// resource[c_pwm].enable 
-	setsr 0x1									// EEBLE (Enable Thread Events - If c_pwm has data jump to L_THREE_LONG)
-
-	// NB Continue if no data on c_pwm
-	// clear events
-	clrsr 0x1									// EEBLE (Clear Thread Events - Queue Pending Events)
-	clre											// Clear all thread enabling flags
-
-	retsp 0;
-// long_single3_new_data_test
-/*****************************************************************************/
-long_single2_new_data_test:  // test if new data arrived, if 2xLONG_SINGLE
-
-	// update SYNC timestamp
-	ldc r11, SYNC_INCREMENT	// r11 = PWM_MAX_VALUE = 4096
-	add r9, r11, r9					// r9 += 4096 ( Increment Time-stamp of previous transfer )
-
-	ldap r11, L_TWO_LONG			// r11 = PC + 2xL_TWO_LONG (Load jump address)
-	setv res[r10], r11				// resource[c_pwm].vect = L_TWO_LONG (Use Relative address)
-	eeu res[r10]							// resource[c_pwm].enable 
-	setsr 0x1									// EEBLE (Enable Thread Events - If c_pwm has data jump to L_TWO_LONG)
-
-	// NB Continue if no data on c_pwm
-	// clear events
-	clrsr 0x1									// EEBLE (Clear Thread Events - Queue Pending Events)
-	clre											// Clear all thread enabling flags
-
-	retsp 0;
-// long_single2_new_data_test
-/*****************************************************************************/
-long_single_new_data_test:  // test if new data arrived, if LONG_SINGLE
-
-	// update SYNC timestamp
-	ldc r11, SYNC_INCREMENT	// r11 = PWM_MAX_VALUE = 4096
-	add r9, r11, r9					// r9 += 4096 ( Increment Time-stamp of previous transfer )
-
-	ldap r11, L_ONE_LONG			// r11 = PC + 2xL_ONE_LONG (Load jump address)
-	setv res[r10], r11				// resource[c_pwm].vect = L_ONE_LONG (Use Relative address)
-	eeu res[r10]							// resource[c_pwm].enable 
-	setsr 0x1									// EEBLE (Enable Thread Events - If c_pwm has data jump to L_ONE_LONG)
+	// EEBLE (Enable Thread Events - If c_pwm has data jump label held in r11 [L_ONE_LONG, L_TWO_LONG, L_THREE_LONG]
+	setsr 0x1									
 
 	// NB Continue if no data on c_pwm
 	// clear events
@@ -635,9 +607,11 @@ long_single_new_data_test:  // test if new data arrived, if LONG_SINGLE
 	retsp 0;
 // long_single_new_data_test
 /*****************************************************************************/
-No_LS_new_data_test:  // test if new data arrived if No LONG_SINGLE
+No_LS_new_data_test:  // Test if new data arrived, for 'No LONG_SINGLE'
 
 	ldap r11, L_WAIT_NO_LONG			// r11 = PC + 2xL_WAIT_NO_LONG	
+
+	ldw r10, sp[11] // r10 = sp[11] (chanend c_pwm)
 	setv res[r10], r11				// resource[c_pwm].vect = L_WAIT_NO_LONG (Use Relative address)
 	eeu res[r10]							// resource[c_pwm].enable 
 	setsr 0x1									// EEBLE (Enable Thread Events - If c_pwm has data jump to L_WAIT_NO_LONG)
