@@ -171,6 +171,12 @@ L_READ_NEW_DATA:
 	bt r11, L_MODE_5
 	eq r11, r10, D_PWM_MODE_6
 	bt r11, L_MODE_6
+	eq r11, r10, D_PWM_MODE_7
+	bt r11, L_MODE_7
+	eq r11, r10, D_PWM_MODE_8
+	bt r11, L_MODE_8
+	eq r11, r10, D_PWM_MODE_9
+	bt r11, L_MODE_9
 
 // Default if Mode NOT supported
 L_PWM_STOP:
