@@ -99,18 +99,17 @@ L_READ_NEW_DATA:
 
 	/* load ports and data pointers */
 
+	// prep for reading pwm_out_data_buf
+	ldc r11, OFFSET_OF_DATA_OUT			// r11 = Offset to start of pwm_out_data_buf[][]
+	add r5, r8, r11  								// r5 = addr of start of pwm_out_data_buf[][]
+	ldc r11, (SIZE_OF_T_DATA_OUT*3)	// r11 = 120 = 40 * NUM_PWM_PHASES (pwm_out_data_buf line-size)
+	mul r9, r0, r11									// r9 = buf_id * r11 (Offset to correct line of pwm_out_data_buf[])
+	add r5, r5, r9 									// r5 = addr of start of correct pwm_out_data_buf[]
+
 	//prep for reading chan_id_buf
 	ldc r3, 12 				// r3 = 12 ( sizeof(unsigned) * NUM_PWM_PHASES : chan_id_buf line size)
 	mul r3, r0, r3 		// r3 = buf_id * 12  (Offset to correct line of chan_id_buf[])
 	add r8, r3, r8	// r8 = addr of start of correct chan_id_buf[]
-
-	// prep for reading pwm_out_data_buf
-	ldw r5, sp[14]									// r5 = mem_addr
-	ldc r11, OFFSET_OF_DATA_OUT			// r11 = Offset to start of pwm_out_data_buf[][]
-	add r5, r5, r11  								// r5 = addr of start of pwm_out_data_buf[][]
-	ldc r11, (SIZE_OF_T_DATA_OUT*3)	// r11 = 120 = 40 * NUM_PWM_PHASES (pwm_out_data_buf line-size)
-	mul r9, r0, r11									// r9 = buf_id * r11 (Offset to correct line of pwm_out_data_buf[])
-	add r5, r5, r9 									// r5 = addr of start of correct pwm_out_data_buf[]
 
 	ldc r11, SIZE_OF_T_DATA_OUT // r11 = 40
 
