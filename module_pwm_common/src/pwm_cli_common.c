@@ -16,6 +16,7 @@
 
 #include <assert.h>
 #include <print.h>
+#include <xclib.h>
 
 #include "pwm_cli_common.h"
 #include "pwm_common.h"
@@ -311,8 +312,6 @@ void calculate_data_out(
 	outdata_ps->hi.edges[0].time = (value >> 1);
 	outdata_ps->hi.edges[1].time = (value >> 1)-31;
 } // calculate_data_out 
-
-#endif //MB~ Depreciated
 /*****************************************************************************/
 void calculate_data_out_ref( 
 	unsigned value, 
@@ -329,7 +328,7 @@ void calculate_data_out_ref(
 	// very low values
 	if (value < 32)
 	{
-		*cat = SINGLE;
+ 		*cat = SINGLE;
 		// compiler work around, bug 8218
 		/* pwm_out_data.out0 = ((1 << value)-1);  */
 		asm("mkmsk %0, %1"
@@ -395,6 +394,7 @@ void calculate_data_out_ref(
 		*ts1 = 0;
 		return;
 	}
+
 	// midrange
 	*cat = DOUBLE;
 	*out0 = 0xFFFFFFFF;
@@ -404,8 +404,9 @@ void calculate_data_out_ref(
 	*ts1 = (value >> 1)-31;
 
 } // calculate_data_out_ref
+#endif //MB~ Depreciated
 /*****************************************************************************/
-void calculate_leg_data_out_ref( 
+void calculate_leg_data_out_ref( // convert pulse width to a 32-bit pattern and a time-offset
 	PWM_PULSE_TYP * pulsedata_ps, // Pointer to PWM pulse data structure (for one leg of balanced line)
 	e_pwm_cat * typ_p, // Pointer to type of pulse to generate
 	unsigned inp_wid // PWM pulse-width value
@@ -416,65 +417,79 @@ void calculate_leg_data_out_ref(
 	unsigned tmp;
 
 
-	// very low values
-	if (inp_wid < 32)
-	{
-		*typ_p = SINGLE;
-		pulsedata_ps->edges[0].pattern = ((1 << inp_wid)-1);
-		pulsedata_ps->edges[0].pattern <<= 16 - (inp_wid >> 1); // move it to the middle
-		pulsedata_ps->edges[0].time = 16;
+/* The time offset is measured from a time datum (e.g. the Centre of the pulses) 
+ * For the 1st word, it is measured backwards from the centre to the start of the pulse.
+ * For the 2nd word, (if used) it is measured forwards to the end of the pulse (- 32 bits).
+ * Therefore in pwm_op_inv.S, you will find Tc - To (Time_Centre - Time_Offset) for the 1st word
+ * and Tc + To (Time_Centre + Time_Offset) for the 2nd word
+ */
 
-		/* DOUBLE mode safe inp_wids */
-		pulsedata_ps->edges[1].pattern = 0;
-		pulsedata_ps->edges[1].time = 100;
+	// Garbage values for edge[1]
+	pulsedata_ps->edges[1].pattern = 0x55555555;
+	pulsedata_ps->edges[1].time = 0;
+
+	// Check for SINGLE pulse 
+	if (inp_wid < 32)
+	{ // NB Need MSB to be zero, as this lasts for long low section of pulse
+		*typ_p = SINGLE;
+		pulsedata_ps->edges[0].time = 16;
+		pulsedata_ps->edges[0].pattern = ((1 << inp_wid)-1);
+
+		// shift pulse to the middle of the 32-bit pattern
+		pulsedata_ps->edges[0].pattern <<= ((32 - inp_wid) >> 1); // Ensures MSB=0 for inp_wid = 31 
 
 		return;
 	} // if (inp_wid < 32)
 
-	// close to PWM_MAX_VALUE
-	/* Its pretty impossible to apply dead time to values this high... so update function should clamp the values to
-	 * PWM_MAX - (31+PWM_DEAD_TIME)
-	 */
-
-	num_zeros = PWM_MAX_VALUE - inp_wid; // No. of 0's
-	if (num_zeros < 32)
-	{
-		*typ_p = LONG_SINGLE;
-		num_ones = 32 - num_zeros; // number of 1's
-
-		pulsedata_ps->edges[0].pattern = ((1 << num_ones) - 1); // Generate mask with required 1's in LSB's
-		pulsedata_ps->edges[0].pattern <<= num_zeros;           // Move required 1's to MSB's
-		pulsedata_ps->edges[0].time = (PWM_MAX_VALUE >> 1) + (num_zeros >> 1); // MAX + (num 0's / 2)
-
-		pulsedata_ps->edges[1].pattern = 0;
-		pulsedata_ps->edges[1].time = 0;
-
-		return;
-	}	// if (inp_wid >= (PWM_MAX_VALUE-31))
-
-	// low mid range
+	// Check for short pulse with adjacent DOUBLE's
 	if (inp_wid < 64)
 	{
 		*typ_p = DOUBLE;
 
-		if (inp_wid == 63)
-		{
-			tmp = 32;
-		} // if (inp_wid == 63)
-		else
-		{
-			tmp = inp_wid >> 1;
-		} // else !(inp_wid == 63)
-
-		pulsedata_ps->edges[0].pattern = ((1 << tmp)-1);
+		tmp = (64 - inp_wid) >> 1; // NB tmp range [16..0]
+		pulsedata_ps->edges[0].pattern = ((1 << tmp)-1); // This is inverted pattern
+		pulsedata_ps->edges[0].pattern = ~(pulsedata_ps->edges[0].pattern); // This is correct pattern
 		pulsedata_ps->edges[0].time = 32;
 
-		tmp = inp_wid - tmp;
+		tmp = (inp_wid >> 1); // NB tmp range [0..31]
 		pulsedata_ps->edges[1].pattern = ((1 << tmp)-1);
 		pulsedata_ps->edges[1].time = 0;
 
 		return;
 	} // if (inp_wid < 64)
+
+	num_zeros = PWM_MAX_VALUE - inp_wid; // No. of 0's
+
+	// Check for LONG_SINGLE pulse 
+	if (num_zeros < 32)
+	{	// close to PWM_MAX_VALUE
+		*typ_p = LONG_SINGLE;
+
+		pulsedata_ps->edges[0].time = (PWM_MAX_VALUE >> 1) - 16;
+		pulsedata_ps->edges[0].pattern = ((1 << num_zeros)-1);
+		pulsedata_ps->edges[0].pattern <<= ((32 - num_zeros) >> 1); // shift inverted pulse to the middle of the 32-bit pattern
+		pulsedata_ps->edges[0].pattern = ~(pulsedata_ps->edges[0].pattern); // This is correct pattern
+
+		return;
+	}	// if (inp_wid >= (PWM_MAX_VALUE-31))
+
+	// Check for long pulse with adjacent DOUBLE's
+	if (num_zeros < 64)
+	{	// close to PWM_MAX_VALUE
+		*typ_p = DOUBLE;
+
+		tmp = (num_zeros >> 1); // NB tmp range [0..31]
+		pulsedata_ps->edges[0].pattern = ((1 << tmp)-1);
+		pulsedata_ps->edges[0].pattern = ~(pulsedata_ps->edges[0].pattern); // This is correct pattern
+		pulsedata_ps->edges[0].time = (PWM_MAX_VALUE >> 1);
+
+		tmp = (64 - num_zeros) >> 1; // NB tmp range [16..0]
+		pulsedata_ps->edges[1].pattern = ((1 << tmp)-1); // This is inverted pattern
+		pulsedata_ps->edges[1].time = (PWM_MAX_VALUE >> 1) - 32;
+
+
+		return;
+	}	// if (inp_wid >= (PWM_MAX_VALUE-31))
 
 	// Default: midrange
 
@@ -523,7 +538,7 @@ assert( 0 == 1 ); // MB~ Test Me!
 	phase_p[phase_b].ord_id = tmp_id;
 } // swap_phase_ids 
 /*****************************************************************************/
-void order_common_mode( // Order common mode
+void order_common_mode( // Order common mode using 3 element Bubble Sort
 	PWM_BUFFER_TYP * pwm_buf_data_ps, // Pointer to structure containing PWM buffer-data
 	PWM_PHASE_TYP * phase_p // Pointer to array of phase data strutures
 )
@@ -538,9 +553,18 @@ void order_common_mode( // Order common mode
 		swap_phase_ids( phase_p ,1 ,2 );  // Swap id's for phase 1 and 2
 	} // if (phase_p[1].out_data.width > phase_p[2].out_data.width) 
 
+	// NB Phase_2 now largest
+
+	if (phase_p[0].out_data.width > phase_p[1].out_data.width) 
+	{
+		swap_phase_ids( phase_p ,0 ,1 ); // Swap id's for phase 0 and 1
+	} //if (phase_p[0].out_data.width > phase_p[1].out_data.width) 
+
+	// NB Phase_0 now smallest
+
 } // order_common_mode
 /*****************************************************************************/
-void order_new_pwm(  // Used by INV and NOINV modes
+void calculate_pwm_mode(  // Used by INV and NOINV modes
 	PWM_CONTROL_TYP * pwm_ctrl_ps // Pointer to structure of PWM control data
 )
 {
@@ -591,12 +615,11 @@ void order_new_pwm(  // Used by INV and NOINV modes
 		} // switch( phase_p[phase_cnt].out_data.typ ) 
 	}	// for phase_cnt
 
-//MB~ When pwm_op_inv rewritten, the pwm_buf_data_ps->cur_mode will be equivalent to the mode_id 
 	// Order pulse-data according to PWM mode
 	switch( pwm_buf_data_ps->cur_mode )
 	{
 		case D_PWM_MODE_3: // 3xDOUBLE (Most common mode)
-			order_common_mode( pwm_buf_data_ps ,phase_p );
+//MB~	order_common_mode( pwm_buf_data_ps ,phase_p ); // Depreciated. See explanation at end of file
 		break; // case 3
 
 		case D_PWM_MODE_0: // 3xSINGLE
@@ -705,10 +728,16 @@ void order_new_pwm(  // Used by INV and NOINV modes
 
 #else // #ifndef PWM_CLIPPED_RANGE
 
-	order_common_mode( pwm_buf_data_ps ,phase_p ); // Just do common_mode
+/* WARNING: order_common_mode() is used to order the edges of the pulses for all 3 phases.
+ *	pwm_op_inv.S queues up all edges with timestamp triggers (ahead of time).
+ * 	These edges are effectively waiting in parallel and will trigger at the correct time-stamp.
+ *	The order in which they were queued is therefore irrelevant. Therefore depreciated
+ *
+ *	order_common_mode( pwm_buf_data_ps ,phase_p ); // Just do common_mode
+ */
 
 #endif //  else #ifdef PWM_CLIPPED_RANGE
 
-} // order_new_pwm 
+} // calculate_pwm_mode 
 /*****************************************************************************/
 // pwm_cli_common.c

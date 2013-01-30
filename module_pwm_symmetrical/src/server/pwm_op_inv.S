@@ -4,20 +4,71 @@
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
- * Copyright XMOS Ltd 2010
+ * Copyright XMOS Ltd 2013
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
  * below. The modifications to the code are still covered by the 
  * copyright notice above.
  *
- **/                                   
-//
-// This implements all PWM configurations for 3 channel
-// PWM. The mode of operation should be updated using
-// the appropriate functions in the dsc_pwm_cli API
-//
-// 26 Apr 2010
+ * This code was substantially re-written Jan-2013 to be more readable.
+ * Subroutines are used for common code sections. These require a 2 cycle overhead.
+ * Also the 3 missing modes were added (more than one LONG_SINGLES)
+ *
+ * WARNING: No other modes other than Mode_3 (3xDOUBLE) have ever been tested.
+ * This is due to the fact that the H/W used in the test, never needed to use
+ * any of the other modes. 
+ *
+ * The flow of the pwm_op_inv() function is as follows ...
+ *
+ *(0) Initialisation. NB This function never terminates. It loops through the following stages (1 .. 9)
+ *
+ *(1) READ_NEW_DATA: Reads data for 6-edges (3 Phases) from current buffer in shared memory.
+ *		including the current mode (pulse configuration. E.g. LONG_SINGLE, DOUBLE, SINGLE)
+ *
+ *(2) A switch statement inspects the current mode and jumps to the correct section for that mode.
+ *		(I.e. L_MODE_0 .. L_MODE_9)
+ *
+ *(3) The instructions in each mode section are different, but have similarities ...
+ *
+ *(4) Firstly, all modes call a subroutine load_word1_data, which does the following ...
+ *	(a) loads a 32-bit word onto each of the 6 ports with a timestamp. 
+ *			These words contains 1 or 2 edges, and will fire when each timestamp is reached.
+ *	(b) If LOCK_ADC_TO_PWM is active, a timestamp is calculated for the next PWM->ADC trigger.
+ *			As the trigger event is sent over channel c_adc_trig (and these can NOT be timed), 
+ *			a dummy port is used (p16_adc_sync). This is used to force a wait until the dummy port
+ *      reaches the time-stamp. Then immediately afterwards, a token is sent on the c_adc_trig channel.
+ *
+ *(5)	If the mode contains a DOUBLE, a 2nd word of data containing the 2nd edge is required.
+ *		This are queued with a timestamp, similarly to the first word.
+ *
+ *(6) A test is now made to check whether the next set of data is ready (in the other buffer in shared memory).
+ *		This is done in subroutine No_LS_new_data_test or long_single_new_data_test.
+ *		(The reason 2 subroutines are required will be discussed later. See 9)
+ *		An attempt to read the next buffer identifier from the c_pwm channel is made ...
+ *
+ *(7)	If the data is NOT ready, then we loop again through the same mode with the old 32-bit data values.
+ *		However, the timestamps are incremented by one full revolution.
+ *
+ *(8)	If the data is ready, then a jump is performed to the label held in the ldap register.
+ *		This location varies with the mode. If the mode does NOT contain a LONG_SINGLE, 
+ *		then a jump is made straight to L_WAIT_NO_LONG, where the new buffer identifier is read.
+ *		Then we jump back to L_READ_NEW_DATA (2).
+ *
+ *		If the mode contains at least one LONG_SINGLE, then a 2nd word for each LONG_SINGLE 
+ *    is required to be transmitted before we can proceed to L_WAIT_NO_LONG.
+ *		All the 2nd words are set to a zero value, and are output one full revolution after the current time.
+ *		(Currently the 1st word data is overwritten, I think the 2nd word data could be used instead)
+ *		These 2nd words are are loaded by jumping to one of (L_ONE_LONG, L_TWO_LONG, L_THREE_LONG).
+ *
+ *(9) If the mode contains a LONG_SINGLE, then the current time is incremented before the jump to
+ *		L_READ_NEW_DATA. If the mode does NOT contain a LONG_SINGLE, 
+ *		the time is incremented ONLY if the jump to L_READ_NEW_DATA is NOT taken.
+ *		This requires two instances of the 'new_data_test' subroutine 
+ *		(No_LS_new_data_test or long_single_new_data_test).
+ *		WARNING: I am suspicous of this, as for consecutive modes with a LONG_SINGLE,
+ *		2 time increments are performed per revolution (3 pulses).
+ **/
 
 #include <xs1.h>
 
@@ -140,7 +191,7 @@ L_READ_NEW_DATA:
 	// update time stamp => start time = old_start_time + SYNC_INCREMENT
 	ldw r9, sp[13] // r9 = sp[13] (Get Time-stamp of previous transfer on 1stPort)
 	ldc r11, INIT_SYNC_INCREMENT // r11 = 4096 (PWM_MAX_VALUE)
-	add r9, r11, r9  // r9 += PWM_MAX_VALUE (1st Port TS + 4096)
+	add r9, r11, r9  // r9 += PWM_MAX_VALUE (Increment to Time-stamp for next transfer on 1stPort)
 
 	// Expected registers values when we jump to current mode:
 	// r0: p32_pwm_hi[0] Hi-leg of 1st Port
@@ -593,7 +644,7 @@ load_word1_data:
 /*****************************************************************************/
 long_single_new_data_test:  // Test if new data arrived, for AT LEAST 'One LONG_SINGLE'
 
-	// update SYNC timestamp
+	// update SYNC timestamp MB~ Not sure this is in correct place. In can lead to double increments between data-reads
 	ldc r10, SYNC_INCREMENT	// r10 = PWM_MAX_VALUE = 4096
 	add r9, r10, r9					// r9 += 4096 ( Increment Time-stamp of previous transfer )
 

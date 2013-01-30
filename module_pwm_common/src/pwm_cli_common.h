@@ -81,6 +81,6 @@ inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PWM_OUTDA
 #endif
 
 // Calculate required ordering of operation
-void order_new_pwm( REFERENCE_PARAM( PWM_CONTROL_TYP ,pwm_ctrl ) );
+void calculate_pwm_mode( REFERENCE_PARAM( PWM_CONTROL_TYP ,pwm_ctrl ) );
 
 #endif /* _PWM_CLI_COMMON__H_ */

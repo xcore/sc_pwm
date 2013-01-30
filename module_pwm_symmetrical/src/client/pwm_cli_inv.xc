@@ -106,7 +106,7 @@ void update_pwm_inv(
 //MB~Depreciated		if (pwm_width[phase_cnt] != -1) minus_one = 0; // Clear minus_one flag
 	} // for phase_cnt
 
-	order_new_pwm( pwm_ctrl );
+	calculate_pwm_mode( pwm_ctrl );		// now order them and work out the mode
 
 #ifdef MB // Depreciated
 	// Check if minus_one flag still set. //MB~ Not sure what this is doing yet.
@@ -116,17 +116,16 @@ void update_pwm_inv(
 	} // if (minus_one)
 	else 
 	{
-		// now order them and work out the mode
-		order_new_pwm( pwm_ctrl );
+		calculate_pwm_mode( pwm_ctrl ); // now order them and work out the mode
 	} // else !(minus_one)
 #endif //MB~ Depreciated
 
 	write_pwm_data_to_mem( pwm_ctrl ,asm_ctrl ); // Write PWM data to shared memory (read by assembler)
 { //MB~ Dbg
-	xscope[0] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][2].hi_ts0;
-	xscope[1] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][2].lo_ts0;
-	xscope[2] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][2].hi_ts1;
-	xscope[3] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][2].lo_ts1;
+	xscope[0] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][0].hi_ts0;
+	xscope[1] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][0].lo_ts0;
+	xscope[2] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][0].hi_ts1;
+	xscope[3] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][0].lo_ts1;
 } //MB~ Dbg
 
 	c_pwm <: pwm_ctrl.cur_buf; // Signal PWM server that PWM data is ready to read
