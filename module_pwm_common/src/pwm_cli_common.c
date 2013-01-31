@@ -411,101 +411,75 @@ void calculate_leg_data_out_ref( // convert pulse width to a 32-bit pattern and 
 	e_pwm_cat * typ_p, // Pointer to type of pulse to generate
 	unsigned inp_wid // PWM pulse-width value
 )
+/* The time offset is measured from a time datum (e.g. the Centre of the pulse) 
+ * Therefore the earlier edge (rising edge) has a negative offset
+ * and the later edge (falling edge) has a positive offset
+ * The absolute time is calculated in pwm_op_inv.S, as (Time_Centre + Time_Offset)
+ *
+ * NB When the PWM pattern is transmiited from an XMOS 32-bit bufferred port,
+ * The Least Significant Bit is the earliest in time, i.e. the LSB is sent 1st.
+ */
 {
 	unsigned num_zeros; // No of Zero bits in 32-bit unsigned
-	unsigned num_ones; // No of One bits in 32-bit unsigned
 	unsigned tmp;
 
-
-/* The time offset is measured from a time datum (e.g. the Centre of the pulses) 
- * backwards to the start of the pulse.
- * Therefore in pwm_op_inv.S, you will find Tc - To (Time_Centre - Time_Offset)
- */
-
-	// Garbage values for edge[1]
-	pulsedata_ps->edges[1].pattern = 0x55555555;
-	pulsedata_ps->edges[1].time_off = 0;
-
-	// Check for SINGLE pulse 
-	if (inp_wid < 32)
-	{ // NB Need MSB to be zero, as this lasts for long low section of pulse
-		*typ_p = SINGLE;
-		pulsedata_ps->edges[0].time_off = -16;
-		pulsedata_ps->edges[0].pattern = ((1 << inp_wid)-1);
-
-		// shift pulse to the middle of the 32-bit pattern
-		pulsedata_ps->edges[0].pattern <<= ((32 - inp_wid) >> 1); // Ensures MSB=0 for inp_wid = 31 
-
-		// Garbage values for edge[1]
-		pulsedata_ps->edges[1].pattern = 0x55555555;
-		pulsedata_ps->edges[1].time_off = 0;
-
-		return;
-	} // if (inp_wid < 32)
-
-	// Check for short pulse with adjacent DOUBLE's
-	if (inp_wid < 64)
-	{
-		*typ_p = DOUBLE;
-
-		tmp = (64 - inp_wid) >> 1; // NB tmp range [16..0]
-		pulsedata_ps->edges[0].pattern = ((1 << tmp)-1); // This is inverted pattern
-		pulsedata_ps->edges[0].pattern = ~(pulsedata_ps->edges[0].pattern); // This is correct pattern
-		pulsedata_ps->edges[0].time_off = -32;
-
-		tmp = (inp_wid >> 1); // NB tmp range [0..31]
-		pulsedata_ps->edges[1].pattern = ((1 << tmp)-1);
-		pulsedata_ps->edges[1].time_off = 0;
-
-		return;
-	} // if (inp_wid < 64)
-
-	num_zeros = PWM_MAX_VALUE - inp_wid; // No. of 0's
-
-	// Check for LONG_SINGLE pulse 
-	if (num_zeros < 32)
-	{	// close to PWM_MAX_VALUE
-		*typ_p = LONG_SINGLE;
-
-		// Garbage values for edge[1]
-		pulsedata_ps->edges[0].pattern = 0x55555555;
-		pulsedata_ps->edges[0].time_off = 0;
-
-		pulsedata_ps->edges[1].time_off = (PWM_MAX_VALUE >> 1) - 16;
-		pulsedata_ps->edges[1].pattern = ((1 << num_zeros)-1);
-		pulsedata_ps->edges[1].pattern <<= ((32 - num_zeros) >> 1); // shift inverted pulse to the middle of the 32-bit pattern
-		pulsedata_ps->edges[1].pattern = ~(pulsedata_ps->edges[1].pattern); // This is correct pattern
-
-		return;
-	}	// if (inp_wid >= (PWM_MAX_VALUE-31))
-
-	// Check for long pulse with adjacent DOUBLE's
-	if (num_zeros < 64)
-	{	// close to PWM_MAX_VALUE
-		*typ_p = DOUBLE;
-
-		tmp = (num_zeros >> 1); // NB tmp range [0..31]
-		pulsedata_ps->edges[0].pattern = ((1 << tmp)-1);
-		pulsedata_ps->edges[0].pattern = ~(pulsedata_ps->edges[0].pattern); // This is correct pattern
-		pulsedata_ps->edges[0].time_off = -(PWM_MAX_VALUE >> 1);
-
-		tmp = (64 - num_zeros) >> 1; // NB tmp range [16..0]
-		pulsedata_ps->edges[1].pattern = ((1 << tmp)-1); // This is inverted pattern
-		pulsedata_ps->edges[1].time_off = (PWM_MAX_VALUE >> 1) - 32;
-
-
-		return;
-	}	// if (inp_wid >= (PWM_MAX_VALUE-31))
-
-	// Default: midrange
-
 	*typ_p = DOUBLE;
-	pulsedata_ps->edges[0].pattern = 0xFFFFFFFF;
-	pulsedata_ps->edges[0].time_off = -((inp_wid+1) >> 1);
 
-	pulsedata_ps->edges[1].pattern = 0x7FFFFFFF;
-	pulsedata_ps->edges[1].time_off = (inp_wid >> 1) - 31;
 
+	// Check for short pulse 
+	if (inp_wid < 32)
+	{ // Short Pulse:
+
+		// earlier edge ( zeros transmitted 1st)
+		pulsedata_ps->edges[0].time_off = -32;
+		tmp = (inp_wid + 1) >> 1; // Range [0..16]
+		tmp = ((1 << tmp)-1); // Range 0x0000_0000 .. 0x0000_FFFF
+		pulsedata_ps->edges[0].pattern = bitrev( tmp ); // Range 0x0000_0000 .. 0xFFFF_0000
+
+		// later edge ( zeros transmitted last): 
+		// NB Need MSB to be zero, as this lasts for long low section of pulse
+		pulsedata_ps->edges[1].time_off = 0;
+		tmp = (inp_wid >> 1); // Range [0..15]
+		pulsedata_ps->edges[1].pattern = ((1 << tmp)-1); // Range 0x0000_0000 .. 0x7FFF_0000
+
+	} // if (inp_wid < 32)
+	else
+	{ // NOT a short pulse
+		num_zeros = PWM_MAX_VALUE - inp_wid; // Calculate No. of 0's
+	
+		// Check for mid-range pulse
+		if (num_zeros > 31)
+		{ // Mid-range Pulse
+
+			// earlier edge ( zeros transmitted 1st)
+			pulsedata_ps->edges[0].pattern = 0xFFFF0000;
+			pulsedata_ps->edges[0].time_off = -((inp_wid+33) >> 1);
+	
+			// later edge ( zeros transmitted last)
+			pulsedata_ps->edges[1].pattern = 0x0000FFFF;
+			pulsedata_ps->edges[1].time_off = ((inp_wid - 32) >> 1);
+		} // if (num_zeros > 31)
+		else
+		{ // Long pulse
+
+			// earlier edge ( zeros transmitted 1st)
+			// NB Need MSB to be 1, as this lasts for long high section of pulse
+			pulsedata_ps->edges[0].time_off = -(PWM_MAX_VALUE >> 1);
+			tmp = (num_zeros >> 1); // Range [15..0]
+			tmp = ((1 << tmp)-1); // Range 0x0000_7FFF .. 0x0000_0000
+			pulsedata_ps->edges[0].pattern = ~tmp; // Invert Pattern: Range 0xFFFF_8000 .. 0xFFFF_FFFF
+	
+			// later edge ( zeros transmitted last): 
+			pulsedata_ps->edges[1].time_off = (PWM_MAX_VALUE >> 1) - 32;
+			tmp = ((num_zeros + 1) >> 1); // Range [16..0]
+			tmp = ((1 << tmp)-1); // Range 0x0000_FFFF .. 0x0000_0000
+			tmp = ~tmp; // Invert Pattern: Range 0xFFFF_0000 .. 0xFFFF_FFFF
+			pulsedata_ps->edges[1].pattern = bitrev( tmp ); // Invert Pattern: Range 0x0000_FFFF .. 0xFFFF_FFFF
+
+		} // else !(num_zeros > 31)
+	} // else !(inp_wid < 32)
+
+	return;
 } // calculate_leg_data_out_ref
 /*****************************************************************************/
 void calculate_all_data_out_ref( // Calculate all PWM Pulse data for balanced line

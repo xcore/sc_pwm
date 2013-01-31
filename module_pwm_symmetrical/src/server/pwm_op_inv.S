@@ -21,53 +21,33 @@
  *
  * The flow of the pwm_op_inv() function is as follows ...
  *
- *(0) Initialisation. NB This function never terminates. It loops through the following stages (1 .. 9)
+ *(0) Initialisation. NB This function never terminates. It loops through the following stages (1 .. 7):-
  *
  *(1) READ_NEW_DATA: Reads data for 6-edges (3 Phases) from current buffer in shared memory.
  *		including the current mode (pulse configuration. E.g. LONG_SINGLE, DOUBLE, SINGLE)
  *
- *(2) A switch statement inspects the current mode and jumps to the correct section for that mode.
- *		(I.e. L_MODE_0 .. L_MODE_9)
+ *(2) Tests if Motor should be stopped, if so, if so drops through to L_PWM_STOP, else jumps to L_MODE_3
  *
- *(3) The instructions in each mode section are different, but have similarities ...
- *
- *(4) Firstly, all modes call a subroutine load_word1_data, which does the following ...
- *	(a) loads a 32-bit word onto each of the 6 ports with a timestamp. 
- *			These words contains 1 or 2 edges, and will fire when each timestamp is reached.
- *	(b) If LOCK_ADC_TO_PWM is active, a timestamp is calculated for the next PWM->ADC trigger.
+ *(3) L_MODE_3:
+ *	(a)	Increment the pulse-centre time-stamp by one full revolution.
+ *	(b) Load the 1st 32-bit word onto each of the 6 ports with an individually calculated port time-stamp. 
+ *			These words contain the rising edge of the pulse, and will fire when each time-stamp is reached.
+ *	(c) If LOCK_ADC_TO_PWM is active, a time-stamp is calculated for the next PWM->ADC trigger.
  *			As the trigger event is sent over channel c_adc_trig (and these can NOT be timed), 
  *			a dummy port is used (p16_adc_sync). This is used to force a wait until the dummy port
  *      reaches the time-stamp. Then immediately afterwards, a token is sent on the c_adc_trig channel.
+ *	(d) Load the 2nd 32-bit word onto each of the 6 ports with an individually calculated port time-stamp.
+ *			These words contain the falling edge of the pulse, and will fire when each time-stamp is reached.
  *
- *(5)	If the mode contains a DOUBLE, a 2nd word of data containing the 2nd edge is required.
- *		This are queued with a timestamp, similarly to the first word.
- *
- *(6) A test is now made to check whether the next set of data is ready (in the other buffer in shared memory).
- *		This is done in subroutine No_LS_new_data_test or long_single_new_data_test.
- *		(The reason 2 subroutines are required will be discussed later. See 9)
+ *(4) A test is now made to check whether the next set of data is ready (in the other buffer in shared memory).
  *		An attempt to read the next buffer identifier from the c_pwm channel is made ...
  *
- *(7)	If the data is NOT ready, then we loop again through the same mode with the old 32-bit data values.
- *		However, the timestamps are incremented by one full revolution.
+ *(5)	If the data is NOT ready, then we loop again to L_MODE_3 (stage 3), and use the same old 32-bit data values.
  *
- *(8)	If the data is ready, then a jump is performed to the label held in the ldap register.
- *		This location varies with the mode. If the mode does NOT contain a LONG_SINGLE, 
- *		then a jump is made straight to L_WAIT_NO_LONG, where the new buffer identifier is read.
- *		Then we jump back to L_READ_NEW_DATA (2).
+ *(6)	If the data IS ready, then a jump is performed to the label held in the ldap register (L_READ_NEW_BUF).
  *
- *		If the mode contains at least one LONG_SINGLE, then a 2nd word for each LONG_SINGLE 
- *    is required to be transmitted before we can proceed to L_WAIT_NO_LONG.
- *		All the 2nd words are set to a zero value, and are output one full revolution after the current time.
- *		(Currently the 1st word data is overwritten, I think the 2nd word data could be used instead)
- *		These 2nd words are are loaded by jumping to one of (L_ONE_LONG, L_TWO_LONG, L_THREE_LONG).
+ *(7)	In L_READ_NEW_BUF, the new buffer identifier is read, and then a jump is made to L_READ_NEW_DATA (1).
  *
- *(9) If the mode contains a LONG_SINGLE, then the current time is incremented before the jump to
- *		L_READ_NEW_DATA. If the mode does NOT contain a LONG_SINGLE, 
- *		the time is incremented ONLY if the jump to L_READ_NEW_DATA is NOT taken.
- *		This requires two instances of the 'new_data_test' subroutine 
- *		(No_LS_new_data_test or long_single_new_data_test).
- *		WARNING: I am suspicous of this, as for consecutive modes with a LONG_SINGLE,
- *		2 time increments are performed per revolution (3 pulses).
  **/
 
 #include <xs1.h>
@@ -124,6 +104,7 @@ pwm_op_inv:
 	ldw r11, r1[r6] // r11 = p32_pwm_hi[cur_id] (current Hi-leg 1st port)
 
 	getts r9, res[r11] // r9 = resource[1stPort].time // Time-stamp of previous transfer or current port-time
+	stw r9, sp[13] // sp[13] = r9 (Store Time-stamp for centre of previous pulse)
 
 L_READ_NEW_DATA:
 	// r0: buf_id
@@ -134,8 +115,6 @@ L_READ_NEW_DATA:
 	// sp[10]: p32_pwm_lo[]
 	// sp[14]: mem_addr (Shared memory address)
 
-
-	stw r9, sp[13] // sp[13] = r9 (Store Time-stamp of previous transfer on 1stPort)
 	stw r0, sp[8]		// sp[8] = r0 (buf_id)
 
 	ldw r2, sp[9]		// r2 = p32_pwm_hi[]
@@ -188,11 +167,6 @@ L_READ_NEW_DATA:
 	ldw r7, r8[r7]	// r7 = p32_pwm_lo[2nd_id] (current Lo-leg port) (2nd port)
 	ldw r8, r8[r9]	// r8 = p32_pwm_lo[3rd_id] (current Lo-leg port) (3rd port)
 
-	// update time stamp => start time = old_start_time + SYNC_INCREMENT
-	ldw r9, sp[13] // r9 = sp[13] (Get Time-stamp of previous transfer on 1stPort)
-	ldc r11, INIT_SYNC_INCREMENT // r11 = 4096 (PWM_MAX_VALUE)
-	add r9, r11, r9  // r9 += PWM_MAX_VALUE (Increment to Time-stamp for next transfer on 1stPort)
-
 	// Expected registers values when we jump to current mode:
 	// r0: p32_pwm_hi[0] Hi-leg of 1st Port
 	// r1: p32_pwm_hi[1] Hi-leg of 2nd Port
@@ -207,26 +181,8 @@ L_READ_NEW_DATA:
 	// r10: cur_mode
 
 	// check mode and branch as appropriate. NB read_out_data returns r10 = cur_mode
-	eq r11, r10, D_PWM_MODE_0
-	bt r11, L_MODE_0
-	eq r11, r10, D_PWM_MODE_1
-	bt r11, L_MODE_1
-	eq r11, r10, D_PWM_MODE_2
-	bt r11, L_MODE_2
 	eq r11, r10, D_PWM_MODE_3
 	bt r11, L_MODE_3
-	eq r11, r10, D_PWM_MODE_4
-	bt r11, L_MODE_4
-	eq r11, r10, D_PWM_MODE_5
-	bt r11, L_MODE_5
-	eq r11, r10, D_PWM_MODE_6
-	bt r11, L_MODE_6
-	eq r11, r10, D_PWM_MODE_7
-	bt r11, L_MODE_7
-	eq r11, r10, D_PWM_MODE_8
-	bt r11, L_MODE_8
-	eq r11, r10, D_PWM_MODE_9
-	bt r11, L_MODE_9
 
 // Default if Mode NOT supported
 L_PWM_STOP:
@@ -240,70 +196,7 @@ L_PWM_STOP:
 	out res[r11], r9
 	bu	L_PWM_STOP
 
-L_MODE_0: // 3xSINGLE
-	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
-
-	bl No_LS_new_data_test  // Jump if new data arrived if No LONG_SINGLE
-
-	bu L_MODE_0 // repeat old Mode_0 data
-	
-L_MODE_1: // 2xSINGLE + DOUBLE
-	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
-
-	// Edge_1 Channel_0 Hi-Leg
-	ldw r11, r3[2] // r11 = hi_ts0 (time-stamp for edge_1 of Hi-leg 1stPort)
-	add r11, r9, r11 // r11 = r9 - r11 (= 1stPort_TS - hi_ts0 + 4096 -- Time Diff)
-	setpt res[r0], r11 // resource[Hi_Leg 1stPort].time = r11 (set time next for transfer on Hi-Leg 1stPort)
-	ldw r11, r3[3] // r11 = hi_out0 (Load Hi-leg Output Value)
-	out res[r0], r11 // resource[Hi_Leg 1stPort].val = r11 (Load output value into Hi-Leg 1stPort)
-
-	// Edge_1 Channel_0 Lo-Leg
-	ldw r11, r3[6] // r11 = lo_ts0 (time-stamp for edge_1 of Lo-leg 1stPort)
-	add r11, r9, r11 // r11 = r9 - r11 (= 1stPort_TS - lo_ts0 + 4096 -- Time Diff)
-	setpt res[r6], r11 // resource[Lo_leg 1stPort].time = r11 (set time for next transfer on Lo-Leg 1stPort)
-	ldw r11, r3[7] // r11 = lo_out0 (Load Lo-Leg Output Value)
-	out res[r6], r11 // resource[Lo_Leg 1stPort].val = r11 (Load output value into Lo-Leg 1stPort)
-
-	bl No_LS_new_data_test  // Jump if new data arrived if No LONG_SINGLE
-
-	bu L_MODE_1 // repeat old Mode_1 data
-
-L_MODE_2: // SINGLE + 2xDOUBLE
-	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
-
-	// Edge_1 Channel_1 Hi-Leg
-	ldw r11, r4[2]
-	add r11, r9, r11
-	setpt res[r1], r11
-	ldw r11, r4[3]
-	out res[r1], r11
-
-	// Edge_1 Channel_1 Lo-Leg
-	ldw r11, r4[6]
-	add r11, r9, r11
-	setpt res[r7], r11
-	ldw r11, r4[7]
-	out res[r7], r11
-
-	// Edge_1 Channel_0 Hi-Leg
-	ldw r11, r3[2] // r11 = hi_ts0 (time-stamp for edge_1 of Hi-leg 1stPort)
-	add r11, r9, r11 // r11 = r9 - r11 (= 1stPort_TS - hi_ts0 + 4096 -- Time Diff)
-	setpt res[r0], r11 // resource[Hi_Leg 1stPort].time = r11 (set time next for transfer on Hi-Leg 1stPort)
-	ldw r11, r3[3] // r11 = hi_out0 (Load Hi-leg Output Value)
-	out res[r0], r11 // resource[Hi_Leg 1stPort].val = r11 (Load output value into Hi-Leg 1stPort)
-
-	// Edge_1 Channel_0 Lo-Leg
-	ldw r11, r3[6] // r11 = lo_ts0 (time-stamp for edge_1 of Lo-leg 1stPort)
-	add r11, r9, r11 // r11 = r9 - r11 (= 1stPort_TS - lo_ts0 + 4096 -- Time Diff)
-	setpt res[r6], r11 // resource[Lo_leg 1stPort].time = r11 (set time for next transfer on Lo-Leg 1stPort)
-	ldw r11, r3[7] // r11 = lo_out0 (Load Lo-Leg Output Value)
-	out res[r6], r11 // resource[Lo_Leg 1stPort].val = r11 (Load output value into Lo-Leg 1stPort)
-
-	bl No_LS_new_data_test  // Jump if new data arrived if No LONG_SINGLE
-	
-	bu L_MODE_2 // repeat old Mode_2 data
-	
-L_MODE_3: // 3xDOUBLE
+L_MODE_3: // Old 3xDOUBLE mode
 	// Expected registers values on exit:
 	// r0: p32_pwm_hi[0] Hi-leg of 1st Port
 	// r1: p32_pwm_hi[1] Hi-leg of 2nd Port
@@ -324,238 +217,15 @@ L_MODE_3: // 3xDOUBLE
 	// sp[15]: c_adc_trig
 	// sp[16]: p16_adc_sync
 
-	// Set-up Edge_0 outputs on 6 PWM ports (NB Each will fire at timestamp specified) ...
 
-	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
+	// Increment time-stamp for pulse-centre by one revolution
+	ldw r9, sp[13] // r9 = sp[13] (Get Time-stamp of previous pulse-centre )
+	ldc r11, INIT_SYNC_INCREMENT // r11 = 4096 (PWM_MAX_VALUE)
+	add r9, r11, r9  // r9 += PWM_MAX_VALUE (Increment to Time-stamp by one revolution)
+	stw r9, sp[13] // sp[13] = r9 (Store Time-stamp of next pulse-centre)
 
-	// Set-up Edge_1 outputs on 6 PWM ports (NB Each will fire at timestamp specified) ...
+	// Set-up Edge_0 outputs on 6 PWM ports (NB Each will fire at time-stamp specified) ...
 
-	// Edge_1 Channel_2 Hi-Leg
-	ldw r11, r5[2]	// r11 = hi_ts1 (time-stamp for edge_1 of Hi-leg 3rdPort)
-	add r11, r9, r11
-	setpt res[r2], r11
-	ldw r11, r5[3] // r11 = hi_out1 (Load Output Value for edge_1 of Hi-leg 3rdPort)
-	out res[r2], r11
-
-	// Edge_1 Channel_2 Lo-Leg
-	ldw r11, r5[6]	// r11 = lo_ts1 (time-stamp for edge_1 of Lo-leg 3rdPort)
-	add r11, r9, r11
-	setpt res[r8], r11
-	ldw r11, r5[7] // r11 = lo_out1 (Load Output Value for edge_1 of Lo-leg 3rdPort)
-	out res[r8], r11
-
-	// Edge_1 Channel_1 Hi-Leg
-	ldw r11, r4[2]
-	add r11, r9, r11
-	setpt res[r1], r11
-	ldw r11, r4[3]
-	out res[r1], r11
-
-	// Edge_1 Channel_1 Lo-Leg
-	ldw r11, r4[6]
-	add r11, r9, r11
-	setpt res[r7], r11
-	ldw r11, r4[7]
-	out res[r7], r11
-
-	// Edge_1 Channel_0 Hi-Leg
-	ldw r11, r3[2]
-	add r11, r9, r11
-	setpt res[r0], r11
-	ldw r11, r3[3]
-	out res[r0], r11
-
-	// Edge_1 Channel_0 Lo-Leg
-	ldw r11, r3[6]
-	add r11, r9, r11
-	setpt res[r6], r11
-	ldw r11, r3[7]
-	out res[r6], r11
-
-	bl No_LS_new_data_test  // Jump if new data arrived if No LONG_SINGLE
-
-	bu L_MODE_3 // repeat old Mode_3 data
-
-L_MODE_4: // LONG + 2xSINGLE
-	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
-
-	ldap r11, L_ONE_LONG			// r11 = PC + 2xL_ONE_LONG (Load jump address)
- 	bl long_single_new_data_test // Jump if new data arrived if LONG_SINGLE
-
-	bu L_MODE_4 // repeat old Mode_4 data
-
-L_MODE_5: // LONG + SINGLE + DOUBLE
-	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
-
-	// Edge_1 Channel_1 Hi-Leg
-	ldw r11, r4[2]
-	add r11, r9, r11
-	setpt res[r1], r11
-	ldw r11, r4[3]
-	out res[r1], r11
-
-	// Edge_1 Channel_1 Lo-Leg
-	ldw r11, r4[6]
-	add r11, r9, r11
-	setpt res[r7], r11
-	ldw r11, r4[7]
-	out res[r7], r11
-
-	ldap r11, L_ONE_LONG			// r11 = PC + 2xL_ONE_LONG (Load jump address)
- 	bl long_single_new_data_test // Jump if new data arrived if LONG_SINGLE
-
-	bu L_MODE_5 // repeat old Mode_5 data
-
-L_MODE_6: // LONG + 2xDOUBLE
-	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
-
-	// Edge_1 Channel_2 Hi-Leg
-	ldw r11, r5[2]	// r11 = hi_ts1 (time-stamp for edge_1 of Hi-leg 3rdPort)
-	add r11, r9, r11
-	setpt res[r2], r11
-	ldw r11, r5[3] // r11 = hi_out1 (Load Output Value for edge_1 of Hi-leg 3rdPort)
-	out res[r2], r11
-
-	// Edge_1 Channel_2 Lo-Leg
-	ldw r11, r5[6]	// r11 = lo_ts1 (time-stamp for edge_1 of Lo-leg 3rdPort)
-	add r11, r9, r11
-	setpt res[r8], r11
-	ldw r11, r5[7] // r11 = lo_out1 (Load Output Value for edge_1 of Lo-leg 3rdPort)
-	out res[r8], r11
-
-	// Edge_1 Channel_1 Hi-Leg
-	ldw r11, r4[2]
-	add r11, r9, r11
-	setpt res[r1], r11
-	ldw r11, r4[3]
-	out res[r1], r11
-
-	// Edge_1 Channel_1 Lo-Leg
-	ldw r11, r4[6]
-	add r11, r9, r11
-	setpt res[r7], r11
-	ldw r11, r4[7]
-	out res[r7], r11
-
-	ldap r11, L_ONE_LONG			// r11 = PC + 2xL_ONE_LONG (Load jump address)
- 	bl long_single_new_data_test // Jump if new data arrived if LONG_SINGLE
-
-	bu L_MODE_6 // repeat old Mode_6 data
-
-L_MODE_7: // 2xLONG + SINGLE
-	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
-
-	ldap r11, L_TWO_LONG			// r11 = PC + 2xL_TWO_LONG (Load jump address)
- 	bl long_single_new_data_test // Jump if new data arrived if 2xLONG_SINGLE
-
-	bu L_MODE_7 // repeat old Mode_7 data
-
-L_MODE_8: // 2xLONG + DOUBLE
-	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
-
-	// Edge_1 Channel_2 Hi-Leg
-	ldw r11, r5[2]	// r11 = hi_ts1 (time-stamp for edge_1 of Hi-leg 3rdPort)
-	add r11, r9, r11
-	setpt res[r2], r11
-	ldw r11, r5[3] // r11 = hi_out1 (Load Output Value for edge_1 of Hi-leg 3rdPort)
-	out res[r2], r11
-
-	// Edge_1 Channel_2 Lo-Leg
-	ldw r11, r5[6]	// r11 = lo_ts1 (time-stamp for edge_1 of Lo-leg 3rdPort)
-	add r11, r9, r11
-	setpt res[r8], r11
-	ldw r11, r5[7] // r11 = lo_out1 (Load Output Value for edge_1 of Lo-leg 3rdPort)
-	out res[r8], r11
-
-	ldap r11, L_TWO_LONG			// r11 = PC + 2xL_TWO_LONG (Load jump address)
- 	bl long_single_new_data_test // Jump if new data arrived if 2xLONG_SINGLE
-
-	bu L_MODE_8 // repeat old Mode_8 data
-
-L_MODE_9: // 3xLONG
-	bl load_word1_data // Load 1st word containing 1 or 2 edges onto ports
-
-	ldap r11, L_THREE_LONG			// r11 = PC + 2xL_THREE_LONG (Load jump address)
- 	bl long_single_new_data_test // Jump if new data arrived if 3xLONG_SINGLE
-
-	bu L_MODE_9 // repeat old Mode_9 data
-
-/*......................... End of Switch(Cur_mode) .........................*/
-
-L_THREE_LONG: // Load 3rd Port with zero, for 3xLONG_SINGLE 
-	// Expected registers values on entry:
-	// r0: p32_pwm_hi[0] Hi-leg of 1st Port
-	// r1: p32_pwm_hi[1] Hi-leg of 2nd Port
-	// r2: p32_pwm_hi[2] Hi-leg of 3rd Port
-	// r3: Addr of 1st pwm_out_data_buf[][] cell
-	// r4: Addr of 2nd pwm_out_data_buf[][] cell
-	// r5: Addr of 3rd pwm_out_data_buf[][] cell
-	// r6: p32_pwm_lo[0] Lo-leg of 1stPort
-	// r7: p32_pwm_lo[1] Lo-leg of 2ndPort
-	// r8: p32_pwm_lo[2] Lo-leg of 3rdPort
-	// r9: Time-stamp of previous transfer on 1stPort
-	// r10: c_pwm
-
-	// Edge_1 Channel_2 Hi-Leg
-	ldw r11, r5[2]	// r11 = hi_ts1 (time-stamp for edge_1 of Hi-leg 3rdPort)
-	add r11, r9, r11
-	setpt res[r2], r11
-	ldw r11, r5[3] // r11 = hi_out1 (Load Output Value for edge_1 of Hi-leg 3rdPort)
-	out res[r2], r11
-
-	// Edge_1 Channel_2 Lo-Leg
-	ldw r11, r5[6]	// r11 = lo_ts1 (time-stamp for edge_1 of Lo-leg 3rdPort)
-	add r11, r9, r11
-	setpt res[r8], r11
-	ldw r11, r5[7] // r11 = lo_out1 (Load Output Value for edge_1 of Lo-leg 3rdPort)
-	out res[r8], r11
-
-L_TWO_LONG: // Load 2nd Port with zero, for 2xLONG_SINGLE
-
-	// Edge_1 Channel_1 Hi-Leg
-	ldw r11, r4[2]
-	add r11, r9, r11
-	setpt res[r1], r11
-	ldw r11, r4[3]
-	out res[r1], r11
-
-	// Edge_1 Channel_1 Lo-Leg
-	ldw r11, r4[6]
-	add r11, r9, r11
-	setpt res[r7], r11
-	ldw r11, r4[7]
-	out res[r7], r11
-
-L_ONE_LONG: // Load 1st Port with zero, for one LONG_SINGLE
-
-	// Edge_1 Channel_0 Hi-Leg
-	ldw r11, r3[2]
-	add r11, r9, r11
-	setpt res[r0], r11
-	ldw r11, r3[3]
-	out res[r0], r11
-
-	// Edge_1 Channel_0 Lo-Leg
-	ldw r11, r3[6]
-	add r11, r9, r11
-	setpt res[r6], r11
-	ldw r11, r3[7]
-	out res[r6], r11
-
-L_WAIT_NO_LONG: // Wait for new data to arrive
-	// Expected registers values on entry:
-	// r10: c_pwm
-
-	chkct res[r10], 0x1	// discard resource[c_pwm].token if equal to  1  
-	outct res[r10], 0x1	// output token of value 1 on channel c_pwm
-	in r0, res[r10]			// r0 = c_pwm data (Wait until new buf_id ready on c_pwm -- NB signals next data ready)
-	chkct res[r10], 0x1
-	outct res[r10], 0x1
-
-	bu L_READ_NEW_DATA
-
-/*****************************************************************************/
-load_word1_data:
 	// Load 1st word onto ports, this contains at least the first edge (Edge_0),
 	// and for SINGLE and LONG_SINGLE, also the 2nd edge (Edge_1)
 	// Expected registers values on entry
@@ -573,21 +243,21 @@ load_word1_data:
 	// Set-up 1st word output on 6 PWM ports ...
 
 	// Channel_0 Hi-Leg
-	ldw r11, r3[0] // r11 = hi_ts0 (time-stamp for edge_0 of Hi-leg 1stPort)
+	ldw r11, r3[0] // r11 = hi_ts0 (time-offset for edge_0 of Hi-leg 1stPort)
 	add r11, r9, r11 // r11 = r9 + r11 (time of start of 1st Hi-leg word. NB r11 is -ve)
 	setpt res[r0], r11 // resource[Hi_Leg 1stPort].time = r11 (set time next for transfer on Hi-Leg 1stPort)
 	ldw r11, r3[1] // r11 = hi_out0 (Load Hi-leg Output Value)
 	out res[r0], r11 // resource[Hi_Leg 1stPort].val = r11 (Load output value into Hi-Leg 1stPort)
 
 	// Channel_0 Lo-Leg
-	ldw r11, r3[4] // r11 = lo_ts0 (time-stamp for edge_0 of Lo-leg 1stPort)
+	ldw r11, r3[4] // r11 = lo_ts0 (time-offset for edge_0 of Lo-leg 1stPort)
 	add r11, r9, r11 // r11 = r9 + r11  (time of start of 1st Lo-leg word. NB r11 is -ve)
 	setpt res[r6], r11 // resource[Lo_leg 1stPort].time = r11 (set time for next transfer on Lo-Leg 1stPort)
 	ldw r11, r3[5] // r11 = lo_out0 (Load Lo-Leg Output Value)
 	out res[r6], r11 // resource[Lo_Leg 1stPort].val = r11 (Load output value into Lo-Leg 1stPort)
 
 	// Channel_1 Hi-Leg
-	ldw r11, r4[0]	// r11 = hi_ts0 (time-stamp for edge_0 of Hi-leg 2ndPort)
+	ldw r11, r4[0]	// r11 = hi_ts0 (time-offset for edge_0 of Hi-leg 2ndPort)
 	add r11, r9, r11
 	setpt res[r1], r11 // resource[Hi_Leg 2ndPort].time = r11 (set time for next transfer on Hi-Leg 2ndPort)
 	ldw r11, r4[1]
@@ -601,7 +271,7 @@ load_word1_data:
 	out res[r7], r11
 
 	// Channel_2 Hi-Leg
-	ldw r11, r5[0]	// r11 = hi_ts0 (time-stamp for edge_0 of Hi-leg 3rdPort)
+	ldw r11, r5[0]	// r11 = hi_ts0 (time-offset for edge_0 of Hi-leg 3rdPort)
 	add r11, r9, r11
 	setpt res[r2], r11 // resource[Hi_Leg 3rdPort].time = r11 (set time for next transfer on Hi-Leg 3rdPort)
 	ldw r11, r5[1]
@@ -636,50 +306,73 @@ load_word1_data:
 	// r9: resource[1stPort].time  Time-stamp of next transfer
 	// r10: c_pwm
 
-	retsp 0;
-// load_word1_data
-/*****************************************************************************/
-long_single_new_data_test:  // Test if new data arrived, for AT LEAST 'One LONG_SINGLE'
+	// Set-up Edge_1 outputs on 6 PWM ports (NB Each will fire at time-stamp specified) ...
 
-	// update SYNC timestamp MB~ Not sure this is in correct place. In can lead to double increments between data-reads
-	ldc r10, SYNC_INCREMENT	// r10 = PWM_MAX_VALUE = 4096
-	add r9, r10, r9					// r9 += 4096 ( Increment Time-stamp of previous transfer )
+	// Edge_1 Channel_2 Hi-Leg
+	ldw r11, r5[2]	// r11 = hi_ts1 (time-offset for edge_1 of Hi-leg 3rdPort)
+	add r11, r9, r11
+	setpt res[r2], r11
+	ldw r11, r5[3] // r11 = hi_out1 (Load Output Value for edge_1 of Hi-leg 3rdPort)
+	out res[r2], r11
 
-	ldw r10, sp[11]						// r10 = sp[11] (chanend c_pwm)
+	// Edge_1 Channel_2 Lo-Leg
+	ldw r11, r5[6]	// r11 = lo_ts1 (time-offset for edge_1 of Lo-leg 3rdPort)
+	add r11, r9, r11
+	setpt res[r8], r11
+	ldw r11, r5[7] // r11 = lo_out1 (Load Output Value for edge_1 of Lo-leg 3rdPort)
+	out res[r8], r11
 
-	setv res[r10], r11				// resource[c_pwm].vect = label (Use Relative address)
-	eeu res[r10]							// resource[c_pwm].enable 
-	// EEBLE (Enable Thread Events - If c_pwm has data jump label held in r11 [L_ONE_LONG, L_TWO_LONG, L_THREE_LONG]
-	setsr 0x1									
+	// Edge_1 Channel_1 Hi-Leg
+	ldw r11, r4[2]
+	add r11, r9, r11
+	setpt res[r1], r11
+	ldw r11, r4[3]
+	out res[r1], r11
 
-	// NB Continue if no data on c_pwm
-	// clear events
-	clrsr 0x1									// EEBLE (Clear Thread Events - Queue Pending Events)
-	clre											// Clear all thread enabling flags
+	// Edge_1 Channel_1 Lo-Leg
+	ldw r11, r4[6]
+	add r11, r9, r11
+	setpt res[r7], r11
+	ldw r11, r4[7]
+	out res[r7], r11
 
-	retsp 0;
-// long_single_new_data_test
-/*****************************************************************************/
-No_LS_new_data_test:  // Test if new data arrived, for 'No LONG_SINGLE'
+	// Edge_1 Channel_0 Hi-Leg
+	ldw r11, r3[2]
+	add r11, r9, r11
+	setpt res[r0], r11
+	ldw r11, r3[3]
+	out res[r0], r11
 
-	ldap r11, L_WAIT_NO_LONG			// r11 = PC + 2xL_WAIT_NO_LONG	
+	// Edge_1 Channel_0 Lo-Leg
+	ldw r11, r3[6]
+	add r11, r9, r11
+	setpt res[r6], r11
+	ldw r11, r3[7]
+	out res[r6], r11
 
 	ldw r10, sp[11] // r10 = sp[11] (chanend c_pwm)
-	setv res[r10], r11				// resource[c_pwm].vect = L_WAIT_NO_LONG (Use Relative address)
+	ldap r11, L_READ_NEW_BUF			// r11 = PC + 2xL_READ_NEW_BUF	
+	setv res[r10], r11				// resource[c_pwm].vect = L_READ_NEW_BUF (Use Relative address)
 	eeu res[r10]							// resource[c_pwm].enable 
-	setsr 0x1									// EEBLE (Enable Thread Events - If c_pwm has data jump to L_WAIT_NO_LONG)
+	setsr 0x1									// EEBLE (Enable Thread Events - If c_pwm has data jump to L_READ_NEW_BUF)
 
 	// NB Continue if no data on c_pwm
 	// clear events
 	clrsr 0x1									// EEBLE (Clear Thread Events - Queue Pending Events)
 	clre											// Clear all thread enabling flags
 
-	// update SYNC timestamp
-	ldc r11, SYNC_INCREMENT	// r11 = PWM_MAX_VALUE = 4096
-	add r9, r11, r9					// r9 += 4096 ( Increment Time-stamp of previous transfer )
+	bu L_MODE_3 // repeat old Mode_3 data
 
-	retsp 0;
-// No_LS_new_data_test
-/*****************************************************************************/
+L_READ_NEW_BUF: // Wait for new data to arrive
+	// Expected registers values on entry:
+	// r10: c_pwm
+
+	chkct res[r10], 0x1	// discard resource[c_pwm].token if equal to  1  
+	outct res[r10], 0x1	// output token of value 1 on channel c_pwm
+	in r0, res[r10]			// r0 = c_pwm data (Wait until new buf_id ready on c_pwm -- NB signals next data ready)
+	chkct res[r10], 0x1
+	outct res[r10], 0x1
+
+	bu L_READ_NEW_DATA
 
 .cc_bottom pwm_op_inv.func

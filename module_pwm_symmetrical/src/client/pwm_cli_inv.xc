@@ -89,9 +89,6 @@ void update_pwm_inv(
 	{
 		pwm_ctrl.buf_data[pwm_ctrl.cur_buf].phase_data[phase_cnt].ord_id = phase_cnt; // Reset default phase order
 
-#ifdef PWM_CLIPPED_RANGE
-		calculate_data_out_quick( pwm_width[phase_cnt] ,pwm_ctrl.buf_data[pwm_ctrl.cur_buf].phase_data[phase_cnt].out_data );
-#else
 		/* clamp to avoid issues with LONG_SINGLE */
 		if (pwm_width[phase_cnt] > PWM_LIM_VALUE) 
 		{
@@ -101,24 +98,9 @@ void update_pwm_inv(
 
 		calculate_all_data_out_ref( pwm_ctrl.buf_data[pwm_ctrl.cur_buf].phase_data[phase_cnt].out_data 
 			,pwm_width[phase_cnt] ,PWM_DEAD_TIME );
-#endif
-
-//MB~Depreciated		if (pwm_width[phase_cnt] != -1) minus_one = 0; // Clear minus_one flag
 	} // for phase_cnt
 
-	calculate_pwm_mode( pwm_ctrl );		// now order them and work out the mode
-
-#ifdef MB // Depreciated
-	// Check if minus_one flag still set. //MB~ Not sure what this is doing yet.
-	if (minus_one)
-	{
-		pwm_ctrl.buf_data[pwm_ctrl.cur_buf].cur_mode = -1;
-	} // if (minus_one)
-	else 
-	{
-		calculate_pwm_mode( pwm_ctrl ); // now order them and work out the mode
-	} // else !(minus_one)
-#endif //MB~ Depreciated
+	pwm_ctrl.buf_data[pwm_ctrl.cur_buf].cur_mode = 3; // PWM mode for 3xDOUBLE (Historic)
 
 	write_pwm_data_to_mem( pwm_ctrl ,asm_ctrl ); // Write PWM data to shared memory (read by assembler)
 { //MB~ Dbg
