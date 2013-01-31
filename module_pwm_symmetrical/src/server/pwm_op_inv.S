@@ -496,54 +496,51 @@ L_THREE_LONG: // Load 3rd Port with zero, for 3xLONG_SINGLE
 	// r9: Time-stamp of previous transfer on 1stPort
 	// r10: c_pwm
 
-	// Edge_0 Channel_2 Hi-Leg
-	ldw r11, r5[0]	// r11 = hi_ts1 (time-stamp for edge_0 of Hi-leg 3rdPort)
+	// Edge_1 Channel_2 Hi-Leg
+	ldw r11, r5[2]	// r11 = hi_ts1 (time-stamp for edge_1 of Hi-leg 3rdPort)
 	add r11, r9, r11
 	setpt res[r2], r11
+	ldw r11, r5[3] // r11 = hi_out1 (Load Output Value for edge_1 of Hi-leg 3rdPort)
+	out res[r2], r11
 
-	// Edge_0 Channel_2 Lo-Leg
-	ldw r11, r5[4]	// r11 = lo_ts1 (time-stamp for edge_0 of Lo-leg 3rdPort)
+	// Edge_1 Channel_2 Lo-Leg
+	ldw r11, r5[6]	// r11 = lo_ts1 (time-stamp for edge_1 of Lo-leg 3rdPort)
 	add r11, r9, r11
 	setpt res[r8], r11
-
-	// Edge_0 Channel_2 Both-Legs
-	ldc r11, 0					// r11 = 0 (Load Output Value for both legs of edge_0
-	out res[r2], r11		// resource[Hi_Leg 3rdPort].val = 0 (Load Zero into Hi-Leg 3rdPort)
-	out res[r8], r11	// resource[Lo_Leg 3rdPort].val = 0 (Load Zero into Lo-Leg 3rdPort)
+	ldw r11, r5[7] // r11 = lo_out1 (Load Output Value for edge_1 of Lo-leg 3rdPort)
+	out res[r8], r11
 
 L_TWO_LONG: // Load 2nd Port with zero, for 2xLONG_SINGLE
 
-	// Edge_0 Channel_1 Hi-Leg
-	ldw r11, r4[0]			// r11 = hi_ts1 (time-stamp for edge_0 of Hi-leg 2nd Port)
+	// Edge_1 Channel_1 Hi-Leg
+	ldw r11, r4[2]
 	add r11, r9, r11
 	setpt res[r1], r11
+	ldw r11, r4[3]
+	out res[r1], r11
 
-	// Edge_0 Channel_1 Lo-Leg
-	ldw r11, r4[4]			// r11 = lo_ts1 (time-stamp for edge_0 of Lo-leg 2nd Port)
+	// Edge_1 Channel_1 Lo-Leg
+	ldw r11, r4[6]
 	add r11, r9, r11
 	setpt res[r7], r11
-
-	// Edge_0 Channel_1 Both-Legs
-	ldc r11, 0					// r11 = 0 (Load Output Value for both legs of edge_0
-	out res[r1], r11	// resource[Hi_Leg 2ndPort].val = 0 (Load Zero into Hi-Leg 2nd Port)
-	out res[r7], r11	// resource[Lo_Leg 2ndPort].val = 0 (Load Zero into Lo-Leg 2nd Port)
+	ldw r11, r4[7]
+	out res[r7], r11
 
 L_ONE_LONG: // Load 1st Port with zero, for one LONG_SINGLE
 
-	// Edge_0 Channel_0 Hi-Leg
-	ldw r11, r3[0]			// r11 = hi_ts0 (time-stamp for edge_0 of Hi-leg 1stPort)
-	sub r11, r9, r11		// r11 = r9 - r11 (= 1stPort_TS - hi_ts0 + 4096 -- Time Diff)
-	setpt res[r0], r11	// resource[Hi_Leg 1stPort].time = r11 (set time next for transfer on Hi-Leg 1stPort)
+	// Edge_1 Channel_0 Hi-Leg
+	ldw r11, r3[2]
+	add r11, r9, r11
+	setpt res[r0], r11
+	ldw r11, r3[3]
+	out res[r0], r11
 
-	// Edge_0 Channel_0 Lo-Leg
-	ldw r11, r3[4]			// r11 = lo_ts0 (time-stamp for edge_0 of Lo-leg 1stPort)
-	sub r11, r9, r11		// r11 = r9 - r11 (= 1stPort_TS - lo_ts0 + 4096 -- Time Diff)
-	setpt res[r6], r11	// resource[Lo_leg 1stPort].time = r11 (set time for next transfer on Lo-Leg 1stPort)
-
-	// Edge_0 Channel_0 Both-Legs
-	ldc r11, 0					// r11 = 0 (Load Output Value for both legs of edge_0
-	out res[r0], r11		// resource[Hi_Leg 1stPort].val = 0 (Load Zero into Hi-Leg 1stPort)
-	out res[r6], r11		// resource[Lo_Leg 1stPort].val = 0 (Load Zero into Hi-Leg 1stPort)
+	// Edge_1 Channel_0 Lo-Leg
+	ldw r11, r3[6]
+	add r11, r9, r11
+	setpt res[r6], r11
+	ldw r11, r3[7]
+	out res[r6], r11
 
 L_WAIT_NO_LONG: // Wait for new data to arrive
 	// Expected registers values on entry:
@@ -577,42 +574,42 @@ load_word1_data:
 
 	// Channel_0 Hi-Leg
 	ldw r11, r3[0] // r11 = hi_ts0 (time-stamp for edge_0 of Hi-leg 1stPort)
-	sub r11, r9, r11 // r11 = r9 - r11 (= 1stPort_TS - hi_ts0 + 4096 -- Time Diff)
+	add r11, r9, r11 // r11 = r9 + r11 (time of start of 1st Hi-leg word. NB r11 is -ve)
 	setpt res[r0], r11 // resource[Hi_Leg 1stPort].time = r11 (set time next for transfer on Hi-Leg 1stPort)
 	ldw r11, r3[1] // r11 = hi_out0 (Load Hi-leg Output Value)
 	out res[r0], r11 // resource[Hi_Leg 1stPort].val = r11 (Load output value into Hi-Leg 1stPort)
 
 	// Channel_0 Lo-Leg
 	ldw r11, r3[4] // r11 = lo_ts0 (time-stamp for edge_0 of Lo-leg 1stPort)
-	sub r11, r9, r11 // r11 = r9 - r11 (= 1stPort_TS - lo_ts0 + 4096 -- Time Diff)
+	add r11, r9, r11 // r11 = r9 + r11  (time of start of 1st Lo-leg word. NB r11 is -ve)
 	setpt res[r6], r11 // resource[Lo_leg 1stPort].time = r11 (set time for next transfer on Lo-Leg 1stPort)
 	ldw r11, r3[5] // r11 = lo_out0 (Load Lo-Leg Output Value)
 	out res[r6], r11 // resource[Lo_Leg 1stPort].val = r11 (Load output value into Lo-Leg 1stPort)
 
 	// Channel_1 Hi-Leg
 	ldw r11, r4[0]	// r11 = hi_ts0 (time-stamp for edge_0 of Hi-leg 2ndPort)
-	sub r11, r9, r11
+	add r11, r9, r11
 	setpt res[r1], r11 // resource[Hi_Leg 2ndPort].time = r11 (set time for next transfer on Hi-Leg 2ndPort)
 	ldw r11, r4[1]
 	out res[r1], r11
 
 	// Channel_1 Lo-Leg
 	ldw r11, r4[4]
-	sub r11, r9, r11
+	add r11, r9, r11
 	setpt res[r7], r11 // resource[Lo_leg 2ndPort].time = r11 (set time for next transfer on Lo-Leg 2ndPort)
 	ldw r11, r4[5]
 	out res[r7], r11
 
 	// Channel_2 Hi-Leg
 	ldw r11, r5[0]	// r11 = hi_ts0 (time-stamp for edge_0 of Hi-leg 3rdPort)
-	sub r11, r9, r11
+	add r11, r9, r11
 	setpt res[r2], r11 // resource[Hi_Leg 3rdPort].time = r11 (set time for next transfer on Hi-Leg 3rdPort)
 	ldw r11, r5[1]
 	out res[r2], r11
 
 	// Channel_2 Lo-Leg
 	ldw r11, r5[4]
-	sub r11, r9, r11
+	add r11, r9, r11
 	setpt res[r8], r11 // resource[Lo_leg 3rdPort].time = r11 (set time for next transfer on Lo-Leg 3rdPort)
 	ldw r11, r5[5]
 	out res[r8], r11

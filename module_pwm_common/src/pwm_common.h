@@ -75,16 +75,15 @@ typedef enum PWM_OUTPUT_CAT
 /* if changing this then change the corresponding value in dsc_pwm_common.h */
 typedef struct ASM_OUTDATA_TAG
 {
-	/* N */
-	unsigned hi_ts0;  // 0
+	// The 'ts' fields are time-offsets measured from the centre of the pulse (Tr)
+	signed hi_ts0;  	// 0: High-leg time-offset to start of 1st word containing 1st edge,
 	unsigned hi_out0; // 1
-	unsigned hi_ts1;  // 2
+	signed hi_ts1;  	// 2: High-leg time-offset to start of 2nd word (if used)
 	unsigned hi_out1; // 3
 
-	/* N' */
-	unsigned lo_ts0;  // 4
+	signed lo_ts0;  	// 4: Low-leg time-offset to start of 1st word containing 1st edge,
 	unsigned lo_out0; // 5
-	unsigned lo_ts1;  // 6
+	signed lo_ts1;  	// 6: Low-leg time-offset to start of 2nd word (if used)
 	unsigned lo_out1; // 7
 
 	/* other info */
@@ -104,8 +103,8 @@ typedef struct ASM_CONTROL_TAG
 // Structure containing data for at least one pulse edge
 typedef struct PWM_EDGE_TAG
 {
-	unsigned time;
-	unsigned pattern;
+	unsigned pattern;		// Bit-pattern used to define pulse edge
+	signed time_off;	// time-offset to start of pattern
 } PWM_EDGE_TYP;
 
 // Structure containing all pulse-data for one leg of balanced line 

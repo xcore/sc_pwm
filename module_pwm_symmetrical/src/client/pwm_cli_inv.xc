@@ -30,14 +30,14 @@ void write_output_data( // MB~ Until Assembler is rewritten, need to write to me
 	ASM_OUTDATA_TYP & asm_data // Assembler compatible output data structure
 )
 {
-	asm_data.hi_ts0 = pwm_data.hi.edges[0].time;
+	asm_data.hi_ts0 = pwm_data.hi.edges[0].time_off;
 	asm_data.hi_out0 = pwm_data.hi.edges[0].pattern;
-	asm_data.hi_ts1 = pwm_data.hi.edges[1].time;
+	asm_data.hi_ts1 = pwm_data.hi.edges[1].time_off;
 	asm_data.hi_out1 = pwm_data.hi.edges[1].pattern;
 
-	asm_data.lo_ts0 = pwm_data.lo.edges[0].time;
+	asm_data.lo_ts0 = pwm_data.lo.edges[0].time_off;
 	asm_data.lo_out0 = pwm_data.lo.edges[0].pattern;
-	asm_data.lo_ts1 = pwm_data.lo.edges[1].time;
+	asm_data.lo_ts1 = pwm_data.lo.edges[1].time_off;
 	asm_data.lo_out1 = pwm_data.lo.edges[1].pattern;
 
 	asm_data.cat = pwm_data.typ;

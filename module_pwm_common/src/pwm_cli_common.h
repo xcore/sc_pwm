@@ -70,13 +70,13 @@ inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PWM_OUTDA
 
 	pwm_out_data.hi.edges[0].pattern = 0xFFFFFFFF;
 	pwm_out_data.hi.edges[1].pattern = 0x7FFFFFFF;
-	pwm_out_data.hi.edges[0].time = (value >> 1);
-	pwm_out_data.hi.edges[1].time = (value >> 1)-31;
+	pwm_out_data.hi.edges[0].time_off = (value >> 1);
+	pwm_out_data.hi.edges[1].time_off = (value >> 1)-31;
 
 	pwm_out_data.lo.edges[0].pattern = 0xFFFFFFFF;
 	pwm_out_data.lo.edges[1].pattern = 0x7FFFFFFF;
-	pwm_out_data.lo.edges[0].time = ((value+PWM_DEAD_TIME) >> 1);
-	pwm_out_data.lo.edges[1].time = ((value+PWM_DEAD_TIME) >> 1) - 31;
+	pwm_out_data.lo.edges[0].time_off = ((value+PWM_DEAD_TIME) >> 1);
+	pwm_out_data.lo.edges[1].time_off = ((value+PWM_DEAD_TIME) >> 1) - 31;
 }
 #endif
 

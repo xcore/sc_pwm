@@ -248,9 +248,9 @@ void calculate_data_out(
 )
 {
 	outdata_ps->hi.edges[1].pattern = 0;
-	outdata_ps->hi.edges[1].time = 0;
+	outdata_ps->hi.edges[1].time_off = 0;
 	outdata_ps->lo.edges[1].pattern = 0;
-	outdata_ps->lo.edges[1].time = 0;
+	outdata_ps->lo.edges[1].time_off = 0;
 
 	// very low values
 	if (value <= 31)
@@ -260,7 +260,7 @@ void calculate_data_out(
 		asm("mkmsk %0, %1" : "=r"(outdata_ps->hi.edges[0].pattern) : "r"(value));		// compiler work around, bug 8218
 
 		outdata_ps->hi.edges[0].pattern <<= (value >> 1); // move it to the middle
-		outdata_ps->hi.edges[0].time = 16;
+		outdata_ps->hi.edges[0].time_off = 16;
 		return;
 	}
 
@@ -276,7 +276,7 @@ void calculate_data_out(
 		asm("mkmsk %0, %1" : "=r"(outdata_ps->hi.edges[0].pattern) : "r"(tmp) );		// compiler work around, bug 8218
 
 		outdata_ps->hi.edges[0].pattern <<= (32 - tmp);
-		outdata_ps->hi.edges[0].time = (PWM_MAX_VALUE >> 1) + ((PWM_MAX_VALUE - value) >> 1); // MAX + (num 0's / 2)
+		outdata_ps->hi.edges[0].time_off = (PWM_MAX_VALUE >> 1) + ((PWM_MAX_VALUE - value) >> 1); // MAX + (num 0's / 2)
 		return;
 	}
 
@@ -299,8 +299,8 @@ void calculate_data_out(
 		/* outdata_ps..pattern = ((1 << (value - (value >> 1)))-1);  */
 		asm("mkmsk %0, %1" : "=r"(outdata_ps->hi.edges[1].pattern) : "r"(tmp) );		// compiler work around, bug 8218
 
-		outdata_ps->hi.edges[0].time = 32;
-		outdata_ps->hi.edges[1].time = 0;
+		outdata_ps->hi.edges[0].time_off = 32;
+		outdata_ps->hi.edges[1].time_off = 0;
 		return;
 	}
 
@@ -309,8 +309,8 @@ void calculate_data_out(
 	outdata_ps->hi.edges[0].pattern = 0xFFFFFFFF;
 	outdata_ps->hi.edges[1].pattern = 0x7FFFFFFF;
 
-	outdata_ps->hi.edges[0].time = (value >> 1);
-	outdata_ps->hi.edges[1].time = (value >> 1)-31;
+	outdata_ps->hi.edges[0].time_off = (value >> 1);
+	outdata_ps->hi.edges[1].time_off = (value >> 1)-31;
 } // calculate_data_out 
 /*****************************************************************************/
 void calculate_data_out_ref( 
@@ -418,25 +418,27 @@ void calculate_leg_data_out_ref( // convert pulse width to a 32-bit pattern and 
 
 
 /* The time offset is measured from a time datum (e.g. the Centre of the pulses) 
- * For the 1st word, it is measured backwards from the centre to the start of the pulse.
- * For the 2nd word, (if used) it is measured forwards to the end of the pulse (- 32 bits).
- * Therefore in pwm_op_inv.S, you will find Tc - To (Time_Centre - Time_Offset) for the 1st word
- * and Tc + To (Time_Centre + Time_Offset) for the 2nd word
+ * backwards to the start of the pulse.
+ * Therefore in pwm_op_inv.S, you will find Tc - To (Time_Centre - Time_Offset)
  */
 
 	// Garbage values for edge[1]
 	pulsedata_ps->edges[1].pattern = 0x55555555;
-	pulsedata_ps->edges[1].time = 0;
+	pulsedata_ps->edges[1].time_off = 0;
 
 	// Check for SINGLE pulse 
 	if (inp_wid < 32)
 	{ // NB Need MSB to be zero, as this lasts for long low section of pulse
 		*typ_p = SINGLE;
-		pulsedata_ps->edges[0].time = 16;
+		pulsedata_ps->edges[0].time_off = -16;
 		pulsedata_ps->edges[0].pattern = ((1 << inp_wid)-1);
 
 		// shift pulse to the middle of the 32-bit pattern
 		pulsedata_ps->edges[0].pattern <<= ((32 - inp_wid) >> 1); // Ensures MSB=0 for inp_wid = 31 
+
+		// Garbage values for edge[1]
+		pulsedata_ps->edges[1].pattern = 0x55555555;
+		pulsedata_ps->edges[1].time_off = 0;
 
 		return;
 	} // if (inp_wid < 32)
@@ -449,11 +451,11 @@ void calculate_leg_data_out_ref( // convert pulse width to a 32-bit pattern and 
 		tmp = (64 - inp_wid) >> 1; // NB tmp range [16..0]
 		pulsedata_ps->edges[0].pattern = ((1 << tmp)-1); // This is inverted pattern
 		pulsedata_ps->edges[0].pattern = ~(pulsedata_ps->edges[0].pattern); // This is correct pattern
-		pulsedata_ps->edges[0].time = 32;
+		pulsedata_ps->edges[0].time_off = -32;
 
 		tmp = (inp_wid >> 1); // NB tmp range [0..31]
 		pulsedata_ps->edges[1].pattern = ((1 << tmp)-1);
-		pulsedata_ps->edges[1].time = 0;
+		pulsedata_ps->edges[1].time_off = 0;
 
 		return;
 	} // if (inp_wid < 64)
@@ -465,10 +467,14 @@ void calculate_leg_data_out_ref( // convert pulse width to a 32-bit pattern and 
 	{	// close to PWM_MAX_VALUE
 		*typ_p = LONG_SINGLE;
 
-		pulsedata_ps->edges[0].time = (PWM_MAX_VALUE >> 1) - 16;
-		pulsedata_ps->edges[0].pattern = ((1 << num_zeros)-1);
-		pulsedata_ps->edges[0].pattern <<= ((32 - num_zeros) >> 1); // shift inverted pulse to the middle of the 32-bit pattern
-		pulsedata_ps->edges[0].pattern = ~(pulsedata_ps->edges[0].pattern); // This is correct pattern
+		// Garbage values for edge[1]
+		pulsedata_ps->edges[0].pattern = 0x55555555;
+		pulsedata_ps->edges[0].time_off = 0;
+
+		pulsedata_ps->edges[1].time_off = (PWM_MAX_VALUE >> 1) - 16;
+		pulsedata_ps->edges[1].pattern = ((1 << num_zeros)-1);
+		pulsedata_ps->edges[1].pattern <<= ((32 - num_zeros) >> 1); // shift inverted pulse to the middle of the 32-bit pattern
+		pulsedata_ps->edges[1].pattern = ~(pulsedata_ps->edges[1].pattern); // This is correct pattern
 
 		return;
 	}	// if (inp_wid >= (PWM_MAX_VALUE-31))
@@ -481,11 +487,11 @@ void calculate_leg_data_out_ref( // convert pulse width to a 32-bit pattern and 
 		tmp = (num_zeros >> 1); // NB tmp range [0..31]
 		pulsedata_ps->edges[0].pattern = ((1 << tmp)-1);
 		pulsedata_ps->edges[0].pattern = ~(pulsedata_ps->edges[0].pattern); // This is correct pattern
-		pulsedata_ps->edges[0].time = (PWM_MAX_VALUE >> 1);
+		pulsedata_ps->edges[0].time_off = -(PWM_MAX_VALUE >> 1);
 
 		tmp = (64 - num_zeros) >> 1; // NB tmp range [16..0]
 		pulsedata_ps->edges[1].pattern = ((1 << tmp)-1); // This is inverted pattern
-		pulsedata_ps->edges[1].time = (PWM_MAX_VALUE >> 1) - 32;
+		pulsedata_ps->edges[1].time_off = (PWM_MAX_VALUE >> 1) - 32;
 
 
 		return;
@@ -495,10 +501,10 @@ void calculate_leg_data_out_ref( // convert pulse width to a 32-bit pattern and 
 
 	*typ_p = DOUBLE;
 	pulsedata_ps->edges[0].pattern = 0xFFFFFFFF;
-	pulsedata_ps->edges[0].time = (inp_wid >> 1);
+	pulsedata_ps->edges[0].time_off = -((inp_wid+1) >> 1);
 
 	pulsedata_ps->edges[1].pattern = 0x7FFFFFFF;
-	pulsedata_ps->edges[1].time = (inp_wid >> 1) - 31;
+	pulsedata_ps->edges[1].time_off = (inp_wid >> 1) - 31;
 
 } // calculate_leg_data_out_ref
 /*****************************************************************************/
