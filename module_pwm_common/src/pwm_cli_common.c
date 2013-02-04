@@ -47,7 +47,7 @@ void pwm_share_control_buffer_address_with_server(
 void order_pwm(  // Used by INV and NOINV modes
 	unsigned * mode, 
 	unsigned * chan_id, 
-	PWM_OUTDATA_TYP * pwm_out_data
+	PWM_PHASE_TYP * pwm_out_data
 )
 {
 	unsigned chan_id_tmp;
@@ -244,23 +244,23 @@ void order_pwm(  // Used by INV and NOINV modes
 /*****************************************************************************/
 void calculate_data_out( 
 	unsigned value, 
-	PWM_OUTDATA_TYP * outdata_ps 
+	PWM_PHASE_TYP * phase_data_ps 
 )
 {
-	outdata_ps->hi.edges[1].pattern = 0;
-	outdata_ps->hi.edges[1].time_off = 0;
-	outdata_ps->lo.edges[1].pattern = 0;
-	outdata_ps->lo.edges[1].time_off = 0;
+	phase_data_ps->hi.edges[1].pattern = 0;
+	phase_data_ps->hi.edges[1].time_off = 0;
+	phase_data_ps->lo.edges[1].pattern = 0;
+	phase_data_ps->lo.edges[1].time_off = 0;
 
 	// very low values
 	if (value <= 31)
 	{
-		outdata_ps->typ = SINGLE;
-		/* outdata_ps..pattern = ((1 << value)-1);  */
-		asm("mkmsk %0, %1" : "=r"(outdata_ps->hi.edges[0].pattern) : "r"(value));		// compiler work around, bug 8218
+		phase_data_ps->typ = SINGLE;
+		/* phase_data_ps..pattern = ((1 << value)-1);  */
+		asm("mkmsk %0, %1" : "=r"(phase_data_ps->hi.edges[0].pattern) : "r"(value));		// compiler work around, bug 8218
 
-		outdata_ps->hi.edges[0].pattern <<= (value >> 1); // move it to the middle
-		outdata_ps->hi.edges[0].time_off = 16;
+		phase_data_ps->hi.edges[0].pattern <<= (value >> 1); // move it to the middle
+		phase_data_ps->hi.edges[0].time_off = 16;
 		return;
 	}
 
@@ -268,15 +268,15 @@ void calculate_data_out(
 	else if (value >= (PWM_MAX_VALUE-31))
 	{
 		unsigned tmp;
-		outdata_ps->typ = LONG_SINGLE;
+		phase_data_ps->typ = LONG_SINGLE;
 		tmp = PWM_MAX_VALUE - value; // number of 0's
 		tmp = 32 - tmp; // number of 1's
 
-		/* outdata_ps..pattern = ((1 << value)-1);  */
-		asm("mkmsk %0, %1" : "=r"(outdata_ps->hi.edges[0].pattern) : "r"(tmp) );		// compiler work around, bug 8218
+		/* phase_data_ps..pattern = ((1 << value)-1);  */
+		asm("mkmsk %0, %1" : "=r"(phase_data_ps->hi.edges[0].pattern) : "r"(tmp) );		// compiler work around, bug 8218
 
-		outdata_ps->hi.edges[0].pattern <<= (32 - tmp);
-		outdata_ps->hi.edges[0].time_off = (PWM_MAX_VALUE >> 1) + ((PWM_MAX_VALUE - value) >> 1); // MAX + (num 0's / 2)
+		phase_data_ps->hi.edges[0].pattern <<= (32 - tmp);
+		phase_data_ps->hi.edges[0].time_off = (PWM_MAX_VALUE >> 1) + ((PWM_MAX_VALUE - value) >> 1); // MAX + (num 0's / 2)
 		return;
 	}
 
@@ -284,33 +284,33 @@ void calculate_data_out(
 	else if (value < 64)
 	{
 		unsigned tmp;
-		outdata_ps->typ = DOUBLE;
+		phase_data_ps->typ = DOUBLE;
 
 		if (value == 63)
 			tmp = 32;
 		else
 			tmp = value >> 1;
 
-		/* outdata_ps..pattern = ((1 << (value >> 1))-1);  */
-		asm("mkmsk %0, %1" : "=r"(outdata_ps->hi.edges[0].pattern) : "r"(tmp) );		// compiler work around, bug 8218
+		/* phase_data_ps..pattern = ((1 << (value >> 1))-1);  */
+		asm("mkmsk %0, %1" : "=r"(phase_data_ps->hi.edges[0].pattern) : "r"(tmp) );		// compiler work around, bug 8218
 
 		tmp = value - tmp;
 
-		/* outdata_ps..pattern = ((1 << (value - (value >> 1)))-1);  */
-		asm("mkmsk %0, %1" : "=r"(outdata_ps->hi.edges[1].pattern) : "r"(tmp) );		// compiler work around, bug 8218
+		/* phase_data_ps..pattern = ((1 << (value - (value >> 1)))-1);  */
+		asm("mkmsk %0, %1" : "=r"(phase_data_ps->hi.edges[1].pattern) : "r"(tmp) );		// compiler work around, bug 8218
 
-		outdata_ps->hi.edges[0].time_off = 32;
-		outdata_ps->hi.edges[1].time_off = 0;
+		phase_data_ps->hi.edges[0].time_off = 32;
+		phase_data_ps->hi.edges[1].time_off = 0;
 		return;
 	}
 
 	// midrange
-	outdata_ps->typ = DOUBLE;
-	outdata_ps->hi.edges[0].pattern = 0xFFFFFFFF;
-	outdata_ps->hi.edges[1].pattern = 0x7FFFFFFF;
+	phase_data_ps->typ = DOUBLE;
+	phase_data_ps->hi.edges[0].pattern = 0xFFFFFFFF;
+	phase_data_ps->hi.edges[1].pattern = 0x7FFFFFFF;
 
-	outdata_ps->hi.edges[0].time_off = (value >> 1);
-	outdata_ps->hi.edges[1].time_off = (value >> 1)-31;
+	phase_data_ps->hi.edges[0].time_off = (value >> 1);
+	phase_data_ps->hi.edges[1].time_off = (value >> 1)-31;
 } // calculate_data_out 
 /*****************************************************************************/
 void calculate_data_out_ref( 
@@ -483,7 +483,7 @@ void calculate_leg_data_out_ref( // convert pulse width to a 32-bit pattern and 
 } // calculate_leg_data_out_ref
 /*****************************************************************************/
 void calculate_all_data_out_ref( // Calculate all PWM Pulse data for balanced line
-	PWM_OUTDATA_TYP * outdata_ps, // Pointer to PWM output data structure
+	PWM_PHASE_TYP * phase_data_ps, // Pointer to PWM output data structure
 	unsigned value, // PWM pulse-width value
 	unsigned dead_time // PWM dead-time
 )
@@ -491,12 +491,12 @@ void calculate_all_data_out_ref( // Calculate all PWM Pulse data for balanced li
 	//  WARNING: Both legs of the balanced line must NOT be switched at the same time. Therefore add dead-time to low leg.
 
 	// Calculate PWM Pulse data for high leg (V+) of balanced line
-	calculate_leg_data_out_ref( &(outdata_ps->hi) ,&(outdata_ps->typ) ,value );
+	calculate_leg_data_out_ref( &(phase_data_ps->hi) ,&(phase_data_ps->typ) ,value );
 
 //WARNING: At present hi-leg 'cat' value is overwritten by lo-leg 'cat' value. MB~
 
 	// Calculate PWM Pulse data for low leg (V+) of balanced line (a short time later)
-	calculate_leg_data_out_ref( &(outdata_ps->lo) ,&(outdata_ps->typ) ,(value + dead_time) );
+	calculate_leg_data_out_ref( &(phase_data_ps->lo) ,&(phase_data_ps->typ) ,(value + dead_time) );
 } // calculate_all_data_out_ref
 /*****************************************************************************/
 void swap_phase_ids( // swap ids of 2 PWM phases
@@ -523,22 +523,22 @@ void order_common_mode( // Order common mode using 3 element Bubble Sort
 	PWM_PHASE_TYP * phase_p // Pointer to array of phase data strutures
 )
 {
-	if (phase_p[0].out_data.width > phase_p[1].out_data.width) 
+	if (phase_p[0].width > phase_p[1].width) 
 	{
 		swap_phase_ids( phase_p ,0 ,1 ); // Swap id's for phase 0 and 1
-	} //if (phase_p[0].out_data.width > phase_p[1].out_data.width) 
+	} //if (phase_p[0].width > phase_p[1].width) 
 
-	if (phase_p[1].out_data.width > phase_p[2].out_data.width) 
+	if (phase_p[1].width > phase_p[2].width) 
 	{
 		swap_phase_ids( phase_p ,1 ,2 );  // Swap id's for phase 1 and 2
-	} // if (phase_p[1].out_data.width > phase_p[2].out_data.width) 
+	} // if (phase_p[1].width > phase_p[2].width) 
 
 	// NB Phase_2 now largest
 
-	if (phase_p[0].out_data.width > phase_p[1].out_data.width) 
+	if (phase_p[0].width > phase_p[1].width) 
 	{
 		swap_phase_ids( phase_p ,0 ,1 ); // Swap id's for phase 0 and 1
-	} //if (phase_p[0].out_data.width > phase_p[1].out_data.width) 
+	} //if (phase_p[0].width > phase_p[1].width) 
 
 	// NB Phase_0 now smallest
 
@@ -574,7 +574,7 @@ void calculate_pwm_mode(  // Used by INV and NOINV modes
 	// Loop through all phases and build PWM mode identifier
 	for (phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
 	{
-		switch( phase_p[phase_cnt].out_data.typ ) 
+		switch( phase_p[phase_cnt].typ ) 
 		{
 			case SINGLE:
 				// No action required
@@ -592,7 +592,7 @@ void calculate_pwm_mode(  // Used by INV and NOINV modes
 			default:
 				assert( 0 == 1 ); // ERROR: Unsupported PWM Pulse type
 			break;
-		} // switch( phase_p[phase_cnt].out_data.typ ) 
+		} // switch( phase_p[phase_cnt].typ ) 
 	}	// for phase_cnt
 
 	// Order pulse-data according to PWM mode
@@ -610,12 +610,12 @@ void calculate_pwm_mode(  // Used by INV and NOINV modes
 			/* need to find the double and put it first */
 			for (phase_cnt = 1; phase_cnt < NUM_PWM_PHASES; phase_cnt++)
 			{
-				if (phase_p[phase_cnt].out_data.typ == DOUBLE )
+				if (phase_p[phase_cnt].typ == DOUBLE )
 				{
 					swap_phase_ids( phase_p ,0 ,phase_cnt ); // Swap id's for phase 0 and phase_cnt
 
 					break;
-				} // if (phase_p[phase_cnt].out_data.typ == DOUBLE )
+				} // if (phase_p[phase_cnt].typ == DOUBLE )
 			} // for phase_cnt
 		break; // case D_PWM_MODE_1
 
@@ -623,29 +623,29 @@ void calculate_pwm_mode(  // Used by INV and NOINV modes
 			/* need to find the single and put it last */
 			for (phase_cnt = 0; phase_cnt < (NUM_PWM_PHASES - 1); phase_cnt++)
 			{
-				if (phase_p[phase_cnt].out_data.typ == SINGLE )
+				if (phase_p[phase_cnt].typ == SINGLE )
 				{
 					swap_phase_ids( phase_p ,phase_cnt ,(NUM_PWM_PHASES - 1) ); // Swap id's for phase phase_cnt and (NUM_PWM_PHASES - 1)
 	
 					break;
-				} // if (phase_p[phase_cnt].out_data.typ == SINGLE )
+				} // if (phase_p[phase_cnt].typ == SINGLE )
 			} // for phase_cnt
 	
 			/* now order 2 doubles with largest length 1st */
-			if (phase_p[1].out_data.width > phase_p[0].out_data.width)
+			if (phase_p[1].width > phase_p[0].width)
 			{
 				swap_phase_ids( phase_p ,0 ,1 ); // Swap id's for phase 0 and 1
-			} // if (phase_p[1].out_data.width > phase_p[0].out_data.width)
+			} // if (phase_p[1].width > phase_p[0].width)
 		break; // case D_PWM_MODE_2 
 	
 		case D_PWM_MODE_4: // 2xSINGLE + LONG_SINGLE
 			/* need to find the long single and put it first */
 			for (phase_cnt = 1; phase_cnt < NUM_PWM_PHASES; phase_cnt++)
 			{
-				if (phase_p[phase_cnt].out_data.typ == LONG_SINGLE)
+				if (phase_p[phase_cnt].typ == LONG_SINGLE)
 				{
 					swap_phase_ids( phase_p ,0 ,phase_cnt ); // Swap id's for phase 0 and phase_cnt
-				} // if (phase_p[phase_cnt].out_data.typ == LONG_SINGLE)
+				} // if (phase_p[phase_cnt].typ == LONG_SINGLE)
 
 				break;
 			} // for phase_cnt
@@ -655,38 +655,38 @@ void calculate_pwm_mode(  // Used by INV and NOINV modes
 			/* need to find the single and put it last */
 			for (phase_cnt = 0; phase_cnt < (NUM_PWM_PHASES - 1); phase_cnt++)
 			{
-				if (phase_p[phase_cnt].out_data.typ == SINGLE) 
+				if (phase_p[phase_cnt].typ == SINGLE) 
 				{
 					swap_phase_ids( phase_p ,phase_cnt ,(NUM_PWM_PHASES - 1) ); // Swap id's for phase phase_cnt and (NUM_PWM_PHASES - 1)
 	
 					break;
-				} // if (phase_p[phase_cnt].out_data.typ == SINGLE) {
+				} // if (phase_p[phase_cnt].typ == SINGLE) {
 			} // for (phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++)
 	
 			/* need to put the long-single first */
-			if (phase_p[1].out_data.typ == LONG_SINGLE ) 
+			if (phase_p[1].typ == LONG_SINGLE ) 
 			{
 				swap_phase_ids( phase_p ,0 ,1 ); // Swap id's for phase 0 and 1
-			} // if (phase_p[phase_cnt].out_data.typ == DOUBLE) 
+			} // if (phase_p[phase_cnt].typ == DOUBLE) 
 		break;  // case D_PWM_MODE_5
 
 		case D_PWM_MODE_6: // 2xDOUBLE + LONG_SINGLE
 			/* need to find the long single and put it first */
 			for (phase_cnt = 1; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
 			{
-				if (phase_p[phase_cnt].out_data.typ == LONG_SINGLE) 
+				if (phase_p[phase_cnt].typ == LONG_SINGLE) 
 				{
 					swap_phase_ids( phase_p ,0 ,phase_cnt ); // Swap id's for phase 0 and phase_cnt
 	
 					break;
-				} // if (phase_p[phase_cnt].out_data.typ == LONG_SINGLE) 
+				} // if (phase_p[phase_cnt].typ == LONG_SINGLE) 
 			} // for phase_cnt
 	
 			/* put the smallest double last */
-			if (phase_p[1].out_data.width < phase_p[NUM_PWM_PHASES - 1].out_data.width)
+			if (phase_p[1].width < phase_p[NUM_PWM_PHASES - 1].width)
 			{
 				swap_phase_ids( phase_p ,1 ,(NUM_PWM_PHASES - 1) ); // Swap id's for phase 1 and last
-			} // if (phase_p[1].out_data.width < phase_p[NUM_PWM_PHASES - 1].out_data.width)
+			} // if (phase_p[1].width < phase_p[NUM_PWM_PHASES - 1].width)
 		break;  // case D_PWM_MODE_6
 
 		case D_PWM_MODE_7: // SINGLE + 2xLONG_SINGLE

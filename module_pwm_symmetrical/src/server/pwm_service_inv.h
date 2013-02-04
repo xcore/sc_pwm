@@ -13,6 +13,7 @@
  *
  **/                                   
 #include "pwm_common.h"
+#include "pwm_service.h"
 
 
 /** \brief Implementation of the centre aligned inverted pair PWM server, with ADC synchronization

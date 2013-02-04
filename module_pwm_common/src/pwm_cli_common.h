@@ -34,7 +34,7 @@
 void pwm_share_control_buffer_address_with_server(chanend c, REFERENCE_PARAM( ASM_CONTROL_TYP ,asm_ctrl) );
 
 // Calculate required ordering of operation
-void order_pwm( REFERENCE_PARAM(unsigned,mode), unsigned chan_id[], PWM_OUTDATA_TYP pwm_out_data[]);
+void order_pwm( REFERENCE_PARAM(unsigned,mode), unsigned chan_id[], PWM_PHASE_TYP pwm_phase_data[]);
 
 #endif //MB~ Depreciated
 
@@ -48,7 +48,7 @@ unsigned long get_struct_address( // Converts structure reference to address
 ); // Return address
 /******************************************************************************/
 // Calculate timings for PWM output
-void calculate_data_out( unsigned value, REFERENCE_PARAM(PWM_OUTDATA_TYP,pwm_out_data) );
+void calculate_data_out( unsigned value, REFERENCE_PARAM(PWM_PHASE_TYP ,pwm_out_data) );
 
 void calculate_data_out_ref( unsigned value,
 		REFERENCE_PARAM(unsigned,ts0),
@@ -58,13 +58,13 @@ void calculate_data_out_ref( unsigned value,
 		REFERENCE_PARAM(e_pwm_cat,cat));
 
 void calculate_all_data_out_ref( 
-		REFERENCE_PARAM( PWM_OUTDATA_TYP ,pwm_out_data ),
+		REFERENCE_PARAM( PWM_PHASE_TYP ,pwm_out_data ),
 		unsigned value,
 		unsigned dead_time
 );
 
 #ifdef __XC__
-inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PWM_OUTDATA_TYP ,pwm_out_data ) )
+inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PWM_PHASE_TYP ,pwm_out_data ) )
 {
 	pwm_out_data.typ = DOUBLE;
 

@@ -22,11 +22,11 @@
 
 #include "pwm_cli_inv.h"
 
-extern inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PWM_OUTDATA_TYP ,pwm_out_data ) );
+extern inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PWM_PHASE_TYP ,pwm_phase_data ) );
 
 /*****************************************************************************/
 void write_output_data( // MB~ Until Assembler is rewritten, need to write to memory structure maintained by assembler
-	PWM_OUTDATA_TYP & pwm_data, // New PWM output data structure
+	PWM_PHASE_TYP & pwm_data, // New PWM output data structure
 	ASM_OUTDATA_TYP & asm_data // Assembler compatible output data structure
 )
 {
@@ -64,7 +64,7 @@ void write_pwm_data_to_mem( // MB~ Until Assembler is rewritten, need to write t
 		 	// transfer phase-data
 			asm_ctrl.chan_id_buf[buf_cnt][phase_cnt] = pwm_ctrl.buf_data[buf_cnt].phase_data[phase_cnt].ord_id;
 
-			write_output_data( pwm_ctrl.buf_data[buf_cnt].phase_data[phase_cnt].out_data ,asm_ctrl.pwm_out_data_buf[buf_cnt][phase_cnt] );
+			write_output_data( pwm_ctrl.buf_data[buf_cnt].phase_data[phase_cnt] ,asm_ctrl.pwm_out_data_buf[buf_cnt][phase_cnt] );
 		} // for phase_cnt
 	} // for buf_cnt
 } // write_pwm_data_to_mem
@@ -96,7 +96,7 @@ void update_pwm_inv(
 			pwm_width[phase_cnt] = PWM_LIM_VALUE;
 		} // if (pwm_width[phase_cnt] > PWM_LIM_VALUE)
 
-		calculate_all_data_out_ref( pwm_ctrl.buf_data[pwm_ctrl.cur_buf].phase_data[phase_cnt].out_data 
+		calculate_all_data_out_ref( pwm_ctrl.buf_data[pwm_ctrl.cur_buf].phase_data[phase_cnt]
 			,pwm_width[phase_cnt] ,PWM_DEAD_TIME );
 	} // for phase_cnt
 

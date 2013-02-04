@@ -113,20 +113,14 @@ typedef struct PWM_PULSE_TAG
 	PWM_EDGE_TYP edges[NUM_PULSE_EDGES]; // array of data structures for pulse edges
 } PWM_PULSE_TYP;
 
-// Structure containing all pulse-data
-typedef struct PWM_OUTDATA_TAG
+// Structure containing pwm output data for one phase
+typedef struct PWM_PHASE_TAG // Structure containing string
 {
 	PWM_PULSE_TYP hi; // Pulse data for high leg (V+) of balanced line
 	PWM_PULSE_TYP lo; // Pulse data for low leg (V-) of balanced line
 
 	e_pwm_cat typ;  // pulse-type  MB~
 	unsigned width; // PWM Pulse width
-} PWM_OUTDATA_TYP;
-
-// Structure containing pwm output data for one phase
-typedef struct PWM_PHASE_TAG // Structure containing string
-{
-	PWM_OUTDATA_TYP out_data;
 	unsigned ord_id; // index for ordering phases in time
 } PWM_PHASE_TYP;
 

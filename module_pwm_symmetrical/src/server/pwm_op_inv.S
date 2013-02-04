@@ -113,6 +113,7 @@ L_READ_NEW_DATA:
 	// Expected stack values on entry:
 	// sp[9]: p32_pwm_hi[]
 	// sp[10]: p32_pwm_lo[]
+	// sp[13]: time-stamp
 	// sp[14]: mem_addr (Shared memory address)
 
 	stw r0, sp[8]		// sp[8] = r0 (buf_id)
@@ -213,6 +214,7 @@ L_MODE_3: // Old 3xDOUBLE mode
 	// sp[8]: buf_id
 	// sp[10]: p32_pwm_lo[]
 	// sp[11]: c_pwm
+	// sp[13]: time-stamp
 	// sp[14]: mem_addr (Shared memory address)
 	// sp[15]: c_adc_trig
 	// sp[16]: p16_adc_sync
@@ -224,23 +226,7 @@ L_MODE_3: // Old 3xDOUBLE mode
 	add r9, r11, r9  // r9 += PWM_MAX_VALUE (Increment to Time-stamp by one revolution)
 	stw r9, sp[13] // sp[13] = r9 (Store Time-stamp of next pulse-centre)
 
-	// Set-up Edge_0 outputs on 6 PWM ports (NB Each will fire at time-stamp specified) ...
-
-	// Load 1st word onto ports, this contains at least the first edge (Edge_0),
-	// and for SINGLE and LONG_SINGLE, also the 2nd edge (Edge_1)
-	// Expected registers values on entry
-	// r0: p32_pwm_hi[0] Hi-leg of 1st Port
-	// r1: p32_pwm_hi[1] Hi-leg of 2nd Port
-	// r2: p32_pwm_hi[2] Hi-leg of 3rd Port
-	// r3: Addr of 1st pwm_out_data_buf[][] cell
-	// r4: Addr of 2nd pwm_out_data_buf[][] cell
-	// r5: Addr of 3rd pwm_out_data_buf[][] cell
-	// r6: p32_pwm_lo[0] Lo-leg of 1stPort
-	// r7: p32_pwm_lo[1] Lo-leg of 2ndPort
-	// r8: p32_pwm_lo[2] Lo-leg of 3rdPort
-	// r9: resource[1stPort].time  Time-stamp of next transfer
-
-	// Set-up 1st word output on 6 PWM ports ...
+	// Set-up 1st word (Edge_0) outputs on 6 PWM ports (NB Each will fire at time-stamp specified) ...
 
 	// Channel_0 Hi-Leg
 	ldw r11, r3[0] // r11 = hi_ts0 (time-offset for edge_0 of Hi-leg 1stPort)
@@ -284,29 +270,7 @@ L_MODE_3: // Old 3xDOUBLE mode
 	ldw r11, r5[5]
 	out res[r8], r11
 
-	// trigger adc
-	#if LOCK_ADC_TO_PWM
-	ldw r11, sp[16] // r11 = p16_adc_sync (ADC synchronisation port)
-	setpt res[r11], r9 // resource[p16_adc_sync].time = 1stPort_TS + 4096 (set time for next transfer on ADC Sync Port to TS for previous transfer on 1stPort)
-	ldw r10, sp[15] // r10 = c_adc_trig (load adc trig chanend)
-	in r11, res[r11] // r11 = resource[p16_adc_sync].val (Wait until time to input data)
-	outct res[r10], XS1_CT_END // resource[c_adc_trig].val = XS1_CT_END ( send adc trig token)
-	#endif
-
-	// Expected registers values on exit:
-	// r0: p32_pwm_hi[0] Hi-leg of 1st Port
-	// r1: p32_pwm_hi[1] Hi-leg of 2nd Port
-	// r2: p32_pwm_hi[2] Hi-leg of 3rd Port
-	// r3: Addr of 1st pwm_out_data_buf[][] cell
-	// r4: Addr of 2nd pwm_out_data_buf[][] cell
-	// r5: Addr of 3rd pwm_out_data_buf[][] cell
-	// r6: p32_pwm_lo[0] Lo-leg of 1stPort
-	// r7: p32_pwm_lo[1] Lo-leg of 2ndPort
-	// r8: p32_pwm_lo[2] Lo-leg of 3rdPort
-	// r9: resource[1stPort].time  Time-stamp of next transfer
-	// r10: c_pwm
-
-	// Set-up Edge_1 outputs on 6 PWM ports (NB Each will fire at time-stamp specified) ...
+	// Set-up 2nd word (Edge_1) outputs on 6 PWM ports (NB Each will fire at time-stamp specified) ...
 
 	// Edge_1 Channel_2 Hi-Leg
 	ldw r11, r5[2]	// r11 = hi_ts1 (time-offset for edge_1 of Hi-leg 3rdPort)
@@ -349,6 +313,17 @@ L_MODE_3: // Old 3xDOUBLE mode
 	setpt res[r6], r11
 	ldw r11, r3[7]
 	out res[r6], r11
+
+	// trigger adc
+	#if LOCK_ADC_TO_PWM
+	ldw r11, sp[16] // r11 = p16_adc_sync (ADC synchronisation port)
+	ldc r10, HALF_DEAD_TIME // r10 = 60 (HALF_DEAD_TIME)
+	add r10, r9, r10	// r10 += r9 (Time-stamp + half of Dead-time)
+	setpt res[r11], r10 // resource[p16_adc_sync].time = (set time for next transfer on ADC Sync Port)
+	ldw r10, sp[15] // r10 = c_adc_trig (load adc trig chanend)
+	in r11, res[r11] // r11 = resource[p16_adc_sync].val (Wait until time to input data)
+	outct res[r10], XS1_CT_END // resource[c_adc_trig].val = XS1_CT_END ( send adc trig token)
+	#endif
 
 	ldw r10, sp[11] // r10 = sp[11] (chanend c_pwm)
 	ldap r11, L_READ_NEW_BUF			// r11 = PC + 2xL_READ_NEW_BUF	
