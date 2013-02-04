@@ -57,6 +57,7 @@ static void do_pwm_port_config(
 
 	start_clock( pwm_clk );
 } // do_pwm_port_config_inv_adc_trig
+#ifdef MB
 /*****************************************************************************/
 void do_pwm_inv_triggered( 
 	chanend c_pwm, 
@@ -89,7 +90,7 @@ void do_pwm_inv_triggered(
 	} // while(1)
 
 } // do_pwm_inv_triggered 
-#ifdef MB
+#endif //MB~
 /*****************************************************************************/
 void load_pwm_edge_onto_port( // Load one set of edge data for current port
 	PWM_EDGE_TYP &edge_data_s, // Reference to structure containing PWM output data for current edge
@@ -109,14 +110,14 @@ void load_pwm_phase( // Load all data ports for current phase/edge
 	unsigned ref_time // Reference time-stamp
 )
 {
-	load_pwm_edge_onto_port( pwm_data_s.hi.edges[edge_id] ,p32_pwm_hi ,ref_time );
-	load_pwm_edge_onto_port( pwm_data_s.lo.edges[edge_id] ,p32_pwm_lo ,ref_time );
+	load_pwm_edge_onto_port( phase_data_s.hi.edges[edge_id] ,p32_pwm_hi ,ref_time );
+	load_pwm_edge_onto_port( phase_data_s.lo.edges[edge_id] ,p32_pwm_lo ,ref_time );
 } // load_pwm_phase
 /*****************************************************************************/
 void load_pwm_edge_for_all_ports( // Load all data ports for current edge
-	PWM_BUFFER_TYP pwm_data_s; // Structure containing PWM output data
-	buffered out port:32 p32_pwm_hi, // 32-bit buffered output port for High-Leg pulse
-	buffered out port:32 p32_pwm_lo, // 32-bit buffered output port for High-Leg pulse
+	PWM_BUFFER_TYP pwm_data_s, // Structure containing PWM output data
+	buffered out port:32 p32_pwm_hi[], // 32-bit buffered output port for High-Leg pulse
+	buffered out port:32 p32_pwm_lo[], // 32-bit buffered output port for High-Leg pulse
 	unsigned edge_id, // Identifier for current edge
 	unsigned ref_time // Reference time-stamp
 )
@@ -143,6 +144,7 @@ void do_pwm_inv_triggered(
 	unsigned buf_id; // Double-buffer identifier [0,1]
 	unsigned mem_addr; // Shared memory address
 	unsigned ref_time; // Reference Time incremented every PWM period, all other time are measured relative to this value
+	unsigned pattern; // Bit-pattern on port
 	int data_ready; //Data ready flag
 
 
@@ -150,7 +152,9 @@ void do_pwm_inv_triggered(
 
 	do_pwm_port_config( p32_pwm_hi ,p32_pwm_lo ,p16_adc_sync ,pwm_clk ); // configure the ports
 
-	p32_pwm_hi[0] :> void @ ref_time; // Dummy read to get arbitary reference time
+	// Find out value of time clock on an output port, WITHOUT changing port value
+	pattern = peek( p32_pwm_hi[0] ); // Find out value on 1-bit port. NB Only LS-bit is relevant
+	ref_time = partout_timestamped( p32_pwm_hi[0] ,1 ,pattern ); // Re-load output port with same bit-value
 
 	c_pwm :> buf_id; // Wait for initial buffer id
 	data_ready = 1; // signal new data ready
@@ -163,35 +167,34 @@ void do_pwm_inv_triggered(
 		{
 			read_pwm_data_from_mem( pwm_data_s ,mem_addr ,buf_id ); // Read data from new buffer in shared memory
 
-			if (pwm_data_s.cur_mode != D_MODE_3) break; // Check for valid mode
+			if (pwm_data_s.cur_mode != D_PWM_MODE_3) break; // Check for valid mode
 		} // if (data_ready)
 
 		ref_time += INIT_SYNC_INCREMENT; // Update reference time to next PWM period
 
 		// WARNING: Load port events in correct time order
-		load_pwm_edge_for all_ports( pwm_data_s ,p32_pwm_hi ,p32_pwm_lo ,0 ,ref_time ); // Load all ports with data for 1st edge
+		load_pwm_edge_for_all_ports( pwm_data_s ,p32_pwm_hi ,p32_pwm_lo ,0 ,ref_time ); // Load all ports with data for 1st edge
 		load_pwm_edge_for_all_ports( pwm_data_s ,p32_pwm_hi ,p32_pwm_lo ,1 ,ref_time ); // Load all ports with data for 2nd edge
 
 #if LOCK_ADC_TO_PWM
 		// Calculate time to read in dummy value from adc port
 		p16_adc_sync @ (ref_time + HALF_DEAD_TIME) :> void; // NB Blocking wait
-		c_adc_trig <: XS1_CT_END; // Send synchronisation signal to ADC
+		outct( c_adc_trig ,XS1_CT_END ); // Send synchronisation token to ADC
 #endif // LOCK_ADC_TO_PWM
 
 		// Check if new data is ready
 		select
 		{
-			case c_pwm :> buf_id; // Is new buf_id ready?
+			case c_pwm :> buf_id : // Is new buf_id ready?
 				data_ready = 1; // signal new data ready
 			break; // c_pwm :> buf_id;
 
-			default:
+			default :
 				data_ready = 0; // signal data NOT ready
 			break; // default
 		} // select
 	} // while(1)
 
 } // do_pwm_inv_triggered
-#endif //MB~
 /*****************************************************************************/
 // pwm_service_inv
