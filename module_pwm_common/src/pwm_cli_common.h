@@ -36,6 +36,23 @@ void pwm_share_control_buffer_address_with_server(chanend c, REFERENCE_PARAM( AS
 // Calculate required ordering of operation
 void order_pwm( REFERENCE_PARAM(unsigned,mode), unsigned chan_id[], PWM_PHASE_TYP pwm_phase_data[]);
 
+#ifdef __XC__
+inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PWM_PHASE_TYP ,pwm_out_data ) )
+{
+	pwm_out_data.typ = DOUBLE;
+
+	pwm_out_data.hi.edges[0].pattern = 0xFFFFFFFF;
+	pwm_out_data.hi.edges[1].pattern = 0x7FFFFFFF;
+	pwm_out_data.hi.edges[0].time_off = (value >> 1);
+	pwm_out_data.hi.edges[1].time_off = (value >> 1)-31;
+
+	pwm_out_data.lo.edges[0].pattern = 0xFFFFFFFF;
+	pwm_out_data.lo.edges[1].pattern = 0x7FFFFFFF;
+	pwm_out_data.lo.edges[0].time_off = ((value+PWM_DEAD_TIME) >> 1);
+	pwm_out_data.lo.edges[1].time_off = ((value+PWM_DEAD_TIME) >> 1) - 31;
+}
+#endif
+
 #endif //MB~ Depreciated
 
 /******************************************************************************/
@@ -56,29 +73,13 @@ void calculate_data_out_ref( unsigned value,
 		REFERENCE_PARAM(unsigned,ts1),
 		REFERENCE_PARAM(unsigned,out1),
 		REFERENCE_PARAM(e_pwm_cat,cat));
-
-void calculate_all_data_out_ref( 
-		REFERENCE_PARAM( PWM_PHASE_TYP ,pwm_out_data ),
-		unsigned value,
-		unsigned dead_time
-);
-
-#ifdef __XC__
-inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PWM_PHASE_TYP ,pwm_out_data ) )
-{
-	pwm_out_data.typ = DOUBLE;
-
-	pwm_out_data.hi.edges[0].pattern = 0xFFFFFFFF;
-	pwm_out_data.hi.edges[1].pattern = 0x7FFFFFFF;
-	pwm_out_data.hi.edges[0].time_off = (value >> 1);
-	pwm_out_data.hi.edges[1].time_off = (value >> 1)-31;
-
-	pwm_out_data.lo.edges[0].pattern = 0xFFFFFFFF;
-	pwm_out_data.lo.edges[1].pattern = 0x7FFFFFFF;
-	pwm_out_data.lo.edges[0].time_off = ((value+PWM_DEAD_TIME) >> 1);
-	pwm_out_data.lo.edges[1].time_off = ((value+PWM_DEAD_TIME) >> 1) - 31;
-}
-#endif
+/*****************************************************************************/
+void calculate_all_data_out_ref( // Calculate all PWM Pulse data for balanced line
+	REFERENCE_PARAM( PWM_PHASE_TYP ,rise_phase_data_ps), // Pointer to PWM output data structure for rising edge of current phase
+	REFERENCE_PARAM( PWM_PHASE_TYP ,fall_phase_data_ps), // Pointer to PWM output data structure for falling edge of current phase
+	unsigned wid_val // PWM pulse-width value
+	);
+/*****************************************************************************/
 
 // Calculate required ordering of operation
 void calculate_pwm_mode( REFERENCE_PARAM( PWM_CONTROL_TYP ,pwm_ctrl ) );

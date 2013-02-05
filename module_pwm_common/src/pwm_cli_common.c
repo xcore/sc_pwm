@@ -404,100 +404,6 @@ void calculate_data_out_ref(
 	*ts1 = (value >> 1)-31;
 
 } // calculate_data_out_ref
-#endif //MB~ Depreciated
-/*****************************************************************************/
-void calculate_leg_data_out_ref( // convert pulse width to a 32-bit pattern and a time-offset
-	PWM_PULSE_TYP * pulsedata_ps, // Pointer to PWM pulse data structure (for one leg of balanced line)
-	e_pwm_cat * typ_p, // Pointer to type of pulse to generate
-	unsigned inp_wid // PWM pulse-width value
-)
-/* The time offset is measured from a time datum (e.g. the Centre of the pulse) 
- * Therefore the earlier edge (rising edge) has a negative offset
- * and the later edge (falling edge) has a positive offset
- * The absolute time is calculated in pwm_op_inv.S, as (Time_Centre + Time_Offset)
- *
- * NB When the PWM pattern is transmiited from an XMOS 32-bit bufferred port,
- * The Least Significant Bit is the earliest in time, i.e. the LSB is sent 1st.
- */
-{
-	unsigned num_zeros; // No of Zero bits in 32-bit unsigned
-	unsigned tmp;
-
-	*typ_p = DOUBLE;
-
-
-	// Check for short pulse 
-	if (inp_wid < 32)
-	{ // Short Pulse:
-
-		// earlier edge ( zeros transmitted 1st)
-		pulsedata_ps->edges[0].time_off = -32;
-		tmp = (inp_wid + 1) >> 1; // Range [0..16]
-		tmp = ((1 << tmp)-1); // Range 0x0000_0000 .. 0x0000_FFFF
-		pulsedata_ps->edges[0].pattern = bitrev( tmp ); // Range 0x0000_0000 .. 0xFFFF_0000
-
-		// later edge ( zeros transmitted last): 
-		// NB Need MSB to be zero, as this lasts for long low section of pulse
-		pulsedata_ps->edges[1].time_off = 0;
-		tmp = (inp_wid >> 1); // Range [0..15]
-		pulsedata_ps->edges[1].pattern = ((1 << tmp)-1); // Range 0x0000_0000 .. 0x7FFF_0000
-
-	} // if (inp_wid < 32)
-	else
-	{ // NOT a short pulse
-		num_zeros = PWM_MAX_VALUE - inp_wid; // Calculate No. of 0's
-	
-		// Check for mid-range pulse
-		if (num_zeros > 31)
-		{ // Mid-range Pulse
-
-			// earlier edge ( zeros transmitted 1st)
-			pulsedata_ps->edges[0].pattern = 0xFFFF0000;
-			pulsedata_ps->edges[0].time_off = -((inp_wid+33) >> 1);
-	
-			// later edge ( zeros transmitted last)
-			pulsedata_ps->edges[1].pattern = 0x0000FFFF;
-			pulsedata_ps->edges[1].time_off = ((inp_wid - 32) >> 1);
-		} // if (num_zeros > 31)
-		else
-		{ // Long pulse
-
-			// earlier edge ( zeros transmitted 1st)
-			// NB Need MSB to be 1, as this lasts for long high section of pulse
-			pulsedata_ps->edges[0].time_off = -(PWM_MAX_VALUE >> 1);
-			tmp = (num_zeros >> 1); // Range [15..0]
-			tmp = ((1 << tmp)-1); // Range 0x0000_7FFF .. 0x0000_0000
-			pulsedata_ps->edges[0].pattern = ~tmp; // Invert Pattern: Range 0xFFFF_8000 .. 0xFFFF_FFFF
-	
-			// later edge ( zeros transmitted last): 
-			pulsedata_ps->edges[1].time_off = (PWM_MAX_VALUE >> 1) - 32;
-			tmp = ((num_zeros + 1) >> 1); // Range [16..0]
-			tmp = ((1 << tmp)-1); // Range 0x0000_FFFF .. 0x0000_0000
-			tmp = ~tmp; // Invert Pattern: Range 0xFFFF_0000 .. 0xFFFF_FFFF
-			pulsedata_ps->edges[1].pattern = bitrev( tmp ); // Invert Pattern: Range 0x0000_FFFF .. 0xFFFF_FFFF
-
-		} // else !(num_zeros > 31)
-	} // else !(inp_wid < 32)
-
-	return;
-} // calculate_leg_data_out_ref
-/*****************************************************************************/
-void calculate_all_data_out_ref( // Calculate all PWM Pulse data for balanced line
-	PWM_PHASE_TYP * phase_data_ps, // Pointer to PWM output data structure
-	unsigned value, // PWM pulse-width value
-	unsigned dead_time // PWM dead-time
-)
-{
-	//  WARNING: Both legs of the balanced line must NOT be switched at the same time. Therefore add dead-time to low leg.
-
-	// Calculate PWM Pulse data for high leg (V+) of balanced line
-	calculate_leg_data_out_ref( &(phase_data_ps->hi) ,&(phase_data_ps->typ) ,value );
-
-//WARNING: At present hi-leg 'cat' value is overwritten by lo-leg 'cat' value. MB~
-
-	// Calculate PWM Pulse data for low leg (V+) of balanced line (a short time later)
-	calculate_leg_data_out_ref( &(phase_data_ps->lo) ,&(phase_data_ps->typ) ,(value + dead_time) );
-} // calculate_all_data_out_ref
 /*****************************************************************************/
 void swap_phase_ids( // swap ids of 2 PWM phases
 	PWM_PHASE_TYP * phase_p, // Pointer to array of phase data strutures
@@ -719,5 +625,95 @@ void calculate_pwm_mode(  // Used by INV and NOINV modes
 #endif //  else #ifdef PWM_CLIPPED_RANGE
 
 } // calculate_pwm_mode 
+#endif //MB~ Depreciated
+/*****************************************************************************/
+void calculate_leg_data_out_ref( // convert pulse width to a 32-bit pattern and a time-offset
+	PWM_PORT_TYP * rise_port_data_ps, // Pointer to port data structure (for one leg of balanced line for rising edge )
+	PWM_PORT_TYP * fall_port_data_ps, // Pointer to port data structure (for one leg of balanced line for falling edge)
+	unsigned inp_wid // PWM pulse-width value
+)
+/* The time offset is measured from a time datum (e.g. the Centre of the pulse) 
+ * Therefore the earlier edge (rising edge) has a negative offset
+ * and the later edge (falling edge) has a positive offset
+ * The absolute time is calculated in pwm_op_inv.S, as (Time_Centre + Time_Offset)
+ *
+ * NB When the PWM pattern is transmiited from an XMOS 32-bit bufferred port,
+ * The Least Significant Bit is the earliest in time, i.e. the LSB is sent 1st.
+ */
+{
+	unsigned num_zeros; // No of Zero bits in 32-bit unsigned
+	unsigned tmp;
+
+
+	// Check for short pulse 
+	if (inp_wid < 32)
+	{ // Short Pulse:
+
+		// earlier edge ( zeros transmitted 1st)
+		rise_port_data_ps->time_off = -32;
+		tmp = (inp_wid + 1) >> 1; // Range [0..16]
+		tmp = ((1 << tmp)-1); // Range 0x0000_0000 .. 0x0000_FFFF
+		rise_port_data_ps->pattern = bitrev( tmp ); // Range 0x0000_0000 .. 0xFFFF_0000
+
+		// later edge ( zeros transmitted last): 
+		// NB Need MSB to be zero, as this lasts for long low section of pulse
+		fall_port_data_ps->time_off = 0;
+		tmp = (inp_wid >> 1); // Range [0..15]
+		fall_port_data_ps->pattern = ((1 << tmp)-1); // Range 0x0000_0000 .. 0x7FFF_0000
+
+	} // if (inp_wid < 32)
+	else
+	{ // NOT a short pulse
+		num_zeros = PWM_MAX_VALUE - inp_wid; // Calculate No. of 0's
+	
+		// Check for mid-range pulse
+		if (num_zeros > 31)
+		{ // Mid-range Pulse
+
+			// earlier edge ( zeros transmitted 1st)
+			rise_port_data_ps->pattern = 0xFFFF0000;
+			rise_port_data_ps->time_off = -((inp_wid+33) >> 1);
+	
+			// later edge ( zeros transmitted last)
+			fall_port_data_ps->pattern = 0x0000FFFF;
+			fall_port_data_ps->time_off = ((inp_wid - 32) >> 1);
+		} // if (num_zeros > 31)
+		else
+		{ // Long pulse
+
+			// earlier edge ( zeros transmitted 1st)
+			// NB Need MSB to be 1, as this lasts for long high section of pulse
+			rise_port_data_ps->time_off = -(PWM_MAX_VALUE >> 1);
+			tmp = (num_zeros >> 1); // Range [15..0]
+			tmp = ((1 << tmp)-1); // Range 0x0000_7FFF .. 0x0000_0000
+			rise_port_data_ps->pattern = ~tmp; // Invert Pattern: Range 0xFFFF_8000 .. 0xFFFF_FFFF
+	
+			// later edge ( zeros transmitted last): 
+			fall_port_data_ps->time_off = (PWM_MAX_VALUE >> 1) - 32;
+			tmp = ((num_zeros + 1) >> 1); // Range [16..0]
+			tmp = ((1 << tmp)-1); // Range 0x0000_FFFF .. 0x0000_0000
+			tmp = ~tmp; // Invert Pattern: Range 0xFFFF_0000 .. 0xFFFF_FFFF
+			fall_port_data_ps->pattern = bitrev( tmp ); // Invert Pattern: Range 0x0000_FFFF .. 0xFFFF_FFFF
+
+		} // else !(num_zeros > 31)
+	} // else !(inp_wid < 32)
+
+	return;
+} // calculate_leg_data_out_ref
+/*****************************************************************************/
+void calculate_all_data_out_ref( // Calculate all PWM Pulse data for balanced line
+	PWM_PHASE_TYP * rise_phase_data_ps, // Pointer to PWM output data structure for rising edge of current phase
+	PWM_PHASE_TYP * fall_phase_data_ps, // Pointer to PWM output data structure for falling edge of current phase
+	unsigned wid_val // PWM pulse-width value
+)
+{
+	//  WARNING: Both legs of the balanced line must NOT be switched at the same time. Therefore add dead-time to low leg.
+
+	// Calculate PWM Pulse data for high leg (V+) of balanced line
+	calculate_leg_data_out_ref( &(rise_phase_data_ps->hi) ,&(fall_phase_data_ps->hi) ,wid_val );
+
+	// Calculate PWM Pulse data for low leg (V+) of balanced line (a short time later)
+	calculate_leg_data_out_ref( &(rise_phase_data_ps->lo) ,&(fall_phase_data_ps->lo) ,(wid_val + PWM_DEAD_TIME) );
+} // calculate_all_data_out_ref
 /*****************************************************************************/
 // pwm_cli_common.c

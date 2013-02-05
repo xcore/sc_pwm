@@ -26,22 +26,23 @@ extern inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PW
 
 /*****************************************************************************/
 void write_output_data( // MB~ Until Assembler is rewritten, need to write to memory structure maintained by assembler
-	PWM_PHASE_TYP & pwm_data, // New PWM output data structure
+	PWM_PHASE_TYP & rise_phase_data, // Reference to data structure containing current phase data (for rising edge)
+	PWM_PHASE_TYP & fall_phase_data, // Reference to data structure containing current phase data (for falling edge)
 	ASM_OUTDATA_TYP & asm_data // Assembler compatible output data structure
 )
 {
-	asm_data.hi_ts0 = pwm_data.hi.edges[0].time_off;
-	asm_data.hi_out0 = pwm_data.hi.edges[0].pattern;
-	asm_data.hi_ts1 = pwm_data.hi.edges[1].time_off;
-	asm_data.hi_out1 = pwm_data.hi.edges[1].pattern;
+	asm_data.hi_ts0 = rise_phase_data.hi.time_off;
+	asm_data.hi_out0 = rise_phase_data.hi.pattern;
+	asm_data.hi_ts1 = fall_phase_data.hi.time_off;
+	asm_data.hi_out1 = fall_phase_data.hi.pattern;
 
-	asm_data.lo_ts0 = pwm_data.lo.edges[0].time_off;
-	asm_data.lo_out0 = pwm_data.lo.edges[0].pattern;
-	asm_data.lo_ts1 = pwm_data.lo.edges[1].time_off;
-	asm_data.lo_out1 = pwm_data.lo.edges[1].pattern;
+	asm_data.lo_ts0 = rise_phase_data.lo.time_off;
+	asm_data.lo_out0 = rise_phase_data.lo.pattern;
+	asm_data.lo_ts1 = fall_phase_data.lo.time_off;
+	asm_data.lo_out1 = fall_phase_data.lo.pattern;
 
-	asm_data.cat = pwm_data.typ;
-	asm_data.value = pwm_data.width;
+	asm_data.cat = DOUBLE;  // MB~ Redundant
+	asm_data.value = 0; // MB~ Depreciated
 } // write_output_data
 /*****************************************************************************/
 void write_pwm_data_to_mem( // MB~ Until Assembler is rewritten, need to write to memory structure maintained by assembler
@@ -62,12 +63,27 @@ void write_pwm_data_to_mem( // MB~ Until Assembler is rewritten, need to write t
 		for (phase_cnt=0; phase_cnt<NUM_PWM_PHASES; phase_cnt++)
 		{
 		 	// transfer phase-data
-			asm_ctrl.chan_id_buf[buf_cnt][phase_cnt] = pwm_ctrl.buf_data[buf_cnt].phase_data[phase_cnt].ord_id;
+			asm_ctrl.chan_id_buf[buf_cnt][phase_cnt] = 0; // MB~ Depreciated
 
-			write_output_data( pwm_ctrl.buf_data[buf_cnt].phase_data[phase_cnt] ,asm_ctrl.pwm_out_data_buf[buf_cnt][phase_cnt] );
+			write_output_data( pwm_ctrl.buf_data[buf_cnt].rise_edg.phase_data[phase_cnt] 
+				,pwm_ctrl.buf_data[buf_cnt].fall_edg.phase_data[phase_cnt] ,asm_ctrl.pwm_out_data_buf[buf_cnt][phase_cnt] );
 		} // for phase_cnt
 	} // for buf_cnt
 } // write_pwm_data_to_mem
+/*****************************************************************************/
+#pragma unsafe arrays
+void convert_pulse_widths( // Convert all PWM pulse widths to pattern/time_offset port data
+	PWM_BUFFER_TYP & pwm_buf_data, // Data structure for one PWM buffer
+	unsigned pwm_width[] // array of PWM widths for each phase
+)
+{
+	for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
+	{
+		calculate_all_data_out_ref( pwm_buf_data.rise_edg.phase_data[phase_cnt] ,pwm_buf_data.fall_edg.phase_data[phase_cnt] ,pwm_width[phase_cnt] );
+	} // for phase_cnt
+
+	pwm_buf_data.cur_mode = D_PWM_MODE_3; // PWM mode for 3xDOUBLE (Historic)
+} // convert_pulse_widths
 /*****************************************************************************/
 #pragma unsafe arrays
 void update_pwm_inv( 
@@ -78,29 +94,10 @@ void update_pwm_inv(
 	unsigned pwm_width[]
 )
 {
-//MB~Depreciated	unsigned minus_one = 1; // NB remains set if all PWM values are -1
-
-
  	pwm_ctrl.cur_buf = 1 - pwm_ctrl.cur_buf; // Toggle double-buffer ready for next calculation
 
-	/* calculate the required outputs */
-#pragma loop unroll
-	for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
-	{
-		pwm_ctrl.buf_data[pwm_ctrl.cur_buf].phase_data[phase_cnt].ord_id = phase_cnt; // Reset default phase order
-
-		/* clamp to avoid issues with LONG_SINGLE */
-		if (pwm_width[phase_cnt] > PWM_LIM_VALUE) 
-		{
-			assert( 0 == 1); // MB~ Dbg: Don't think this happens any more
-			pwm_width[phase_cnt] = PWM_LIM_VALUE;
-		} // if (pwm_width[phase_cnt] > PWM_LIM_VALUE)
-
-		calculate_all_data_out_ref( pwm_ctrl.buf_data[pwm_ctrl.cur_buf].phase_data[phase_cnt]
-			,pwm_width[phase_cnt] ,PWM_DEAD_TIME );
-	} // for phase_cnt
-
-	pwm_ctrl.buf_data[pwm_ctrl.cur_buf].cur_mode = 3; // PWM mode for 3xDOUBLE (Historic)
+	// Convert all PWM pulse widths to pattern/time_offset port data
+	convert_pulse_widths( pwm_ctrl.buf_data[pwm_ctrl.cur_buf] ,pwm_width );
 
 	write_pwm_data_to_mem( pwm_ctrl ,asm_ctrl ); // Write PWM data to shared memory (read by assembler)
 { //MB~ Dbg

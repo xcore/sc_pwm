@@ -100,34 +100,32 @@ typedef struct ASM_CONTROL_TAG
 	unsigned pwm_cur_buf;
 } ASM_CONTROL_TYP;
 
-// Structure containing data for at least one pulse edge
-typedef struct PWM_EDGE_TAG
+// Structure containing data for doing timed load of buffered output port
+typedef struct PWM_PORT_TAG
 {
-	unsigned pattern;		// Bit-pattern used to define pulse edge
+	unsigned pattern;		// Bit-pattern written to port (used to define pulse edge)
 	signed time_off;	// time-offset to start of pattern
-} PWM_EDGE_TYP;
+} PWM_PORT_TYP;
 
-// Structure containing all pulse-data for one leg of balanced line 
-typedef struct PWM_PULSE_TAG
-{
-	PWM_EDGE_TYP edges[NUM_PULSE_EDGES]; // array of data structures for pulse edges
-} PWM_PULSE_TYP;
-
-// Structure containing pwm output data for one phase
+// Structure containing pwm output data for one phase (& one edge)
 typedef struct PWM_PHASE_TAG // Structure containing string
 {
-	PWM_PULSE_TYP hi; // Pulse data for high leg (V+) of balanced line
-	PWM_PULSE_TYP lo; // Pulse data for low leg (V-) of balanced line
-
-	e_pwm_cat typ;  // pulse-type  MB~
-	unsigned width; // PWM Pulse width
-	unsigned ord_id; // index for ordering phases in time
+	PWM_PORT_TYP hi; // Port data for high leg (V+) of balanced line
+	PWM_PORT_TYP lo; // Port data for low leg (V-) of balanced line
 } PWM_PHASE_TYP;
+
+// Structure containing data for one pulse edge for all phases
+typedef struct PWM_EDGE_TAG
+{
+	PWM_PHASE_TYP phase_data[NUM_PWM_PHASES]; // Array of phase-data structures, one for each phase
+} PWM_EDGE_TYP;
 
 // Structure containing pwm output data for one buffer
 typedef struct PWM_BUFFER_TAG
 {
-	PWM_PHASE_TYP phase_data[NUM_PWM_PHASES]; // Array of phase-data structures, one for each phase
+	PWM_EDGE_TYP rise_edg; // data structure for rising edge of all pulses
+	PWM_EDGE_TYP fall_edg; // data structure for falling edge of all pulses
+	unsigned width[NUM_PWM_PHASES]; // array of PWM Pulse widths for each phase
 	unsigned cur_mode; // current PWM mode for this buffer
 } PWM_BUFFER_TYP;
 
