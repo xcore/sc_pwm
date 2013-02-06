@@ -26,11 +26,8 @@
 #define OFFSET_OF_DATA_OUT 32
 #define SIZE_OF_T_DATA_OUT 40
 
-// Define this to limit the symmetrical PWM duty cycle to a smaller range, enabling faster update
-//MB~ #define PWM_CLIPPED_RANGE
-
 // Define this if using shared memory to pass data between Client and Server. NB Otherwise data sent over c_pwm channel
-#define SHARED_MEM
+// #define SHARED_MEM
 
 // The number of PWM channels that are supported by the symmetrical PWM
 #ifndef PWM_CHAN_COUNT
@@ -48,7 +45,9 @@
 #endif
 
 // Enumerate PWM Modes
-// NB These used in assembler, therefore have to be defines NOT enums!-(
+// NB These were originally used in assembler, therefore are defines NOT enums!-(
+// They are now redundant apart from D_PWM_MODE_3, which is used as an integrity check
+
 #define D_PWM_MODE_0 0 // 3xSINGLE
 #define D_PWM_MODE_1 1 // DOUBLE + 2xSINGLE
 #define D_PWM_MODE_2 2 // 2xDOUBLE + SINGLE
@@ -63,45 +62,6 @@
 #define NUM_PWM_PHASES 3 // 3-phase PWM
 #define NUM_PWM_BUFS 2  // Double-buffered
 #define NUM_PULSE_EDGES 2  // Max. number of edges in a pulse!
-
-#ifndef __ASSEMBLER__
-
-typedef enum PWM_OUTPUT_CAT
-{
-	LONG_SINGLE,
-	SINGLE,
-	DOUBLE
-} e_pwm_cat;
-
-
-// PWM Output data structure as laid out in pwm_op_inv assembler
-/* if changing this then change the corresponding value in dsc_pwm_common.h */
-typedef struct ASM_OUTDATA_TAG
-{
-	// The 'ts' fields are time-offsets measured from the centre of the pulse (Tr)
-	signed hi_ts0;  	// 0: High-leg time-offset to start of 1st word containing 1st edge,
-	unsigned hi_out0; // 1
-	signed hi_ts1;  	// 2: High-leg time-offset to start of 2nd word (if used)
-	unsigned hi_out1; // 3
-
-	signed lo_ts0;  	// 4: Low-leg time-offset to start of 1st word containing 1st edge,
-	unsigned lo_out0; // 5
-	signed lo_ts1;  	// 6: Low-leg time-offset to start of 2nd word (if used)
-	unsigned lo_out1; // 7
-
-	/* other info */
-	e_pwm_cat cat;
-	unsigned value;
-} ASM_OUTDATA_TYP;
-
-// PWM control data structure as laid out in pwm_op_inv assembler for shared memory access
-typedef struct ASM_CONTROL_TAG
-{
-	unsigned chan_id_buf[NUM_PWM_BUFS][NUM_PWM_PHASES];
-	unsigned mode_buf[NUM_PWM_BUFS];
-	ASM_OUTDATA_TYP pwm_out_data_buf[NUM_PWM_BUFS][NUM_PWM_PHASES];
-	unsigned pwm_cur_buf;
-} ASM_CONTROL_TYP;
 
 // Structure containing data for doing timed load of buffered output port
 typedef struct PWM_PORT_TAG
@@ -136,7 +96,5 @@ typedef struct PWM_CONTROL_TAG
 {
 	PWM_BUFFER_TYP buf_data[NUM_PWM_BUFS]; // Array of buffer-data structures, one for each buffer
 } PWM_CONTROL_TYP;
-
-#endif // #ifndef __ASSEMBLER__
 
 #endif /*DSC_ALT_PWM_H_*/

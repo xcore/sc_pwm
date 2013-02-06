@@ -179,12 +179,8 @@ void do_pwm_inv_triggered(
 	// Send the PWM client the shared memory structure address
 	mem_addr = get_pwm_struct_address( pwm_ctrl_s ); 
 	c_pwm <: mem_addr;
-
-	pwm_serv_s.shift = 8; // MB~ DBG
 }
-#else // #ifdef SHARED_MEM
-	pwm_serv_s.shift = 10; // MB~ DBG
-#endif // #else SHARED_MEM
+#endif // ifdef SHARED_MEM
 
 	do_pwm_port_config( p32_pwm_hi ,p32_pwm_lo ,p16_adc_sync ,pwm_clk ); // configure the ports
 
@@ -205,7 +201,7 @@ void do_pwm_inv_triggered(
 #ifdef USE_XSCOPE
 	if (motor_id)
 	{
-		xscope_probe_data( 3 ,(pwm_serv_s.data_ready << pwm_serv_s.shift) );
+		xscope_probe_data( 3 ,pwm_serv_s.data_ready );
 	} // if (motor_id)
 #endif // ifdef USE_XSCOPE
 
