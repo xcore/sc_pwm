@@ -29,6 +29,9 @@
 // Define this to limit the symmetrical PWM duty cycle to a smaller range, enabling faster update
 //MB~ #define PWM_CLIPPED_RANGE
 
+// Define this if using shared memory to pass data between Client and Server
+// #define SHARED_MEM
+
 // The number of PWM channels that are supported by the symmetrical PWM
 #ifndef PWM_CHAN_COUNT
 #define PWM_CHAN_COUNT 3
@@ -125,7 +128,6 @@ typedef struct PWM_BUFFER_TAG
 {
 	PWM_EDGE_TYP rise_edg; // data structure for rising edge of all pulses
 	PWM_EDGE_TYP fall_edg; // data structure for falling edge of all pulses
-	unsigned width[NUM_PWM_PHASES]; // array of PWM Pulse widths for each phase
 	unsigned cur_mode; // current PWM mode for this buffer
 } PWM_BUFFER_TYP;
 

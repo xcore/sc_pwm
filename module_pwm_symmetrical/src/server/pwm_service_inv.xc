@@ -22,7 +22,12 @@
 #include "pwm_config.h"
 #endif
 
+#include "pwm_cli_common.h"
 #include "pwm_service_inv.h"
+
+#ifdef USE_XSCOPE
+#include <xscope.h>
+#endif
 
 extern unsigned pwm_op_inv( 
 	unsigned buf_id, 
@@ -57,6 +62,20 @@ static void do_pwm_port_config(
 
 	start_clock( pwm_clk );
 } // do_pwm_port_config_inv_adc_trig
+/*****************************************************************************/
+#pragma unsafe arrays
+void convert_pulse_widths( // Convert all PWM pulse widths to pattern/time_offset port data
+	PWM_BUFFER_TYP & pwm_buf_data, // Data structure for one PWM buffer
+	unsigned pwm_width[] // array of PWM widths for each phase
+)
+{
+	for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
+	{
+		calculate_all_data_out_ref( pwm_buf_data.rise_edg.phase_data[phase_cnt] ,pwm_buf_data.fall_edg.phase_data[phase_cnt] ,pwm_width[phase_cnt] );
+	} // for phase_cnt
+
+	pwm_buf_data.cur_mode = D_PWM_MODE_3; // PWM mode for 3xDOUBLE (Historic)
+} // convert_pulse_widths
 /*****************************************************************************/
 void load_pwm_port_data( // Load one set of output port data
 	PWM_PORT_TYP &port_data_s, // Reference to structure containing PWM output port 
@@ -97,6 +116,7 @@ void load_pwm_edge_for_all_ports( // Load all data ports for current edge
 } // load_pwm_edge_for_all_ports
 /*****************************************************************************/
 void do_pwm_inv_triggered( 
+	unsigned motor_id, // Motor identifier
 	chanend c_pwm, 
 	buffered out port:32 p32_pwm_hi[], 
 	buffered out port:32 p32_pwm_lo[], 
@@ -106,11 +126,13 @@ void do_pwm_inv_triggered(
 )
 {
 	PWM_BUFFER_TYP pwm_data_s; // Structure containing PWM output data
+	unsigned pwm_width[NUM_PWM_PHASES]; // array of pulse widths for each phase
 	unsigned buf_id; // Double-buffer identifier [0,1]
 	unsigned mem_addr; // Shared memory address
 	unsigned ref_time; // Reference Time incremented every PWM period, all other time are measured relative to this value
 	unsigned pattern; // Bit-pattern on port
 	int data_ready; //Data ready flag
+	int shift; // MB~ Dbg
 
 
 	c_pwm :> mem_addr;	// First read the shared memory buffer address from the client
@@ -121,6 +143,12 @@ void do_pwm_inv_triggered(
 	pattern = peek( p32_pwm_hi[0] ); // Find out value on 1-bit port. NB Only LS-bit is relevant
 	ref_time = partout_timestamped( p32_pwm_hi[0] ,1 ,pattern ); // Re-load output port with same bit-value
 
+#ifdef SHARED_MEM
+	shift = 8;
+#else // #ifdef SHARED_MEM
+	shift = 10;
+#endif // #else SHARED_MEM
+
 	c_pwm :> buf_id; // Wait for initial buffer id
 	data_ready = 1; // signal new data ready
 
@@ -130,9 +158,23 @@ void do_pwm_inv_triggered(
 		// Check if new data ready
 		if (data_ready)
 		{
+#ifdef SHARED_MEM
+	// If using shared memory model: Read port data from shared memory
 			read_pwm_data_from_mem( pwm_data_s ,mem_addr ,buf_id ); // Read data from new buffer in shared memory
+#else // #ifndef SHARED_MEM
+	// If NOT using shared memory model: Receive Pulse widths from channel and calculate port data on server side.
+
+			for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
+			{
+				c_pwm :> pwm_width[phase_cnt]; // Receive PWM pulse-width for current phase
+			} // for phase_cnt
+
+			// Convert all PWM pulse widths to pattern/time_offset port data
+			convert_pulse_widths( pwm_data_s ,pwm_width );
+#endif // #else SHARED_MEM
 
 			if (pwm_data_s.cur_mode != D_PWM_MODE_3) break; // Check for valid mode
+
 		} // if (data_ready)
 
 		ref_time += INIT_SYNC_INCREMENT; // Update reference time to next PWM period
@@ -158,6 +200,14 @@ void do_pwm_inv_triggered(
 				data_ready = 0; // signal data NOT ready
 			break; // default
 		} // select
+
+#ifdef USE_XSCOPE
+	if (motor_id)
+	{
+		xscope_probe_data( 3 ,(data_ready << shift) );
+	} // if (motor_id)
+#endif // ifdef USE_XSCOPE
+
 	} // while(1)
 
 } // do_pwm_inv_triggered

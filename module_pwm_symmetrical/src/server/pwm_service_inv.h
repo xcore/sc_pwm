@@ -28,6 +28,7 @@
  *  \param pwm_clk a clock for generating accurate PWM timing
  */
 void do_pwm_inv_triggered( 
+	unsigned motor_id, // Motor identifier
 	chanend c_pwm, 
 	buffered out port:32 p32_pwm_hi[],  
 	buffered out port:32 p32_pwm_lo[], 

@@ -16,11 +16,15 @@
 #include <assert.h>
 
 #include <print.h>
+
 #ifdef __pwm_config_h_exists__
 #include "pwm_config.h"
 #endif
-
 #include "pwm_cli_inv.h"
+
+#ifdef USE_XSCOPE
+#include <xscope.h>
+#endif
 
 extern inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PWM_PHASE_TYP ,pwm_phase_data ) );
 
@@ -72,7 +76,7 @@ void write_pwm_data_to_mem( // MB~ Until Assembler is rewritten, need to write t
 } // write_pwm_data_to_mem
 /*****************************************************************************/
 #pragma unsafe arrays
-void convert_pulse_widths( // Convert all PWM pulse widths to pattern/time_offset port data
+void convert_cli_pulse_widths( // Convert all PWM pulse widths to pattern/time_offset port data
 	PWM_BUFFER_TYP & pwm_buf_data, // Data structure for one PWM buffer
 	unsigned pwm_width[] // array of PWM widths for each phase
 )
@@ -83,10 +87,11 @@ void convert_pulse_widths( // Convert all PWM pulse widths to pattern/time_offse
 	} // for phase_cnt
 
 	pwm_buf_data.cur_mode = D_PWM_MODE_3; // PWM mode for 3xDOUBLE (Historic)
-} // convert_pulse_widths
+} // convert_cli_pulse_widths
 /*****************************************************************************/
 #pragma unsafe arrays
 void update_pwm_inv( 
+	unsigned motor_id, // Motor identifier
 	ASM_CONTROL_TYP & asm_ctrl, 
 	PWM_CONTROL_TYP & pwm_ctrl,
 	int xscope[],
@@ -96,18 +101,33 @@ void update_pwm_inv(
 {
  	pwm_ctrl.cur_buf = 1 - pwm_ctrl.cur_buf; // Toggle double-buffer ready for next calculation
 
+#ifdef SHARED_MEM
+	// If using shared memory model: Port data is calculated on client side and written to shared memory 
+
 	// Convert all PWM pulse widths to pattern/time_offset port data
-	convert_pulse_widths( pwm_ctrl.buf_data[pwm_ctrl.cur_buf] ,pwm_width );
+	convert_cli_pulse_widths( pwm_ctrl.buf_data[pwm_ctrl.cur_buf] ,pwm_width );
 
 	write_pwm_data_to_mem( pwm_ctrl ,asm_ctrl ); // Write PWM data to shared memory (read by assembler)
-{ //MB~ Dbg
-	xscope[0] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][0].hi_ts0;
-	xscope[1] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][0].lo_ts0;
-	xscope[2] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][0].hi_ts1;
-	xscope[3] = asm_ctrl.pwm_out_data_buf[pwm_ctrl.cur_buf][0].lo_ts1;
-} //MB~ Dbg
+#endif // ifdef SHARED_MEM
 
 	c_pwm <: pwm_ctrl.cur_buf; // Signal PWM server that PWM data is ready to read
+
+#ifdef USE_XSCOPE
+	if (motor_id)
+	{
+//		xscope_probe_data(0 ,pwm_width[0] );
+	} // if (motor_id)
+#endif // ifdef USE_XSCOPE
+
+#ifndef SHARED_MEM 
+	// If NOT using shared memory model: Pulse widths are passed down channel for server to calculate port data
+
+	for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
+	{
+		c_pwm <: pwm_width[phase_cnt]; // Send PWM pulse-width for current phase
+	} // for phase_cnt
+#endif // ifndef SHARED_MEM
+
 } // update_pwm_inv 
 /*****************************************************************************/
 // pwm_cli_inv

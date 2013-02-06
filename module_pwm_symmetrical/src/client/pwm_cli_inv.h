@@ -26,6 +26,7 @@
  *  \param value an array of three 24 bit values for the PWM server
  */
 void update_pwm_inv( 
+	unsigned motor_id, // Motor identifier
 	ASM_CONTROL_TYP & asm_ctrl, 
 	PWM_CONTROL_TYP & pwm_ctrl,
 	int xscope[],
