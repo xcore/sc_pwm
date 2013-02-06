@@ -25,12 +25,12 @@
  *  \param c the control channel for the PWM server
  *  \param value an array of three 24 bit values for the PWM server
  */
+
 void update_pwm_inv( 
+	chanend c_pwm, // Channel from run_motor thread
+	unsigned pwm_width[], // array of pulse-widths for each phase
 	unsigned motor_id, // Motor identifier
-	ASM_CONTROL_TYP & asm_ctrl, 
-	PWM_CONTROL_TYP & pwm_ctrl,
-	int xscope[],
-	chanend c, 
-	unsigned value[]
-);
+	unsigned &cur_buf,	// Indicates which current buffer in use
+	unsigned &mem_addr  // Shared memory address (if used)
+	);
 

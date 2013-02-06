@@ -15,6 +15,16 @@
 #include "pwm_common.h"
 #include "pwm_service.h"
 
+// Structure containing pwm server control data
+typedef struct PWM_SERV_TAG
+{
+	unsigned widths[NUM_PWM_PHASES]; // array of pulse widths for each phase
+	unsigned cur_buf; // current double-buffer id
+	unsigned ref_time; // Reference Time incremented every PWM period, all other time are measured relative to this value
+	int data_ready; //Data ready flag
+	int shift; // MB~ Dbg
+} PWM_SERV_TYP;
+
 
 /** \brief Implementation of the centre aligned inverted pair PWM server, with ADC synchronization
  *

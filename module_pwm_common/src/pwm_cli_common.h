@@ -52,17 +52,6 @@ inline void calculate_data_out_quick( unsigned value, REFERENCE_PARAM( PWM_PHASE
 	pwm_out_data.lo.edges[1].time_off = ((value+PWM_DEAD_TIME) >> 1) - 31;
 }
 #endif
-
-#endif //MB~ Depreciated
-
-/******************************************************************************/
-/** Converts structure reference to address.
- * \param ctrl_ps // Pointer to PWM control structure
- * \return Address
- */
-unsigned long get_struct_address( // Converts structure reference to address
-	REFERENCE_PARAM( ASM_CONTROL_TYP ,asm_ctrl ) // PWM control structure
-); // Return address
 /******************************************************************************/
 // Calculate timings for PWM output
 void calculate_data_out( unsigned value, REFERENCE_PARAM(PWM_PHASE_TYP ,pwm_out_data) );
@@ -80,8 +69,32 @@ void calculate_all_data_out_ref( // Calculate all PWM Pulse data for balanced li
 	unsigned wid_val // PWM pulse-width value
 	);
 /*****************************************************************************/
-
 // Calculate required ordering of operation
 void calculate_pwm_mode( REFERENCE_PARAM( PWM_CONTROL_TYP ,pwm_ctrl ) );
+/*****************************************************************************/
 
+#endif //MB~ Depreciated
+
+/******************************************************************************/
+/** Converts PWM structure reference to address.
+ * \param pwm_ps // Pointer to PWM control structure
+ * \return Address
+ */
+unsigned long get_pwm_struct_address( // Converts PWM structure reference to address
+	REFERENCE_PARAM( PWM_CONTROL_TYP ,pwm_ps ) // Pointer to PWM structure
+); // Return address
+/*****************************************************************************/
+void convert_all_pulse_widths( // Convert all PWM pulse widths to pattern/time_offset port data
+	REFERENCE_PARAM( PWM_BUFFER_TYP ,pwm_data_sp), // Pointer to Structure containing PWM output data
+	unsigned motor_id,	// Indicates which current buffer in use
+	unsigned pwm_widths[] // array of PWM widths for each phase
+);
+/*****************************************************************************/
+void convert_widths_in_shared_mem( // Converts PWM Pulse-width to port data in shared memory
+	unsigned mem_addr,  // shared memory address (if used)
+	unsigned cur_buf,	// Indicates which current buffer in use
+	unsigned motor_id,	// Indicates which current buffer in use
+	unsigned pwm_widths[] // array of pulse-widths for each phase
+);
+/*****************************************************************************/
 #endif /* _PWM_CLI_COMMON__H_ */

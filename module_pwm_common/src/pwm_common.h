@@ -29,8 +29,8 @@
 // Define this to limit the symmetrical PWM duty cycle to a smaller range, enabling faster update
 //MB~ #define PWM_CLIPPED_RANGE
 
-// Define this if using shared memory to pass data between Client and Server
-// #define SHARED_MEM
+// Define this if using shared memory to pass data between Client and Server. NB Otherwise data sent over c_pwm channel
+#define SHARED_MEM
 
 // The number of PWM channels that are supported by the symmetrical PWM
 #ifndef PWM_CHAN_COUNT
@@ -135,8 +135,6 @@ typedef struct PWM_BUFFER_TAG
 typedef struct PWM_CONTROL_TAG
 {
 	PWM_BUFFER_TYP buf_data[NUM_PWM_BUFS]; // Array of buffer-data structures, one for each buffer
-	unsigned tmp; // Debug
-	unsigned cur_buf; // current double-buffer id
 } PWM_CONTROL_TYP;
 
 #endif // #ifndef __ASSEMBLER__
