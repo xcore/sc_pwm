@@ -74,7 +74,7 @@ void convert_pulse_width( // convert pulse width to a 32-bit pattern and a time-
 
 			// earlier edge ( zeros transmitted 1st)
 			rise_port_data_ps->pattern = 0xFFFF0000;
-			rise_port_data_ps->time_off = -((inp_wid+33) >> 1);
+			rise_port_data_ps->time_off = -((inp_wid + 33) >> 1);
 	
 			// later edge ( zeros transmitted last)
 			fall_port_data_ps->pattern = 0x0000FFFF;
@@ -113,6 +113,8 @@ void convert_phase_pulse_widths(  // Convert PWM pulse widths for current phase 
 
 	// Calculate PWM Pulse data for high leg (V+) of balanced line
 	convert_pulse_width( &(rise_phase_data_ps->hi) ,&(fall_phase_data_ps->hi) ,wid_val );
+
+	// NB In do_pwm_period() (pwm_service_inv.xc) ADC Sync occurs at (ref_time + HALF_DEAD_TIME)
 
 	// Calculate PWM Pulse data for low leg (V+) of balanced line (a short time later)
 	convert_pulse_width( &(rise_phase_data_ps->lo) ,&(fall_phase_data_ps->lo) ,(wid_val + PWM_DEAD_TIME) );

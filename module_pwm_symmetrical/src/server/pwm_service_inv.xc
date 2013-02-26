@@ -129,6 +129,7 @@ void do_pwm_period( // Does processing for one PWM period (4096 cycles)
 
 		if (pwm_data_s.cur_mode != D_PWM_MODE_3) assert(0 == 1); // Check for valid mode
 
+// if (motor_id) xscope_probe_data( 1 ,pwm_serv_s.widths[0] );
 	} // if (pwm_serv_s.data_ready)
 
 	pwm_serv_s.ref_time += INIT_SYNC_INCREMENT; // Update reference time to next PWM period
@@ -136,6 +137,7 @@ void do_pwm_period( // Does processing for one PWM period (4096 cycles)
 	// WARNING: Load port events in correct time order (i.e. rising THEN falling edge)
 	load_pwm_edge_for_all_ports( pwm_data_s.rise_edg ,p32_pwm_hi ,p32_pwm_lo ,pwm_serv_s.ref_time ); // Load all ports with data for rising edge
 	load_pwm_edge_for_all_ports( pwm_data_s.fall_edg ,p32_pwm_hi ,p32_pwm_lo ,pwm_serv_s.ref_time ); // Load all ports with data for falling edge
+// if (motor_id) xscope_probe_data( 0 ,pwm_data_s.rise_edg.phase_data[0].hi.time_off );
 
 #if LOCK_ADC_TO_PWM
 	// Calculate time to read in dummy value from adc port
@@ -201,7 +203,7 @@ void do_pwm_inv_triggered(
 #ifdef USE_XSCOPE
 	if (motor_id)
 	{
-		xscope_probe_data( 3 ,pwm_serv_s.data_ready );
+//		xscope_probe_data( 3 ,pwm_serv_s.data_ready );
 	} // if (motor_id)
 #endif // ifdef USE_XSCOPE
 
