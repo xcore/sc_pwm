@@ -21,6 +21,8 @@ typedef struct PWM_SERV_TAG
 	unsigned cur_buf; // current double-buffer id
 	unsigned ref_time; // Reference Time incremented every PWM period, all other time are measured relative to this value
 	int data_ready; //Data ready flag
+	unsigned xscope;	// Flag set when xscope output required
+	int x_cnt;	// counts xscope outputs
 } PWM_SERV_TYP;
 
 /** \brief Implementation of the centre aligned inverted pair PWM server, with ADC synchronization

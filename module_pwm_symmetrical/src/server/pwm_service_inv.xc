@@ -137,8 +137,6 @@ void do_pwm_period( // Does processing for one PWM period (4096 cycles)
 	// WARNING: Load port events in correct time order (i.e. rising THEN falling edge)
 	load_pwm_edge_for_all_ports( pwm_data_s.rise_edg ,p32_pwm_hi ,p32_pwm_lo ,pwm_serv_s.ref_time ); // Load all ports with data for rising edge
 	load_pwm_edge_for_all_ports( pwm_data_s.fall_edg ,p32_pwm_hi ,p32_pwm_lo ,pwm_serv_s.ref_time ); // Load all ports with data for falling edge
-// if (motor_id) xscope_probe_data( 0 ,pwm_data_s.rise_edg.phase_data[0].hi.time_off );
-
 #if LOCK_ADC_TO_PWM
 	// Calculate time to read in dummy value from adc port
 	p16_adc_sync @ (pwm_serv_s.ref_time + HALF_DEAD_TIME) :> void; // NB Blocking wait
@@ -173,6 +171,9 @@ void do_pwm_inv_triggered(
 	PWM_CONTROL_TYP pwm_ctrl_s; // Structure containing PWM double-buffered data structure
 	unsigned pattern; // Bit-pattern on port
 
+
+	pwm_serv_s.x_cnt = 0; // initialise xscope output counter
+	pwm_serv_s.xscope = 0; // switch off xscope output
 
 #ifdef SHARED_MEM
 {
