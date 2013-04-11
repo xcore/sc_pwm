@@ -1,0 +1,7 @@
+#Mon Feb 04 11:01:10 GMT 2013
+eclipse.preferences.version=1
+environment/project/com.xmos.cdt.toolchain.96306619/XMOS_MODULE_PATH/delimiter=;
+environment/project/com.xmos.cdt.toolchain.96306619/XMOS_MODULE_PATH/operation=append
+environment/project/com.xmos.cdt.toolchain.96306619/XMOS_MODULE_PATH/value=H\:\\git.dir\\sw_motor_control\\app_basic_bldc;H\:\\git.dir\\sw_motor_control\\app_control_board_demo;H\:\\git.dir\\sw_motor_control\\app_control_board_test;H\:\\git.dir\\sw_motor_control\\app_dsc_demo;H\:\\git.dir\\sw_motor_control\\app_power_board_test;H\:\\git.dir\\sw_motor_control\\module_dsc_adc;H\:\\git.dir\\sw_motor_control\\module_dsc_blocks;H\:\\git.dir\\sw_motor_control\\module_dsc_comms;H\:\\git.dir\\sw_motor_control\\module_dsc_display;H\:\\git.dir\\sw_motor_control\\module_dsc_hall;H\:\\git.dir\\sw_motor_control\\module_dsc_qei;H\:\\git.dir\\sw_motor_control\\test_hall;H\:\\git.dir\\sw_motor_control\\test_pwm;H\:\\git.dir\\sw_motor_control\\test_qei
+environment/project/com.xmos.cdt.toolchain.96306619/append=true
+environment/project/com.xmos.cdt.toolchain.96306619/appendContributed=true
