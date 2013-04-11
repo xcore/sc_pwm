@@ -17,22 +17,19 @@
 #include <assert.h>
 #include <print.h>
 
-//MB~ #include <xclib.h>
-
 #include "app_global.h"
 #include "pwm_common.h"
 #include "pwm_convert_width.h"
-
-//MB~  #include "pwm_config.h"
-//MB~  #include "pwm_cli_common.h"
-
 
 #ifndef LOCK_ADC_TO_PWM 
 	#error Define. LOCK_ADC_TO_PWM in app_global.h
 #endif // LOCK_ADC_TO_PWM
 
+// The initial number of clocks to wait before starting the PWM loops
+#define INIT_SYNC_INCREMENT (PWM_MAX_VALUE)
+
 // Structure containing pwm server control data
-typedef struct PWM_SERV_TAG
+typedef struct PWM_DATA_TAG
 {
 	unsigned widths[NUM_PWM_PHASES]; // array of pulse widths for each phase
 	unsigned cur_buf; // current double-buffer id
@@ -40,7 +37,7 @@ typedef struct PWM_SERV_TAG
 	int data_ready; //Data ready flag
 	unsigned xscope;	// Flag set when xscope output required
 	int x_cnt;	// counts xscope outputs
-} PWM_SERV_TYP;
+} PWM_DATA_TYP;
 
 /** \brief Implementation of the centre aligned inverted pair PWM server, with ADC synchronization
  *

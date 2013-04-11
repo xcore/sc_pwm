@@ -18,45 +18,8 @@
 	#error Define. PWM_SHARED_MEM in app_global.h
 #endif // PWM_SHARED_MEM
 
-// The offset and size of components in the PWM control structure
-#define OFFSET_OF_CHAN_ID  0
-#define OFFSET_OF_MODE_BUF 24
-#define OFFSET_OF_DATA_OUT 32
-#define SIZE_OF_T_DATA_OUT 40
-
-// The number of PWM channels that are supported by the symmetrical PWM
-#ifndef PWM_CHAN_COUNT
-#define PWM_CHAN_COUNT 3
-#endif
-
-// The number of clocks to increment between each phase
-#ifndef SYNC_INCREMENT
-#define SYNC_INCREMENT (PWM_MAX_VALUE)
-#endif
-
-// The initial number of clocks to wait before starting the PWM loops
-#ifndef INIT_SYNC_INCREMENT
-#define INIT_SYNC_INCREMENT (SYNC_INCREMENT)
-#endif
-
-// Enumerate PWM Modes
-// NB These were originally used in assembler, therefore are defines NOT enums!-(
-// They are now redundant apart from D_PWM_MODE_3, which is used as an integrity check
-
-#define D_PWM_MODE_0 0 // 3xSINGLE
-#define D_PWM_MODE_1 1 // DOUBLE + 2xSINGLE
-#define D_PWM_MODE_2 2 // 2xDOUBLE + SINGLE
-#define D_PWM_MODE_3 3 // 3xDOUBLE
-#define D_PWM_MODE_4 4 // LONG_SINGLE + 2xSINGLE
-#define D_PWM_MODE_5 5 // LONG_SINGLE + DOUBLE + SINGLE
-#define D_PWM_MODE_6 6 // LONG_SINGLE + 2xDOUBLE
-#define D_PWM_MODE_7 7 // 2xLONG_SINGLE + SINGLE (WARNING Unsupported)
-#define D_PWM_MODE_8 8 // 2xLONG_SINGLE + DOUBLE (WARNING Unsupported)
-#define D_PWM_MODE_9 9 // 3xLONG_SINGLE (WARNING Unsupported)
-
 #define NUM_PWM_PHASES 3 // 3-phase PWM
 #define NUM_PWM_BUFS 2  // Double-buffered
-#define NUM_PULSE_EDGES 2  // Max. number of edges in a pulse!
 
 // Structure containing data for doing timed load of buffered output port
 typedef struct PWM_PORT_TAG
@@ -83,7 +46,6 @@ typedef struct PWM_BUFFER_TAG
 {
 	PWM_EDGE_TYP rise_edg; // data structure for rising edge of all pulses
 	PWM_EDGE_TYP fall_edg; // data structure for falling edge of all pulses
-	unsigned cur_mode; // current PWM mode for this buffer
 } PWM_BUFFER_TYP;
 
 // Structure containing pwm output data for all buffers

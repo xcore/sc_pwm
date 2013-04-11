@@ -21,8 +21,6 @@
 #include "pwm_common.h"
 #include "pwm_convert_width.h"
 
-//MB~ #include "pwm_config.h"
-//MB~ #include "pwm_cli_common.h"
 
 /** \brief Update the PWM server with three new values
  *

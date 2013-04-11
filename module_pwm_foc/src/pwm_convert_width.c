@@ -124,8 +124,6 @@ void convert_all_pulse_widths( // Convert all PWM pulse widths to pattern/time_o
 		convert_phase_pulse_widths( &(pwm_data_ps->rise_edg.phase_data[phase_cnt]) 
 			,&(pwm_data_ps->fall_edg.phase_data[phase_cnt]) ,pwm_widths[phase_cnt] );
 	} // for phase_cnt
-
-	pwm_data_ps->cur_mode = D_PWM_MODE_3; // PWM mode for 3xDOUBLE (Historic)
 } // convert_all_pulse_widths
 /*****************************************************************************/
 void convert_widths_in_shared_mem( // Converts PWM Pulse-width to port data in shared memory area
