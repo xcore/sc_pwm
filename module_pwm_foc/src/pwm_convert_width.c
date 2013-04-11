@@ -22,7 +22,8 @@ unsigned long get_pwm_struct_address( // Converts PWM structure reference to add
 	return (unsigned long)pwm_ps; // Return Address
 } // get_pwm_struct_address
 /*****************************************************************************/
-void convert_pulse_width( // convert pulse width to a 32-bit pattern and a time-offset
+static void convert_pulse_width( // convert pulse width to a 32-bit pattern and a time-offset
+	PWM_PARAM_TYP * pwm_param_sp, // Pointer to structure containing PWM parameters 
 	PWM_PORT_TYP * rise_port_data_ps, // Pointer to port data structure (for one leg of balanced line for rising edge )
 	PWM_PORT_TYP * fall_port_data_ps, // Pointer to port data structure (for one leg of balanced line for falling edge)
 	unsigned inp_wid // PWM pulse-width value
@@ -96,7 +97,8 @@ void convert_pulse_width( // convert pulse width to a 32-bit pattern and a time-
 	return;
 } // convert_pulse_width
 /*****************************************************************************/
-void convert_phase_pulse_widths(  // Convert PWM pulse widths for current phase to pattern/time_offset port data
+static void convert_phase_pulse_widths(  // Convert PWM pulse widths for current phase to pattern/time_offset port data
+	PWM_PARAM_TYP * pwm_param_sp, // Pointer to structure containing PWM parameters 
 	PWM_PHASE_TYP * rise_phase_data_ps, // Pointer to PWM output data structure for rising edge of current phase
 	PWM_PHASE_TYP * fall_phase_data_ps, // Pointer to PWM output data structure for falling edge of current phase
 	unsigned wid_val // PWM pulse-width value
@@ -105,38 +107,34 @@ void convert_phase_pulse_widths(  // Convert PWM pulse widths for current phase 
 	//  WARNING: Both legs of the balanced line must NOT be switched at the same time. Therefore add dead-time to low leg.
 
 	// Calculate PWM Pulse data for high leg (V+) of balanced line
-	convert_pulse_width( &(rise_phase_data_ps->hi) ,&(fall_phase_data_ps->hi) ,wid_val );
+	convert_pulse_width( pwm_param_sp ,&(rise_phase_data_ps->hi) ,&(fall_phase_data_ps->hi) ,wid_val );
 
 	// NB In do_pwm_period() (pwm_service_inv.xc) ADC Sync occurs at (ref_time + HALF_DEAD_TIME)
 
 	// Calculate PWM Pulse data for low leg (V+) of balanced line (a short time later)
-	convert_pulse_width( &(rise_phase_data_ps->lo) ,&(fall_phase_data_ps->lo) ,(wid_val + PWM_DEAD_TIME) );
+	convert_pulse_width( pwm_param_sp ,&(rise_phase_data_ps->lo) ,&(fall_phase_data_ps->lo) ,(wid_val + PWM_DEAD_TIME) );
 } // convert_phase_pulse_widths
 /*****************************************************************************/
 void convert_all_pulse_widths( // Convert all PWM pulse widths to pattern/time_offset port data
-	PWM_BUFFER_TYP * pwm_data_ps, // Pointer to Structure containing PWM output data
-	unsigned motor_id,	// Indicates which current buffer in use
-	unsigned pwm_widths[] // array of PWM widths for each phase
+	PWM_PARAM_TYP * pwm_param_sp, // Pointer to structure containing PWM parameters 
+	PWM_BUFFER_TYP * pwm_data_ps // Pointer to Structure containing PWM output data
 )
 {
 	for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
 	{
-		convert_phase_pulse_widths( &(pwm_data_ps->rise_edg.phase_data[phase_cnt]) 
-			,&(pwm_data_ps->fall_edg.phase_data[phase_cnt]) ,pwm_widths[phase_cnt] );
+		convert_phase_pulse_widths( pwm_param_sp ,&(pwm_data_ps->rise_edg.phase_data[phase_cnt]) 
+			,&(pwm_data_ps->fall_edg.phase_data[phase_cnt]) ,pwm_param_sp->widths[phase_cnt] );
 	} // for phase_cnt
 } // convert_all_pulse_widths
 /*****************************************************************************/
 void convert_widths_in_shared_mem( // Converts PWM Pulse-width to port data in shared memory area
-	unsigned mem_addr,  // Pointer to shared memory address (if used)
-	unsigned cur_buf,	// Indicates which current buffer in use
-	unsigned motor_id,	// Indicates which current buffer in use
-	unsigned pwm_widths[] // array of pulse-widths for each phase
+	PWM_PARAM_TYP * pwm_param_sp // Pointer to structure containing PWM parameters 
 )
 {	// Cast shared memory address pointer to PWM double-buffered data structure 
-	PWM_CONTROL_TYP * pwm_ctrl_ps = (PWM_CONTROL_TYP *)mem_addr;
+	PWM_CONTROL_TYP * pwm_ctrl_ps = (PWM_CONTROL_TYP *)pwm_param_sp->mem_addr;
 
 	// Convert widths and write to current PWM buffer
-	convert_all_pulse_widths( &(pwm_ctrl_ps->buf_data[cur_buf]) ,motor_id ,pwm_widths );
+	convert_all_pulse_widths( pwm_param_sp ,&(pwm_ctrl_ps->buf_data[pwm_param_sp->buf]) );
 
 } // convert_widths_in_shared_mem
 /*****************************************************************************/

@@ -13,30 +13,31 @@
  *
  **/                                   
 
+#ifndef _PWM_CLIENT_H_
+#define _PWM_CLIENT_H_
+
 #include <xs1.h>
 #include <assert.h>
 #include <print.h>
+#include <xccompat.h>
 
 #include "app_global.h"
 #include "pwm_common.h"
 #include "pwm_convert_width.h"
 
-
-/** \brief Update the PWM server with three new values
+/*****************************************************************************/
+/** \brief Send PWM widths from Client to Server
  *
  *  On the next cycle through the PWM, the server will update the PWM
  *  pulse widths with these new values
  *
- *  \param ctrl the client control structure for this PWM server
- *  \param c the control channel for the PWM server
- *  \param value an array of three 24 bit values for the PWM server
+ *  \param pwm_param_s // Reference to structure containing PWM parameters 
+ *  \param c_pwm // Channel between Client and Server
  */
+void foc_pwm_put_data( // Send PWM widths from Client to Server
+	REFERENCE_PARAM( PWM_PARAM_TYP ,pwm_param_sp), // Pointer to structure containing PWM parameters 
+	chanend c_pwm 				// Channel between Client and Server
+);
+/*****************************************************************************/
 
-void update_pwm_inv( 
-	chanend c_pwm, // Channel from run_motor thread
-	unsigned pwm_width[], // array of pulse-widths for each phase
-	unsigned motor_id, // Motor identifier
-	unsigned &cur_buf,	// Indicates which current buffer in use
-	unsigned &mem_addr  // Shared memory address (if used)
-	);
-
+#endif // _PWM_CLIENT_H_

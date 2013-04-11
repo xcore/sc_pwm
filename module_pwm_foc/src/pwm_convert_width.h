@@ -19,13 +19,9 @@
 #include <xclib.h> // NB Contains bitrev()
 #include <xccompat.h>
 
-//MB~ #include <xs1.h>
-//MB~ #include <assert.h>
-//MB~ #include <print.h>
-
-
 #include "app_global.h"
 #include "pwm_common.h"
+#include "pwm_client.h"
 
 // PWM specific definitions ...
 
@@ -46,16 +42,12 @@ unsigned long get_pwm_struct_address( // Converts PWM structure reference to add
 ); // Return address
 /*****************************************************************************/
 void convert_all_pulse_widths( // Convert all PWM pulse widths to pattern/time_offset port data
-	REFERENCE_PARAM( PWM_BUFFER_TYP ,pwm_data_sp), // Pointer to Structure containing PWM output data
-	unsigned motor_id,	// Indicates which current buffer in use
-	unsigned pwm_widths[] // array of PWM widths for each phase
+	REFERENCE_PARAM( PWM_PARAM_TYP ,pwm_param_sp), // Pointer to structure containing PWM parameters 
+	REFERENCE_PARAM( PWM_BUFFER_TYP ,pwm_data_sp) // Pointer to Structure containing PWM output data
 );
 /*****************************************************************************/
 void convert_widths_in_shared_mem( // Converts PWM Pulse-width to port data in shared memory
-	unsigned mem_addr,  // shared memory address (if used)
-	unsigned cur_buf,	// Indicates which current buffer in use
-	unsigned motor_id,	// Indicates which current buffer in use
-	unsigned pwm_widths[] // array of pulse-widths for each phase
+	REFERENCE_PARAM( PWM_PARAM_TYP ,pwm_param_sp) // Pointer to structure containing PWM parameters 
 );
 /*****************************************************************************/
 

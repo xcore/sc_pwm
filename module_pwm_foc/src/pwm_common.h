@@ -11,6 +11,7 @@
  * below. The modifications to the code are still covered by the 
  * copyright notice above.
  **/                                   
+
 #ifndef _PWM_COMMON_H_
 #define _PWM_COMMON_H_
 
@@ -18,8 +19,25 @@
 	#error Define. PWM_SHARED_MEM in app_global.h
 #endif // PWM_SHARED_MEM
 
-#define NUM_PWM_PHASES 3 // 3-phase PWM
+/** Different PWM Phases */
+typedef enum PWM_PHASE_ETAG
+{
+  PWM_PHASE_A = 0,  // 1st Phase
+  PWM_PHASE_B,		  // 2nd Phase
+  PWM_PHASE_C,		  // 3rd Phase
+  NUM_PWM_PHASES    // Handy Value!-)
+} PWM_PHASE_ENUM;
+
 #define NUM_PWM_BUFS 2  // Double-buffered
+
+/** Structure containing PWM parameters for one motor */
+typedef struct PWM_PARAM_TAG // 
+{
+	unsigned widths[NUM_PWM_PHASES]; // Array of PWM width values
+	unsigned id; // Unique Motor identifier e.g. 0 or 1
+	unsigned buf; 	// double-buffer identifier (0 or 1)
+	unsigned mem_addr; // Shared memory address (if used)
+} PWM_PARAM_TYP;
 
 // Structure containing data for doing timed load of buffered output port
 typedef struct PWM_PORT_TAG
