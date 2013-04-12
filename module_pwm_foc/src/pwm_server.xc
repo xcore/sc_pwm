@@ -129,7 +129,7 @@ static void do_pwm_period( // Does processing for one PWM period (4096 cycles)
 	load_pwm_edge_for_all_ports( pwm_buf_s.rise_edg ,p32_pwm_hi ,p32_pwm_lo ,pwm_serv_s.ref_time ); // Load all ports with data for rising edge
 	load_pwm_edge_for_all_ports( pwm_buf_s.fall_edg ,p32_pwm_hi ,p32_pwm_lo ,pwm_serv_s.ref_time ); // Load all ports with data for falling edge
 
-	if (1 ==LOCK_ADC_TO_PWM)
+	if (1 == LOCK_ADC_TO_PWM)
 	{
 		// Calculate time to read in dummy value from adc port
 		p16_adc_sync @ (pwm_serv_s.ref_time + HALF_DEAD_TIME) :> void; // NB Blocking wait
@@ -165,9 +165,6 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 	PWM_PARAM_TYP pwm_param_s; // Structure containing PWM parameters (Passed from Client)
 	unsigned pattern; // Bit-pattern on port
 
-
-	pwm_serv_s.x_cnt = 0; // initialise xscope output counter
-	pwm_serv_s.xscope = 0; // switch off xscope output
 
 	do_pwm_port_config( p32_pwm_hi ,p32_pwm_lo ,p16_adc_sync ,pwm_clk ); // configure the ports
 

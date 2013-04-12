@@ -34,10 +34,8 @@
 /** Structure containing pwm server control data */
 typedef struct PWM_SERV_TAG
 {
-	unsigned ref_time; // Reference Time incremented every PWM period, all other time are measured relative to this value
+	unsigned ref_time; // Reference Time incremented every PWM period, all other times are measured relative to this value
 	int data_ready; //Data ready flag
-	unsigned xscope;	// Flag set when xscope output required
-	int x_cnt;	// counts xscope outputs
 } PWM_SERV_TYP;
 
 /*****************************************************************************/

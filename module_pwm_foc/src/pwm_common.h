@@ -19,6 +19,9 @@
 	#error Define. PWM_SHARED_MEM in app_global.h
 #endif // PWM_SHARED_MEM
 
+/** Define Number of buffers in storage ring */
+#define NUM_PWM_BUFS 2  // Double-buffered
+
 /** Different PWM Phases */
 typedef enum PWM_PHASE_ETAG
 {
@@ -27,8 +30,6 @@ typedef enum PWM_PHASE_ETAG
   PWM_PHASE_C,		  // 3rd Phase
   NUM_PWM_PHASES    // Handy Value!-)
 } PWM_PHASE_ENUM;
-
-#define NUM_PWM_BUFS 2  // Double-buffered
 
 /** Structure containing PWM parameters for one motor */
 typedef struct PWM_PARAM_TAG // 
