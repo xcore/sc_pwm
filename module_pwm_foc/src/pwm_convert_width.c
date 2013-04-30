@@ -31,7 +31,7 @@ static void convert_pulse_width( // convert pulse width to a 32-bit pattern and 
 /* The time offset is measured from a time datum (e.g. the Centre of the pulse) 
  * Therefore the earlier edge (rising edge) has a negative offset
  * and the later edge (falling edge) has a positive offset
- * The absolute time is calculated in pwm_op_inv.S, as (Time_Centre + Time_Offset)
+ * The absolute time is calculated in pwm_server.xc, as (Time_Centre + Time_Offset)
  *
  * NB When the PWM pattern is transmiited from an XMOS 32-bit bufferred port,
  * The Least Significant Bit is the earliest in time, i.e. the LSB is sent 1st.
@@ -42,11 +42,11 @@ static void convert_pulse_width( // convert pulse width to a 32-bit pattern and 
 
 
 	// Check for short pulse 
-	if (inp_wid < 32)
+	if (inp_wid < PWM_PORT_WID)
 	{ // Short Pulse:
 
 		// earlier edge ( zeros transmitted 1st)
-		rise_port_data_ps->time_off = -32;
+		rise_port_data_ps->time_off = -PWM_PORT_WID;
 		tmp = (inp_wid + 1) >> 1; // Range [0..16]
 		tmp = ((1 << tmp)-1); // Range 0x0000_0000 .. 0x0000_FFFF
 		rise_port_data_ps->pattern = bitrev( tmp ); // Range 0x0000_0000 .. 0xFFFF_0000
@@ -57,23 +57,23 @@ static void convert_pulse_width( // convert pulse width to a 32-bit pattern and 
 		tmp = (inp_wid >> 1); // Range [0..15]
 		fall_port_data_ps->pattern = ((1 << tmp)-1); // Range 0x0000_0000 .. 0x7FFF_0000
 
-	} // if (inp_wid < 32)
+	} // if (inp_wid < PWM_PORT_WID)
 	else
 	{ // NOT a short pulse
 		num_zeros = PWM_MAX_VALUE - inp_wid; // Calculate No. of 0's
 	
 		// Check for mid-range pulse
-		if (num_zeros > 31)
+		if (num_zeros > (PWM_PORT_WID - 1))
 		{ // Mid-range Pulse
 
 			// earlier edge ( zeros transmitted 1st)
 			rise_port_data_ps->pattern = 0xFFFF0000;
-			rise_port_data_ps->time_off = -((inp_wid + 33) >> 1);
+			rise_port_data_ps->time_off = -((inp_wid + (PWM_PORT_WID + 1)) >> 1);
 	
 			// later edge ( zeros transmitted last)
 			fall_port_data_ps->pattern = 0x0000FFFF;
-			fall_port_data_ps->time_off = ((inp_wid - 32) >> 1);
-		} // if (num_zeros > 31)
+			fall_port_data_ps->time_off = ((inp_wid - PWM_PORT_WID) >> 1);
+		} // if (num_zeros > (PWM_PORT_WID - 1))
 		else
 		{ // Long pulse
 
@@ -85,14 +85,14 @@ static void convert_pulse_width( // convert pulse width to a 32-bit pattern and 
 			rise_port_data_ps->pattern = ~tmp; // Invert Pattern: Range 0xFFFF_8000 .. 0xFFFF_FFFF
 	
 			// later edge ( zeros transmitted last): 
-			fall_port_data_ps->time_off = (PWM_MAX_VALUE >> 1) - 32;
+			fall_port_data_ps->time_off = (PWM_MAX_VALUE >> 1) - PWM_PORT_WID;
 			tmp = ((num_zeros + 1) >> 1); // Range [16..0]
 			tmp = ((1 << tmp)-1); // Range 0x0000_FFFF .. 0x0000_0000
 			tmp = ~tmp; // Invert Pattern: Range 0xFFFF_0000 .. 0xFFFF_FFFF
 			fall_port_data_ps->pattern = bitrev( tmp ); // Invert Pattern: Range 0x0000_FFFF .. 0xFFFF_FFFF
 
-		} // else !(num_zeros > 31)
-	} // else !(inp_wid < 32)
+		} // else !(num_zeros > (PWM_PORT_WID - 1))
+	} // else !(inp_wid < PWM_PORT_WID)
 
 	return;
 } // convert_pulse_width

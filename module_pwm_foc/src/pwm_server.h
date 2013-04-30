@@ -28,7 +28,9 @@
 	#error Define. LOCK_ADC_TO_PWM in app_global.h
 #endif // LOCK_ADC_TO_PWM
 
-// The initial number of clocks to wait before starting the PWM loops
+#define PWM_CLK_MHZ 250 // For historical reasons, PWM timings are based on a 250 MHz clock 
+
+// Number of PWM time increments between ADC/PWM synchronisation points
 #define INIT_SYNC_INCREMENT (PWM_MAX_VALUE)
 
 /** Structure containing pwm server control data */

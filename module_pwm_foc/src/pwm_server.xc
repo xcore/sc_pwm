@@ -42,6 +42,10 @@ static void do_pwm_port_config(
 {
 	unsigned i;
 
+
+	// For historical reasons, PWM timings are based on a 250 MHz clock
+ 	configure_clock_rate( pwm_clk ,PLATFORM_REFERENCE_MHZ ,1 ); // Configure clock rate to PLATFORM_REFERENCE_MHZ/1 (250 MHz)
+
 	for (i = 0; i < NUM_PWM_PHASES; i++)
 	{
 		configure_out_port( p32_pwm_hi[i] ,pwm_clk ,0 ); // Set initial value of port to 0 (Switched Off) 
