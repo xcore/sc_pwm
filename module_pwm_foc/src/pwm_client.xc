@@ -15,8 +15,8 @@
 #include "pwm_client.h"
 
 /*****************************************************************************/
-void foc_pwm_put_data( // Send PWM widths from Client to Server
-	PWM_PARAM_TYP &pwm_param_s, // Reference to structure containing PWM parameters 
+void foc_pwm_put_parameters( // Send PWM parameters from Client to Server
+	PWM_COMMS_TYP &pwm_comms_s, // Reference to structure containing PWM communication data
 	chanend c_pwm 				// Channel between Client and Server
 )
 {
@@ -24,19 +24,16 @@ void foc_pwm_put_data( // Send PWM widths from Client to Server
 	if (1 == PWM_SHARED_MEM)
 	{
 		// Call 'C' interface to allow use of pointers
-		convert_widths_in_shared_mem( pwm_param_s ); // Write port data to shared memory
+		convert_widths_in_shared_mem( pwm_comms_s ); // Write port data to shared memory
 	} // if (1 == PWM_SHARED_MEM)
 
-	c_pwm <: pwm_param_s.buf; // Signal PWM server that PWM data is ready to read.
-	pwm_param_s.buf = 1 - pwm_param_s.buf; // Toggle buffer identifier ready for next iteration
+	c_pwm <: pwm_comms_s.buf; // Signal PWM server that PWM data is ready to read.
+	pwm_comms_s.buf = 1 - pwm_comms_s.buf; // Toggle buffer identifier ready for next iteration
 
 	// Check if shared memory used to transfer data from Client to Server 
 	if (0 == PWM_SHARED_MEM)
 	{	// NOT using shared memory model: Pass Pulse widths down channel for server to calculate port data
-		for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
-		{
-			c_pwm <: pwm_param_s.widths[phase_cnt]; // Send PWM pulse-width for current phase
-		} // for phase_cnt
+		c_pwm <: pwm_comms_s.params; // Send PWM parameters to Server
 	} // if (0 == PWM_SHARED_MEM)
 
 } // foc_pwm_put_data

@@ -26,16 +26,16 @@
 #include "pwm_convert_width.h"
 
 /*****************************************************************************/
-/** \brief Send PWM widths from Client to Server
+/** \brief Send PWM parameters from Client to Server
  *
  *  On the next cycle through the PWM, the server will update the PWM
- *  pulse widths with these new values
+ *  pulse widths with these new parameters
  *
- *  \param pwm_param_s // Reference to structure containing PWM parameters 
+ *  \param pwm_comms_s // Reference to structure containing PWM communication data
  *  \param c_pwm // Channel between Client and Server
  */
-void foc_pwm_put_data( // Send PWM widths from Client to Server
-	REFERENCE_PARAM( PWM_PARAM_TYP ,pwm_param_sp), // Pointer to structure containing PWM parameters 
+void foc_pwm_put_parameters( // Send PWM parameters from Client to Server
+	REFERENCE_PARAM( PWM_COMMS_TYP ,pwm_data_sp ), // Reference/Pointer to structure containing PWM communication data
 	chanend c_pwm 				// Channel between Client and Server
 );
 /*****************************************************************************/

@@ -16,22 +16,22 @@
 #include "pwm_server.h"
 
 /*****************************************************************************/
-static void init_pwm_params( // Initialise structure containing PWM parameters (from Client)
-	PWM_PARAM_TYP &pwm_param_s, // Reference to structure containing PWM parameters (from Client)
-	PWM_CONTROL_TYP &pwm_ctrl_s, // Reference to structure containing double-buffered PWM output data
+static void init_pwm_data( // Initialise structure containing PWM data
+	PWM_COMMS_TYP &pwm_comms_s, // Reference to structure containing PWM communication data 
+	PWM_ARRAY_TYP &pwm_ctrl_s, // Reference to structure containing double-buffered PWM output data
 	chanend c_pwm, // PWM channel between Client and Server
 	unsigned motor_id // Motor identifier
 )
 {
 	// Initialise the address of PWM Control structure, in case shared memory is used
-	pwm_param_s.mem_addr = get_pwm_struct_address( pwm_ctrl_s ); 
+	pwm_comms_s.mem_addr = get_pwm_struct_address( pwm_ctrl_s ); 
 
 	// Send address to Client, in case shared memory is used
-	c_pwm <: pwm_param_s.mem_addr;
+	c_pwm <: pwm_comms_s.mem_addr;
 
 	// Wait for initial buffer id
-	c_pwm :> pwm_param_s.buf;
-} // init_pwm_params
+	c_pwm :> pwm_comms_s.buf;
+} // init_pwm_data
 /*****************************************************************************/
 static void do_pwm_port_config( 
 	buffered out port:32 p32_pwm_hi[], 
@@ -101,7 +101,7 @@ static void load_pwm_edge_for_all_ports( // Load all data ports for current edge
 /*****************************************************************************/
 static void do_pwm_period( // Does processing for one PWM period (4096 cycles)
 	PWM_SERV_TYP &pwm_serv_s, // Reference to structure containing PWM server control data structure
-	PWM_PARAM_TYP &pwm_param_s, // Reference to structure containing PWM parameters (from Client)
+	PWM_COMMS_TYP &pwm_comms_s, // Reference to structure containing PWM communication data
 	PWM_BUFFER_TYP &pwm_buf_s, // Reference to buffer containing PWM output data for one period
 	chanend c_pwm, 
 	buffered out port:32 p32_pwm_hi[], 
@@ -117,13 +117,10 @@ static void do_pwm_period( // Does processing for one PWM period (4096 cycles)
 		if (0 == PWM_SHARED_MEM)
 		{ // Shared Memory NOT used, so receive pulse widths from channel and calculate port data on server side.
 	
-			for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
-			{
-				c_pwm :> pwm_param_s.widths[phase_cnt]; // Receive PWM pulse-width for current phase
-			} // for phase_cnt
+			c_pwm :> pwm_comms_s.params; // Receive PWM parameters from Client
 	
 			// Convert all PWM pulse widths to pattern/time_offset port data
-			convert_all_pulse_widths( pwm_param_s ,pwm_buf_s );
+			convert_all_pulse_widths( pwm_comms_s ,pwm_buf_s );
 		} // if (0 == PWM_SHARED_MEM)
 	} // if (pwm_serv_s.data_ready)
 
@@ -143,9 +140,9 @@ static void do_pwm_period( // Does processing for one PWM period (4096 cycles)
 	// Check if new data is ready
 	select
 	{
-		case c_pwm :> pwm_param_s.buf : // Is new buf_id ready?
+		case c_pwm :> pwm_comms_s.buf : // Is new buf_id ready?
 			pwm_serv_s.data_ready = 1; // signal new data ready
-		break; // c_pwm :> pwm_param_s.buf;
+		break; // c_pwm :> pwm_comms_s.buf;
 
 		default :
 			pwm_serv_s.data_ready = 0; // signal data NOT ready
@@ -164,9 +161,9 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 	clock pwm_clk // clock for generating accurate PWM timing
 )
 {
-	PWM_CONTROL_TYP pwm_ctrl_s; // Structure containing double-buffered PWM output data
+	PWM_ARRAY_TYP pwm_ctrl_s; // Structure containing double-buffered PWM output data
 	PWM_SERV_TYP pwm_serv_s; // Structure containing PWM server control data 
-	PWM_PARAM_TYP pwm_param_s; // Structure containing PWM parameters (Passed from Client)
+	PWM_COMMS_TYP pwm_comms_s; // Structure containing PWM communication data
 	unsigned pattern; // Bit-pattern on port
 
 
@@ -176,9 +173,9 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 	pattern = peek( p32_pwm_hi[0] ); // Find out value on 1-bit port. NB Only LS-bit is relevant
 	pwm_serv_s.ref_time = partout_timestamped( p32_pwm_hi[0] ,1 ,pattern ); // Re-load output port with same bit-value
 
-	init_pwm_params( pwm_param_s ,pwm_ctrl_s ,c_pwm ,motor_id ); // Initialise PWM parameters (from Client)
+	init_pwm_data( pwm_comms_s ,pwm_ctrl_s ,c_pwm ,motor_id ); // Initialise PWM parameters (from Client)
 
-	pwm_serv_s.data_ready = 1; // Signal new data ready. NB this happened in init_pwm_params() 
+	pwm_serv_s.data_ready = 1; // Signal new data ready. NB this happened in init_pwm_data() 
 
 	// Loop forever
 	while (1)
@@ -186,7 +183,7 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 #pragma xta endpoint "pwm_main_loop"
 
 		// Do processing for one PWM period, using PWM data in current buffer 
-		do_pwm_period( pwm_serv_s ,pwm_param_s ,pwm_ctrl_s.buf_data[pwm_param_s.buf] 
+		do_pwm_period( pwm_serv_s ,pwm_comms_s ,pwm_ctrl_s.buf_data[pwm_comms_s.buf] 
 			,c_pwm ,p32_pwm_hi ,p32_pwm_lo ,c_adc_trig ,p16_adc_sync );
 	} // while(1)
 

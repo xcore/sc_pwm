@@ -36,9 +36,15 @@ typedef struct PWM_PARAM_TAG //
 {
 	unsigned widths[NUM_PWM_PHASES]; // Array of PWM width values
 	unsigned id; // Unique Motor identifier e.g. 0 or 1
+} PWM_PARAM_TYP;
+
+/** Structure containing pwm communication control data */
+typedef struct PWM_COMMS_TAG
+{
+	PWM_PARAM_TYP params; // Structure of PWM parameters (for Server)
 	unsigned buf; 	// double-buffer identifier (0 or 1)
 	unsigned mem_addr; // Shared memory address (if used)
-} PWM_PARAM_TYP;
+} PWM_COMMS_TYP;
 
 // Structure containing data for doing timed load of buffered output port
 typedef struct PWM_PORT_TAG
@@ -68,9 +74,9 @@ typedef struct PWM_BUFFER_TAG
 } PWM_BUFFER_TYP;
 
 // Structure containing pwm output data for all buffers
-typedef struct PWM_CONTROL_TAG
+typedef struct PWM_ARRAY_TAG
 {
 	PWM_BUFFER_TYP buf_data[NUM_PWM_BUFS]; // Array of buffer-data structures, one for each buffer
-} PWM_CONTROL_TYP;
+} PWM_ARRAY_TYP;
 
 #endif // _PWM_COMMON_H_

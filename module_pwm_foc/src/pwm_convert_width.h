@@ -39,16 +39,16 @@
  * \return Address
  */
 unsigned long get_pwm_struct_address( // Converts PWM structure reference to address
-	REFERENCE_PARAM( PWM_CONTROL_TYP ,pwm_ps ) // Pointer to PWM structure
+	REFERENCE_PARAM( PWM_ARRAY_TYP ,pwm_ps ) // Pointer to PWM structure containing array of buffers
 ); // Return address
 /*****************************************************************************/
 void convert_all_pulse_widths( // Convert all PWM pulse widths to pattern/time_offset port data
-	REFERENCE_PARAM( PWM_PARAM_TYP ,pwm_param_sp), // Pointer to structure containing PWM parameters 
-	REFERENCE_PARAM( PWM_BUFFER_TYP ,pwm_data_sp) // Pointer to Structure containing PWM output data
+	REFERENCE_PARAM( PWM_COMMS_TYP ,pwm_comms_ps), // Pointer to structure containing PWM communication data
+	REFERENCE_PARAM( PWM_BUFFER_TYP ,pwm_buf_ps) // Pointer to Structure containing buffered PWM output data
 );
 /*****************************************************************************/
 void convert_widths_in_shared_mem( // Converts PWM Pulse-width to port data in shared memory
-	REFERENCE_PARAM( PWM_PARAM_TYP ,pwm_param_sp) // Pointer to structure containing PWM parameters 
+	REFERENCE_PARAM( PWM_COMMS_TYP ,pwm_comms_ps) // Pointer to structure containing PWM communication data
 );
 /*****************************************************************************/
 
