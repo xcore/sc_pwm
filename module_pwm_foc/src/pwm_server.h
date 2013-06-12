@@ -36,8 +36,12 @@
 /** Structure containing pwm server control data */
 typedef struct PWM_SERV_TAG
 {
+	int id; // Motor Id
 	unsigned ref_time; // Reference Time incremented every PWM period, all other times are measured relative to this value
 	int data_ready; //Data ready flag
+
+	int temp; // MB~ Dbg
+	int cnt; // MB~ Dbg
 } PWM_SERV_TYP;
 
 /*****************************************************************************/
