@@ -15,7 +15,7 @@
 #ifndef _PWM_COMMON_H_
 #define _PWM_COMMON_H_
 
-// #include "use_locks.h" //MB~ Dbg
+#include "use_locks.h" //MB~ Dbg
 
 #ifndef PWM_SHARED_MEM 
 	#error Define. PWM_SHARED_MEM in app_global.h
@@ -24,8 +24,11 @@
 /** Define Number of buffers in storage ring */
 #define NUM_PWM_BUFS 2  // Double-buffered
 
+/** Define PWM port width resolution */
+#define PORT_RES_BITS 5 // PWM port width resoltion (e.g. 5 for 32-bits) 
+
 /** Define PWM port width in bits */
-#define PWM_PORT_WID 32 // PWM port width in bits
+#define PWM_PORT_WID (1 << PORT_RES_BITS) // PWM port width in bits
 
 #define PWM_MS_MASK ((unsigned)(1 << (PWM_PORT_WID - 1))) // Mask for MS-bit of PWM pattern (e.g. 0x8000_0000)
 #define PWM_ONES_PATN ((unsigned)(PWM_MS_MASK + (PWM_MS_MASK - 1))) // All-ones PWM pattern (e.g. 0xFFFF_FFFF)
