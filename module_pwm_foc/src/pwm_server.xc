@@ -88,7 +88,9 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 
 	pwm_serv_s.data_ready = 1; // Signal new data ready. NB this happened in init_pwm_data() 
 
-	// Loop forever
+	/* This loop requires at least ~280 cycles, which means the PWM period must be at least 512 cycles.
+	 * If convert_all_pulse_widths was optimised for speed, maybe a PWM period of 256 cycles would be possible
+	 */
 	while (1)
 	{
 #pragma xta endpoint "pwm_main_loop"
@@ -104,7 +106,7 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 				c_pwm :> pwm_comms_s.params; // Receive PWM parameters from Client
 		
 				// Convert all PWM pulse widths to pattern/time_offset port data
-				convert_all_pulse_widths( pwm_comms_s ,pwm_ctrl_s.buf_data[pwm_comms_s.buf] );
+				convert_all_pulse_widths( pwm_comms_s ,pwm_ctrl_s.buf_data[pwm_comms_s.buf] ); // Max 178 Cycles
 			} // if (0 == PWM_SHARED_MEM)
 		} // if (pwm_serv_s.data_ready)
 	
@@ -113,10 +115,9 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 		// Load ports in correct time order. Rising-edges --> ADC_trigger --> Falling-edges ...
 
 		/* These port-load commands have been unwrapped and expanded to improve timing.
-		 * WARNING: If a short pulse (Low voltage) does NOT meet timing, then the pulse stays high for a whole timer period
-		 * (2^16 cycles) This is a HIGH voltage and could damage the motor.
+		 * WARNING: If timing is not met pulse stays low for whole timer period (2^16 cycles)
 		 */
-    // Rising edges - these have negative time offsets
+    // Rising edges - these have negative time offsets - 44 Cycles
 		p32_pwm_hi[PWM_PHASE_A] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_A].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_A].hi.pattern;
 		p32_pwm_lo[PWM_PHASE_A] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_A].lo.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_A].lo.pattern;
 	
@@ -129,7 +130,7 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 		if (1 == LOCK_ADC_TO_PWM)
 		{
 			/* This trigger is used to signal to the ADC block the location of the PWM High-pulse mid-point.
-			 * As a blocking wait is required, we send it the trigger early by 1/4 of a PWM pulse.
+			 * As a blocking wait is required, we send the trigger early by 1/4 of a PWM pulse.
 			 * This then allows time to set up the falling edges before they are required.
 			 * WARNING: The ADC module (module_foc_adc) must compensate for the early trigger.
 			 */
@@ -137,7 +138,11 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 			outct( c_adc_trig ,XS1_CT_END ); // Send synchronisation token to ADC
 		} // if (1 ==LOCK_ADC_TO_PWM)
 	
-    // Falling edges - these have positive time offsets
+		/* These port-load commands have been unwrapped and expanded to improve timing.
+		 * DANGER: If a short pulse (Low voltage) does NOT meet timing, then the pulse stays high for a whole timer period
+		 * (2^16 cycles) This is a HIGH voltage and could damage the motor.
+		 */
+    // Falling edges - these have positive time offsets - 44 Cycles
 		p32_pwm_hi[PWM_PHASE_A] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_A].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_A].hi.pattern;
 		p32_pwm_lo[PWM_PHASE_A] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_A].lo.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_A].lo.pattern;
 	
@@ -147,7 +152,8 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 		p32_pwm_hi[PWM_PHASE_C] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_C].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_C].hi.pattern;
 		p32_pwm_lo[PWM_PHASE_C] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_C].lo.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_C].lo.pattern;
 	
-		// Check if new data is ready
+
+		// Check if new data is ready  - ~8 cycles
 		select
 		{
 			case c_pwm :> pwm_comms_s.buf : // Is new buf_id ready?

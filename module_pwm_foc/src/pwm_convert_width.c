@@ -116,7 +116,7 @@ static void convert_phase_pulse_widths(  // Convert PWM pulse widths for current
 	 * (a) Both legs do NOT switch at the same time, and 
 	 * (b) That the High and Low legs pulses are centred on the same time offset
 	 */
-	assert(hi_wid < PWM_WID_LIMIT); // Ensure Low-leg pulse NOT too wide
+//	assert(hi_wid < PWM_WID_LIMIT); // Ensure Low-leg pulse NOT too wide
 
 	convert_pulse_width( pwm_comms_ps ,&(rise_phase_data_ps->lo) ,&(fall_phase_data_ps->lo) ,(hi_wid + PWM_DEAD_TIME) );
 } // convert_phase_pulse_widths
