@@ -101,18 +101,24 @@ static void convert_phase_pulse_widths(  // Convert PWM pulse widths for current
 	PWM_COMMS_TYP * pwm_comms_ps, // Pointer to structure containing PWM communication data
 	PWM_PHASE_TYP * rise_phase_data_ps, // Pointer to PWM output data structure for rising edge of current phase
 	PWM_PHASE_TYP * fall_phase_data_ps, // Pointer to PWM output data structure for falling edge of current phase
-	unsigned wid_val // PWM pulse-width value
+	unsigned hi_wid // PWM pulse-width value for Hi-leg
 )
 {
-	//  WARNING: Both legs of the balanced line must NOT be switched at the same time. Therefore add dead-time to low leg.
+	//  WARNING: Both legs of the balanced line must NOT be switched at the same time. Therefore adjust Low-leg width .
 
 	// Calculate PWM Pulse data for high leg (V+) of balanced line
-	convert_pulse_width( pwm_comms_ps ,&(rise_phase_data_ps->hi) ,&(fall_phase_data_ps->hi) ,wid_val );
+	convert_pulse_width( pwm_comms_ps ,&(rise_phase_data_ps->hi) ,&(fall_phase_data_ps->hi) ,hi_wid );
 
 	// NB In do_pwm_period() (pwm_service_inv.xc) ADC Sync occurs at (ref_time + HALF_DEAD_TIME)
 
-	// Calculate PWM Pulse data for low leg (V+) of balanced line (a short time later)
-	convert_pulse_width( pwm_comms_ps ,&(rise_phase_data_ps->lo) ,&(fall_phase_data_ps->lo) ,(wid_val + PWM_DEAD_TIME) );
+	/* Calculate PWM Pulse data for low leg (V+) of balanced line
+	 * The Low-leg pulse is extended symmetrically on either side by a small amount. This ensures that ...
+	 * (a) Both legs do NOT switch at the same time, and 
+	 * (b) That the High and Low legs pulses are centred on the same time offset
+	 */
+	assert(hi_wid < PWM_WID_LIMIT); // Ensure Low-leg pulse NOT too wide
+
+	convert_pulse_width( pwm_comms_ps ,&(rise_phase_data_ps->lo) ,&(fall_phase_data_ps->lo) ,(hi_wid + PWM_DEAD_TIME) );
 } // convert_phase_pulse_widths
 /*****************************************************************************/
 void convert_all_pulse_widths( // Convert all PWM pulse widths to pattern/time_offset port data

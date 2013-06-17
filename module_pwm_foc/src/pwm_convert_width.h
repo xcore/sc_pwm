@@ -23,11 +23,6 @@
 #include "pwm_common.h"
 #include "pwm_client.h"
 
-// PWM specific definitions ...
-
-#define PWM_DEAD_TIME ((12 * MICRO_SEC + 5) / 10) // 1200ns PWM Dead-Time WARNING: Safety critical
-#define HALF_DEAD_TIME (PWM_DEAD_TIME >> 1) // Used for rounding
-
 /******************************************************************************/
 /** Converts PWM structure reference to address.
  * \param pwm_ps // Pointer to PWM control structure

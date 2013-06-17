@@ -60,126 +60,6 @@ static void do_pwm_port_config(
 	start_clock( pwm_clk );
 } // do_pwm_port_config_inv_adc_trig
 /*****************************************************************************/
-static void load_pwm_port_data( // Load one set of output port data
-	PWM_SERV_TYP &pwm_serv_s, // Reference to structure containing PWM server control data 
-	PWM_PORT_TYP &port_data_s, // Reference to structure containing PWM output port 
-	buffered out port:32 p32_pwm_leg, // current 32-bit buffered output port
-	unsigned ref_time // Reference time-stamp
-)
-{
-	// Calculate absolute time to load pattern on port
-	p32_pwm_leg @ (PORT_TIME_TYP)(ref_time + port_data_s.time_off) <: port_data_s.pattern;
-
-#ifdef MB
-// This xscope overloads the bus, so needs to be very selective
-if (pwm_serv_s.id) // Only do motor_1
-{
-	if (!(pwm_serv_s.temp & 7)) // Only do phase_A on high-leg
-	{
-		if (16 & pwm_serv_s.cnt) // Only do alternate bursts of 16
-		{
-			xscope_probe_data( 3 ,pwm_serv_s.temp );
-		} // if (16 & pwm_serv_s.cnt)
-
-		pwm_serv_s.cnt++;
-	} // if (pwm_serv_s.temp & 7)
-} // if (pwm_serv_s.id)
-#endif //MB~
-
-} // load_pwm_port_data
-/*****************************************************************************/
-static void load_pwm_phase( // Load all data ports for current phase/edge
-	PWM_SERV_TYP &pwm_serv_s, // Reference to structure containing PWM server control data 
-	PWM_PHASE_TYP &phase_data_s, // Reference to structure containing PWM output data for current phase
-	buffered out port:32 p32_pwm_hi, // 32-bit buffered output port for High-Leg pulse
-	buffered out port:32 p32_pwm_lo, // 32-bit buffered output port for Low-Leg pulse
-	unsigned ref_time // Reference time-stamp
-)
-{
-	int base = (pwm_serv_s.temp << 1); // MB~ dbg
-
-
-pwm_serv_s.temp = base + 0; //MB~ dbg
-	load_pwm_port_data( pwm_serv_s ,phase_data_s.hi ,p32_pwm_hi ,ref_time );
-pwm_serv_s.temp = base + 1; //MB~ dbg
-	load_pwm_port_data( pwm_serv_s ,phase_data_s.lo ,p32_pwm_lo ,ref_time );
-} // load_pwm_phase
-/*****************************************************************************/
-static void load_pwm_edge_for_all_ports( // Load all data ports for current edge
-	PWM_SERV_TYP &pwm_serv_s, // Reference to structure containing PWM server control data 
-	PWM_EDGE_TYP pwm_edge_data_s, // Structure containing PWM output data for current edge
-	buffered out port:32 p32_pwm_hi[], // 32-bit buffered output port for High-Leg pulse
-	buffered out port:32 p32_pwm_lo[], // 32-bit buffered output port for High-Leg pulse
-	unsigned ref_time // Reference time-stamp
-)
-{
-	int phase_cnt; // Phase counter
-	int base = (pwm_serv_s.temp << 2); // MB~ dbg
-
-
-// acquire_lock(); printstr("S_PTN="); printhexln( pwm_edge_data_s.phase_data[PWM_PHASE_A].hi.pattern ); release_lock(); //MB~
-	for (phase_cnt=0; phase_cnt<NUM_PWM_PHASES; phase_cnt++)
-	{
-pwm_serv_s.temp =  base + phase_cnt; //MB~ dbg
-		load_pwm_phase( pwm_serv_s ,pwm_edge_data_s.phase_data[phase_cnt] ,p32_pwm_hi[phase_cnt] ,p32_pwm_lo[phase_cnt] ,ref_time );
-	} // for phase_cnt
-
-} // load_pwm_edge_for_all_ports
-/*****************************************************************************/
-static void do_pwm_period( // Does processing for one PWM period (4096 cycles)
-	PWM_SERV_TYP &pwm_serv_s, // Reference to structure containing PWM server control data 
-	PWM_COMMS_TYP &pwm_comms_s, // Reference to structure containing PWM communication data
-	PWM_BUFFER_TYP &pwm_buf_s, // Reference to buffer containing PWM output data for one period
-	chanend c_pwm, 
-	buffered out port:32 p32_pwm_hi[], 
-	buffered out port:32 p32_pwm_lo[], 
-	chanend? c_adc_trig, 
-	in port? p16_adc_sync
-)
-{
-	// Check if new data ready
-	if (pwm_serv_s.data_ready)
-	{
-		// If shared memory was used for data transfer, port data is already in pwm_buf_s
-		if (0 == PWM_SHARED_MEM)
-		{ // Shared Memory NOT used, so receive pulse widths from channel and calculate port data on server side.
-	
-			c_pwm :> pwm_comms_s.params; // Receive PWM parameters from Client
-	
-			// Convert all PWM pulse widths to pattern/time_offset port data
-			convert_all_pulse_widths( pwm_comms_s ,pwm_buf_s );
-		} // if (0 == PWM_SHARED_MEM)
-	} // if (pwm_serv_s.data_ready)
-
-	pwm_serv_s.ref_time += INIT_SYNC_INCREMENT; // Update reference time to next PWM period
-
-	// WARNING: Load port events in correct time order (i.e. rising THEN falling edge)
-pwm_serv_s.temp = 1; //MB~ dbg
-	load_pwm_edge_for_all_ports( pwm_serv_s ,pwm_buf_s.rise_edg ,p32_pwm_hi ,p32_pwm_lo ,pwm_serv_s.ref_time ); // Load all ports with data for rising edge
-pwm_serv_s.temp = 0; //MB~ dbg
-	load_pwm_edge_for_all_ports( pwm_serv_s ,pwm_buf_s.fall_edg ,p32_pwm_hi ,p32_pwm_lo ,pwm_serv_s.ref_time ); // Load all ports with data for falling edge
-
-	if (1 == LOCK_ADC_TO_PWM)
-	{
-		// Calculate time to read in dummy value from adc port
-		p16_adc_sync @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + HALF_DEAD_TIME) :> void; // NB Blocking wait
-		outct( c_adc_trig ,XS1_CT_END ); // Send synchronisation token to ADC
-	} // if (1 ==LOCK_ADC_TO_PWM)
-
-	// Check if new data is ready
-	select
-	{
-		case c_pwm :> pwm_comms_s.buf : // Is new buf_id ready?
-			pwm_serv_s.data_ready = 1; // signal new data ready
-		break; // c_pwm :> pwm_comms_s.buf;
-
-		default :
-			pwm_serv_s.data_ready = 0; // signal data NOT ready
-		break; // default
-	} // select
-
-} // do_pwm_period
-/*****************************************************************************/
 void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pair, PWM server, with ADC sync
 	unsigned motor_id, // Motor identifier
 	chanend c_pwm, // PWM channel between Client and Server
@@ -197,7 +77,6 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 
 
 	pwm_serv_s.id = motor_id; // Assign motor identifier
-	pwm_serv_s.cnt = 0; // MB~ dbg
 
 	do_pwm_port_config( p32_pwm_hi ,p32_pwm_lo ,p16_adc_sync ,pwm_clk ); // configure the ports
 
@@ -213,10 +92,72 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 	while (1)
 	{
 #pragma xta endpoint "pwm_main_loop"
-
 		// Do processing for one PWM period, using PWM data in current buffer 
-		do_pwm_period( pwm_serv_s ,pwm_comms_s ,pwm_ctrl_s.buf_data[pwm_comms_s.buf] 
-			,c_pwm ,p32_pwm_hi ,p32_pwm_lo ,c_adc_trig ,p16_adc_sync );
+
+		// Check if new data ready
+		if (pwm_serv_s.data_ready)
+		{
+			// If shared memory was used for data transfer, port data is already in pwm_ctrl_s.buf_data[pwm_comms_s.buf]
+			if (0 == PWM_SHARED_MEM)
+			{ // Shared Memory NOT used, so receive pulse widths from channel and calculate port data on server side.
+		
+				c_pwm :> pwm_comms_s.params; // Receive PWM parameters from Client
+		
+				// Convert all PWM pulse widths to pattern/time_offset port data
+				convert_all_pulse_widths( pwm_comms_s ,pwm_ctrl_s.buf_data[pwm_comms_s.buf] );
+			} // if (0 == PWM_SHARED_MEM)
+		} // if (pwm_serv_s.data_ready)
+	
+		pwm_serv_s.ref_time += INIT_SYNC_INCREMENT; // Update reference time to next PWM period
+
+		// Load ports in correct time order. Rising-edges --> ADC_trigger --> Falling-edges ...
+
+		/* These port-load commands have been unwrapped and expanded to improve timing.
+		 * WARNING: If a short pulse (Low voltage) does NOT meet timing, then the pulse stays high for a whole timer period
+		 * (2^16 cycles) This is a HIGH voltage and could damage the motor.
+		 */
+    // Rising edges - these have negative time offsets
+		p32_pwm_hi[PWM_PHASE_A] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_A].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_A].hi.pattern;
+		p32_pwm_lo[PWM_PHASE_A] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_A].lo.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_A].lo.pattern;
+	
+		p32_pwm_hi[PWM_PHASE_B] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_B].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_B].hi.pattern;
+		p32_pwm_lo[PWM_PHASE_B] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_B].lo.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_B].lo.pattern;
+	
+		p32_pwm_hi[PWM_PHASE_C] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_C].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_C].hi.pattern;
+		p32_pwm_lo[PWM_PHASE_C] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_C].lo.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_C].lo.pattern;
+	
+		if (1 == LOCK_ADC_TO_PWM)
+		{
+			/* This trigger is used to signal to the ADC block the location of the PWM High-pulse mid-point.
+			 * As a blocking wait is required, we send it the trigger early by 1/4 of a PWM pulse.
+			 * This then allows time to set up the falling edges before they are required.
+			 * WARNING: The ADC module (module_foc_adc) must compensate for the early trigger.
+			 */
+			p16_adc_sync @ (PORT_TIME_TYP)(pwm_serv_s.ref_time - QUART_PWM_MAX) :> void; // NB Blocking wait
+			outct( c_adc_trig ,XS1_CT_END ); // Send synchronisation token to ADC
+		} // if (1 ==LOCK_ADC_TO_PWM)
+	
+    // Falling edges - these have positive time offsets
+		p32_pwm_hi[PWM_PHASE_A] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_A].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_A].hi.pattern;
+		p32_pwm_lo[PWM_PHASE_A] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_A].lo.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_A].lo.pattern;
+	
+		p32_pwm_hi[PWM_PHASE_B] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_B].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_B].hi.pattern;
+		p32_pwm_lo[PWM_PHASE_B] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_B].lo.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_B].lo.pattern;
+	
+		p32_pwm_hi[PWM_PHASE_C] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_C].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_C].hi.pattern;
+		p32_pwm_lo[PWM_PHASE_C] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_C].lo.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_C].lo.pattern;
+	
+		// Check if new data is ready
+		select
+		{
+			case c_pwm :> pwm_comms_s.buf : // Is new buf_id ready?
+				pwm_serv_s.data_ready = 1; // signal new data ready
+			break; // c_pwm :> pwm_comms_s.buf;
+	
+			default :
+				pwm_serv_s.data_ready = 0; // signal data NOT ready
+			break; // default
+		} // select
 	} // while(1)
 
 } // foc_pwm_do_triggered

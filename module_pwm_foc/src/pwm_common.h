@@ -15,11 +15,15 @@
 #ifndef _PWM_COMMON_H_
 #define _PWM_COMMON_H_
 
-#include "use_locks.h" //MB~ Dbg
+// #include "use_locks.h" //MB~ Dbg
 
 #ifndef PWM_SHARED_MEM 
 	#error Define. PWM_SHARED_MEM in app_global.h
 #endif // PWM_SHARED_MEM
+
+#ifndef PWM_MAX_VALUE
+	#error Define. PWM_NAX_VALUE in app_global.h
+#endif // PWM_MAX_VALUE
 
 /** Define Number of buffers in storage ring */
 #define NUM_PWM_BUFS 2  // Double-buffered
@@ -29,9 +33,19 @@
 
 /** Define PWM port width in bits */
 #define PWM_PORT_WID (1 << PORT_RES_BITS) // PWM port width in bits
+#define HALF_PORT_WID (PWM_PORT_WID >> 1) // Half of PWM port width in bits
 
 #define PWM_MS_MASK ((unsigned)(1 << (PWM_PORT_WID - 1))) // Mask for MS-bit of PWM pattern (e.g. 0x8000_0000)
 #define PWM_ONES_PATN ((unsigned)(PWM_MS_MASK + (PWM_MS_MASK - 1))) // All-ones PWM pattern (e.g. 0xFFFF_FFFF)
+
+#define HALF_PWM_MAX (PWM_MAX_VALUE >> 1)  // Half of maximum PWM width value
+
+// PWM specific definitions ...
+
+#define PWM_DEAD_TIME ((12 * MICRO_SEC + 5) / 10) // 1200ns PWM Dead-Time WARNING: Safety critical
+#define HALF_DEAD_TIME (PWM_DEAD_TIME >> 1) // Used for rounding
+
+#define PWM_WID_LIMIT (PWM_MAX_VALUE - PWM_DEAD_TIME - PWM_PORT_WID) // Pulse width limit
 
 /** Different PWM Phases */
 typedef enum PWM_PHASE_ETAG
