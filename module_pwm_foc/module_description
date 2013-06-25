@@ -1,1 +1,3 @@
-PWM 6 port symmetrical
+Pulse Width Modulation (PWM) module
+Uses 3-Phase balanced-line (High-leg, Low-leg) plus PWM-to-ADC trigger (6 ports, one channel)
+used in conjunction with FOC motor control

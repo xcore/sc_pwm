@@ -47,6 +47,9 @@
 
 #define PWM_WID_LIMIT (PWM_MAX_VALUE - PWM_DEAD_TIME - PWM_PORT_WID) // Pulse width limit
 
+/** Maximum Port timer value. See also PORT_TIME_TYP */
+#define PORT_TIME_MASK 0xFFFF
+
 /** Different PWM Phases */
 typedef enum PWM_PHASE_ETAG
 {
@@ -64,7 +67,7 @@ typedef enum PWM_LEG_ETAG
   NUM_PWM_LEGS	// Handy Value!-)
 } PWM_LEG_ENUM;
 
-/** Type for Port timer values */
+/** Type for Port timer values. See also PORT_TIME_MASK */
 typedef unsigned short PORT_TIME_TYP;
 
 /** Structure containing PWM parameters for one motor */

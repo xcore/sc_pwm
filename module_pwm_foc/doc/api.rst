@@ -7,11 +7,14 @@ API
 
 Configuration Defines
 ---------------------
-.. doxygendefine:: NUMBER_OF_MOTORS 
+.. doxygendefine:: MOTOR_ID 
 .. doxygendefine:: NUM_POLE_PAIRS 
-.. doxygendefine:: HALL_PER_POLE 
+.. doxygendefine:: SECS_PER_MIN
 .. doxygendefine:: MAX_SPEC_RPM 
-.. doxygendefine:: HALL_FILTER 
+.. doxygendefine:: PWM_RES_BITS
+.. doxygendefine:: LOCK_ADC_TO_PWM
+.. doxygendefine:: PWM_SHARED_MEM
+.. doxygendefine:: PRINT_TST_PWM
 .. doxygendefine:: PLATFORM_REFERENCE_HZ  
 
 Functions
@@ -22,15 +25,17 @@ Data Types
 
 Data Structures
 +++++++++++++++
-.. doxygenstruct:: HALL_PARAM_TAG
+.. doxygenstruct:: PWM_PARAM_TAG
+.. doxygenstruct:: PWM_COMMS_TAG
 
 Configuration Functions
 +++++++++++++++++++++++
 
 Receive Functions
 +++++++++++++++++
-.. doxygenfunction:: foc_hall_get_parameters
+.. doxygenfunction:: foc_pwm_do_triggered
 
 Transmit Functions
 ++++++++++++++++++
-.. doxygenfunction:: foc_hall_do_multiple
+.. doxygenfunction:: foc_pwm_put_parameters
+

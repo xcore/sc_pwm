@@ -1,5 +1,5 @@
-XMOS xSOFTip FOC Motor Control Hall Function Library
-====================================================
+XMOS xSOFTip FOC Motor Control PWM Function Library
+===================================================
 
 .. toctree::
 

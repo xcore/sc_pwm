@@ -12,13 +12,13 @@ Processing Requirements
 +---------------+-------+-------+
 | Input Ports   |   1   |       |
 +---------------+-------+-------+
-| Output Ports  |       |       |
+| Output Ports  |   6   |       |
 +---------------+-------+-------+
-| Channel Ends  |   1   |   1   |
+| Channel Ends  |   2   |   1   |
 +---------------+-------+-------+
-| Timers        |   1   |       |
+| Timers        |       |       |
 +---------------+-------+-------+
-| Clocks        |       |       |
+| Clocks        |   1   |       |
 +---------------+-------+-------+
 
 
@@ -27,10 +27,12 @@ Memory Requirements
 
 Approximate memory usage for this module is (figures shown in Bytes):
 
-* codememory: 546 Bytes
-* datamemory: 542 Bytes
+* codememory: 546 Bytes FIXME
+* datamemory: 542 Bytes FIXME
 
 
 Performance
 +++++++++++
-When using a 500 MHz instruction clock, the server takes approximately 0.30 micro-seconds to service a change on the input pins, and 0.60 micro-seconds to service a client request.
+The PWM resolution is 2^n. Currently n=12, giving a resolution of 4096.
+This means the main loop of the PWM server lasts 4096 cycles.
+Currently only 276 cycles of processing are required in the main loop, giving 3820 idle cycles.
