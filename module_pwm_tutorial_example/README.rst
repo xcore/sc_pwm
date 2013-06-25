@@ -20,8 +20,10 @@ Details
 +++++++
 The PWM component uses 1 Core, with a channel interface to the rest of the application. 
 The client application sends two values over the channel to configure the PWM driver:
+
    #. The PWM period length
    #. The PWM duty cycle length 
+
 All times are measured with the 100mHz reference clock. 
 For example, a value of 100 is 100 x 10ns = 1us.
 

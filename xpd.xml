@@ -1,6 +1,14 @@
 <?xml version="1.0" ?>
 <xpd>
     <components>
+        <component name = "Pulse Wave Modulation (PWM) Interface Component" type = "component" buildresults_path = "module_pwm_foc/.module_pwm_foc.buildinfo" scope = "Early Development" path = "module_pwm_foc" metainfo_path = "module_pwm_foc/module_pwm_foc.metainfo" local = "false" id = "module_pwm_foc" description = "The PWM module is a xSoftIP component of the FOC Motor control suite for generating a set of PWM Voltages to be applied to the motor">
+            <board>XP-MC-CTRL-L2</board>
+            <board>XA-MC-PWR-DLV</board>
+            <keyword>PWM</keyword>
+            <keyword>"Pulse Wave Modulation"</keyword>
+            <keyword>FOC</keyword>
+            <keyword>Motor Control</keyword>
+        </component>
         <component name = "Tutorial Example LED PWM Driver Component" type = "component" buildresults_path = "module_pwm_tutorial_example/.module_pwm_tutorial_example.buildinfo" scope = "Example" path = "module_pwm_tutorial_example" metainfo_path = "module_pwm_tutorial_example/module_pwm_tutorial_example.metainfo" local = "false" id = "module_pwm_tutorial_example" description = "Simple PWM driver component designed for xTimeComposer Tutorial">
             <board>XA-SK-GPIO</board>
             <keyword>PWM</keyword>
