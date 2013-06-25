@@ -31,8 +31,8 @@
  *  On the next cycle through the PWM, the server will update the PWM
  *  pulse widths with these new parameters
  *
- *  \param pwm_comms_s // Reference to structure containing PWM communication data
- *  \param c_pwm // Channel between Client and Server
+ *  \param pwm_comms_s  Reference to structure containing PWM communication data
+ *  \param c_pwm  Channel between Client and Server
  */
 void foc_pwm_put_parameters( // Send PWM parameters from Client to Server
 	REFERENCE_PARAM( PWM_COMMS_TYP ,pwm_data_sp ), // Reference/Pointer to structure containing PWM communication data

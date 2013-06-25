@@ -13,7 +13,7 @@ Usage
 The following 2 functions are designed to be called from an XC file.
 
    * ``foc_pwm_put_parameters()`` Client function designed to be called from an XC file each time a new set of PWM parameters are required.
-   * ``foc_pwm_do_triggered()``, Server function designed to be called from an XC file. It runs on its own core, and receives data from the PWM Client.
+   * ``foc_pwm_do_triggered()``, Server function designed to be called from an XC file. It continually runs in its own core, and receives data from the PWM Client.
 
 The following PWM definitions are required. These are set in ``pwm_common.h`` or ``app_global.h``
 
@@ -66,7 +66,7 @@ To start the test type
    * xsim --plugin LoopbackPort.dll "-port tile[1] XS1_PORT_1D 1 0 -port tile[1] XS1_PORT_1N 1 0 -port tile[1] XS1_PORT_1E 1 0 -port tile[1] XS1_PORT_1O 1 0 -port tile[1] XS1_PORT_1F 1 0 -port tile[1] XS1_PORT_1P 1 0 -port tile[1] XS1_PORT_1A 1 0 -port tile[1] XS1_PORT_1K 1 0 -port tile[1] XS1_PORT_1B 1 0 -port tile[1] XS1_PORT_1L 1 0 -port tile[1] XS1_PORT_1C 1 0 -port tile[1] XS1_PORT_1M 1 0" bin/app_test_pwm.xe
 
 Test results will be printed to standard-out.
-The whole test takes upto 2 minutes to run.
+The whole test takes up to 2 minutes to run.
 
 For a explanation of the test results refer to the quickstart guide in doc_quickstart/pwm/index.rst
 
@@ -77,4 +77,4 @@ The information in the 'check results' column may disappear.
 This and almost any other problem are probably due to NOT setting the port configuration correctly when calling xsim
 
 The printout may pause.
-As mentioned above, depending on the speed of your PC (or Mac), there can be upto 1 minute gap between printed lines.
+As mentioned above, depending on the speed of your PC (or Mac), there can be up to 1 minute gap between printed lines.

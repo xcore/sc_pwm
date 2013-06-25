@@ -49,7 +49,7 @@ typedef struct PWM_SERV_TAG
  *
  *  This server includes a port which triggers the ADC measurement
  *
- *  \param motor_id // Motor identifier
+ *  \param motor_id  Motor identifier
  *  \param c_pwm PWM channel between Client and Server
  *  \param p32_pwm_hi the array of PWM ports (HI side)
  *  \param p32_pwm_lo the array of PWM ports (LO side)

@@ -14,14 +14,14 @@ Configuration Defines
 .. doxygendefine:: PWM_RES_BITS
 .. doxygendefine:: LOCK_ADC_TO_PWM
 .. doxygendefine:: PWM_SHARED_MEM
-.. doxygendefine:: PRINT_TST_PWM
-.. doxygendefine:: PLATFORM_REFERENCE_HZ  
+.. doxygendefine:: PLATFORM_REFERENCE_HZ
 
 Functions
 ---------
 
 Data Types
 ++++++++++
+.. doxygentypedef:: PORT_TIME_TYP
 
 Data Structures
 +++++++++++++++

@@ -27,8 +27,8 @@ Memory Requirements
 
 Approximate memory usage for this module is (figures shown in Bytes):
 
-* codememory: 546 Bytes FIXME
-* datamemory: 542 Bytes FIXME
+* codememory: 1332 Bytes
+* datamemory:  542 Bytes
 
 
 Performance
