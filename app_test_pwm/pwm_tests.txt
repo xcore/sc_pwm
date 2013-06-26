@@ -1,0 +1,9 @@
+# PWM Test Options Set-up File
+# ============================
+# In left column type 1 to select test, 0 to skip.
+# NB Text after a hash is a comment
+#
+1 # Narrow Width tests
+1 # Equal Width tests
+1 # ADC trigger tests
+

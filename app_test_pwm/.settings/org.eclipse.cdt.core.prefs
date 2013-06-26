@@ -1,0 +1,17 @@
+#Fri Jun 14 10:08:02 BST 2013
+eclipse.preferences.version=1
+environment/project/com.xmos.cdt.toolchain.54098428/XMOS_MODULE_PATH/delimiter=\:
+environment/project/com.xmos.cdt.toolchain.54098428/XMOS_MODULE_PATH/operation=append
+environment/project/com.xmos.cdt.toolchain.54098428/XMOS_MODULE_PATH/value=/home/markb/git.dir/sc_pwm/module_pwm_foc
+environment/project/com.xmos.cdt.toolchain.54098428/append=true
+environment/project/com.xmos.cdt.toolchain.54098428/appendContributed=true
+environment/project/com.xmos.cdt.toolchain.69226207/XMOS_MODULE_PATH/delimiter=\:
+environment/project/com.xmos.cdt.toolchain.69226207/XMOS_MODULE_PATH/operation=append
+environment/project/com.xmos.cdt.toolchain.69226207/XMOS_MODULE_PATH/value=/home/markb/git.dir/sc_pwm/module_pwm_foc
+environment/project/com.xmos.cdt.toolchain.69226207/append=true
+environment/project/com.xmos.cdt.toolchain.69226207/appendContributed=true
+environment/project/com.xmos.cdt.toolchain.80682916/XMOS_MODULE_PATH/delimiter=\:
+environment/project/com.xmos.cdt.toolchain.80682916/XMOS_MODULE_PATH/operation=append
+environment/project/com.xmos.cdt.toolchain.80682916/XMOS_MODULE_PATH/value=/home/markb/git.dir/sc_pwm/module_pwm_foc
+environment/project/com.xmos.cdt.toolchain.80682916/append=true
+environment/project/com.xmos.cdt.toolchain.80682916/appendContributed=true

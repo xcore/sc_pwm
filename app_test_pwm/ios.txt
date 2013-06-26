@@ -1,0 +1,877 @@
+PORTS:
+  NODE 0:
+    CORE 0:
+      XS1_PORT_32A: ID = 0x00200000
+        Bit 0: not connected
+        Bit 1: not connected
+        Bit 2: not connected
+        Bit 3: not connected
+        Bit 4: not connected
+        Bit 5: not connected
+        Bit 6: not connected
+        Bit 7: not connected
+        Bit 8: not connected
+        Bit 9: not connected
+        Bit 10: not connected
+        Bit 11: not connected
+        Bit 12: not connected
+        Bit 13: not connected
+        Bit 14: not connected
+        Bit 15: not connected
+        Bit 16: not connected
+        Bit 17: not connected
+        Bit 18: not connected
+        Bit 19: not connected
+        Bit 20: pin (8) name: 'X0D02', package: 'L2'
+        Bit 21: pin (7) name: 'X0D03', package: 'L2'
+        Bit 22: pin (6) name: 'X0D04', package: 'L2'
+        Bit 23: pin (5) name: 'X0D05', package: 'L2'
+        Bit 24: pin (4) name: 'X0D06', package: 'L2'
+        Bit 25: pin (3) name: 'X0D07', package: 'L2'
+        Bit 26: pin (2) name: 'X0D08', package: 'L2'
+        Bit 27: pin (1) name: 'X0D09', package: 'L2'
+        Bit 28: pin (40) name: 'X0D14', package: 'L2'
+        Bit 29: pin (39) name: 'X0D15', package: 'L2'
+        Bit 30: pin (28) name: 'X0D20', package: 'L2'
+        Bit 31: pin (25) name: 'X0D21', package: 'L2'
+      XS1_PORT_16A: ID = 0x00100000
+        Bit 0: pin (8) name: 'X0D02', package: 'L2'
+        Bit 1: pin (7) name: 'X0D03', package: 'L2'
+        Bit 2: pin (6) name: 'X0D04', package: 'L2'
+        Bit 3: pin (5) name: 'X0D05', package: 'L2'
+        Bit 4: pin (4) name: 'X0D06', package: 'L2'
+        Bit 5: pin (3) name: 'X0D07', package: 'L2'
+        Bit 6: pin (2) name: 'X0D08', package: 'L2'
+        Bit 7: pin (1) name: 'X0D09', package: 'L2'
+        Bit 8: pin (40) name: 'X0D14', package: 'L2'
+        Bit 9: pin (39) name: 'X0D15', package: 'L2'
+        Bit 10: pin (38) name: 'X0D16', package: 'L2'
+        Bit 11: pin (37) name: 'X0D17', package: 'L2'
+        Bit 12: pin (35) name: 'X0D18', package: 'L2'
+        Bit 13: pin (33) name: 'X0D19', package: 'L2'
+        Bit 14: pin (28) name: 'X0D20', package: 'L2'
+        Bit 15: pin (25) name: 'X0D21', package: 'L2'
+      XS1_PORT_16B: ID = 0x00100100
+        Bit 0: pin (20) name: 'X0D26', package: 'L2'
+        Bit 1: pin (19) name: 'X0D27', package: 'L2'
+        Bit 2: pin (36) name: 'X0D28', package: 'L2'
+        Bit 3: pin (34) name: 'X0D29', package: 'L2'
+        Bit 4: pin (32) name: 'X0D30', package: 'L2'
+        Bit 5: pin (31) name: 'X0D31', package: 'L2'
+        Bit 6: pin (14) name: 'X0D32', package: 'L2'
+        Bit 7: pin (13) name: 'X0D33', package: 'L2'
+        Bit 8: pin (18) name: 'X0D36', package: 'L2'
+        Bit 9: pin (17) name: 'X0D37', package: 'L2'
+        Bit 10: pin (16) name: 'X0D38', package: 'L2'
+        Bit 11: pin (15) name: 'X0D39', package: 'L2'
+        Bit 12: pin (30) name: 'X0D40', package: 'L2'
+        Bit 13: pin (29) name: 'X0D41', package: 'L2'
+        Bit 14: pin (27) name: 'X0D42', package: 'L2'
+        Bit 15: pin (26) name: 'X0D43', package: 'L2'
+      XS1_PORT_8A: ID = 0x00080000
+        Bit 0: pin (8) name: 'X0D02', package: 'L2'
+        Bit 1: pin (7) name: 'X0D03', package: 'L2'
+        Bit 2: pin (6) name: 'X0D04', package: 'L2'
+        Bit 3: pin (5) name: 'X0D05', package: 'L2'
+        Bit 4: pin (4) name: 'X0D06', package: 'L2'
+        Bit 5: pin (3) name: 'X0D07', package: 'L2'
+        Bit 6: pin (2) name: 'X0D08', package: 'L2'
+        Bit 7: pin (1) name: 'X0D09', package: 'L2'
+      XS1_PORT_8B: ID = 0x00080100
+        Bit 0: pin (40) name: 'X0D14', package: 'L2'
+        Bit 1: pin (39) name: 'X0D15', package: 'L2'
+        Bit 2: pin (38) name: 'X0D16', package: 'L2'
+        Bit 3: pin (37) name: 'X0D17', package: 'L2'
+        Bit 4: pin (35) name: 'X0D18', package: 'L2'
+        Bit 5: pin (33) name: 'X0D19', package: 'L2'
+        Bit 6: pin (28) name: 'X0D20', package: 'L2'
+        Bit 7: pin (25) name: 'X0D21', package: 'L2'
+      XS1_PORT_8C: ID = 0x00080200
+        Bit 0: pin (20) name: 'X0D26', package: 'L2'
+        Bit 1: pin (19) name: 'X0D27', package: 'L2'
+        Bit 2: pin (36) name: 'X0D28', package: 'L2'
+        Bit 3: pin (34) name: 'X0D29', package: 'L2'
+        Bit 4: pin (32) name: 'X0D30', package: 'L2'
+        Bit 5: pin (31) name: 'X0D31', package: 'L2'
+        Bit 6: pin (14) name: 'X0D32', package: 'L2'
+        Bit 7: pin (13) name: 'X0D33', package: 'L2'
+      XS1_PORT_8D: ID = 0x00080300
+        Bit 0: pin (18) name: 'X0D36', package: 'L2'
+        Bit 1: pin (17) name: 'X0D37', package: 'L2'
+        Bit 2: pin (16) name: 'X0D38', package: 'L2'
+        Bit 3: pin (15) name: 'X0D39', package: 'L2'
+        Bit 4: pin (30) name: 'X0D40', package: 'L2'
+        Bit 5: pin (29) name: 'X0D41', package: 'L2'
+        Bit 6: pin (27) name: 'X0D42', package: 'L2'
+        Bit 7: pin (26) name: 'X0D43', package: 'L2'
+      XS1_PORT_4A: ID = 0x00040000
+        Bit 0: pin (8) name: 'X0D02', package: 'L2'
+        Bit 1: pin (7) name: 'X0D03', package: 'L2'
+        Bit 2: pin (2) name: 'X0D08', package: 'L2'
+        Bit 3: pin (1) name: 'X0D09', package: 'L2'
+      XS1_PORT_4B: ID = 0x00040100
+        Bit 0: pin (6) name: 'X0D04', package: 'L2'
+        Bit 1: pin (5) name: 'X0D05', package: 'L2'
+        Bit 2: pin (4) name: 'X0D06', package: 'L2'
+        Bit 3: pin (3) name: 'X0D07', package: 'L2'
+      XS1_PORT_4C: ID = 0x00040200
+        Bit 0: pin (40) name: 'X0D14', package: 'L2'
+        Bit 1: pin (39) name: 'X0D15', package: 'L2'
+        Bit 2: pin (28) name: 'X0D20', package: 'L2'
+        Bit 3: pin (25) name: 'X0D21', package: 'L2'
+      XS1_PORT_4D: ID = 0x00040300
+        Bit 0: pin (38) name: 'X0D16', package: 'L2'
+        Bit 1: pin (37) name: 'X0D17', package: 'L2'
+        Bit 2: pin (35) name: 'X0D18', package: 'L2'
+        Bit 3: pin (33) name: 'X0D19', package: 'L2'
+      XS1_PORT_4E: ID = 0x00040400
+        Bit 0: pin (20) name: 'X0D26', package: 'L2'
+        Bit 1: pin (19) name: 'X0D27', package: 'L2'
+        Bit 2: pin (14) name: 'X0D32', package: 'L2'
+        Bit 3: pin (13) name: 'X0D33', package: 'L2'
+      XS1_PORT_4F: ID = 0x00040500
+        Bit 0: pin (36) name: 'X0D28', package: 'L2'
+        Bit 1: pin (34) name: 'X0D29', package: 'L2'
+        Bit 2: pin (32) name: 'X0D30', package: 'L2'
+        Bit 3: pin (31) name: 'X0D31', package: 'L2'
+      XS1_PORT_1A: ID = 0x00010200
+        Bit 0: pin (10) name: 'X0D00', package: 'L2'
+      XS1_PORT_1B: ID = 0x00010000
+        Bit 0: pin (9) name: 'X0D01', package: 'L2'
+      XS1_PORT_1C: ID = 0x00010100
+        Bit 0: pin (0) name: 'X0D10', package: 'L2'
+      XS1_PORT_1D: ID = 0x00010300
+        Bit 0: pin (43) name: 'X0D11', package: 'L2'
+      XS1_PORT_1E: ID = 0x00010600
+        Bit 0: pin (42) name: 'X0D12', package: 'L2'
+      XS1_PORT_1F: ID = 0x00010400
+        Bit 0: pin (41) name: 'X0D13', package: 'L2'
+      XS1_PORT_1G: ID = 0x00010500
+        Bit 0: pin (24) name: 'X0D22', package: 'L2'
+      XS1_PORT_1H: ID = 0x00010700
+        Bit 0: pin (23) name: 'X0D23', package: 'L2'
+      XS1_PORT_1I: ID = 0x00010a00
+        Bit 0: pin (22) name: 'X0D24', package: 'L2'
+      XS1_PORT_1J: ID = 0x00010800
+        Bit 0: pin (21) name: 'X0D25', package: 'L2'
+      XS1_PORT_1K: ID = 0x00010900
+        Bit 0: pin (12) name: 'X0D34', package: 'L2'
+      XS1_PORT_1L: ID = 0x00010b00
+        Bit 0: pin (11) name: 'X0D35', package: 'L2'
+      XS1_PORT_1M: ID = 0x00010c00
+        Bit 0: pin (18) name: 'X0D36', package: 'L2'
+      XS1_PORT_1N: ID = 0x00010d00
+        Bit 0: pin (17) name: 'X0D37', package: 'L2'
+      XS1_PORT_1O: ID = 0x00010e00
+        Bit 0: pin (16) name: 'X0D38', package: 'L2'
+      XS1_PORT_1P: ID = 0x00010f00
+        Bit 0: pin (15) name: 'X0D39', package: 'L2'
+      XS1_PORT_32B: ID = 0x00200100
+        Bit 0: not connected
+        Bit 1: not connected
+        Bit 2: not connected
+        Bit 3: not connected
+        Bit 4: not connected
+        Bit 5: not connected
+        Bit 6: not connected
+        Bit 7: not connected
+        Bit 8: not connected
+        Bit 9: not connected
+        Bit 10: not connected
+        Bit 11: not connected
+        Bit 12: not connected
+        Bit 13: not connected
+        Bit 14: not connected
+        Bit 15: not connected
+        Bit 16: not connected
+        Bit 17: not connected
+        Bit 18: not connected
+        Bit 19: not connected
+        Bit 20: not connected
+        Bit 21: not connected
+        Bit 22: not connected
+        Bit 23: not connected
+        Bit 24: not connected
+        Bit 25: not connected
+        Bit 26: not connected
+        Bit 27: not connected
+        Bit 28: not connected
+        Bit 29: not connected
+        Bit 30: not connected
+        Bit 31: not connected
+      XS1_PORT_16C: ID = 0x00100200
+        Bit 0: not connected
+        Bit 1: not connected
+        Bit 2: not connected
+        Bit 3: not connected
+        Bit 4: not connected
+        Bit 5: not connected
+        Bit 6: not connected
+        Bit 7: not connected
+        Bit 8: not connected
+        Bit 9: not connected
+        Bit 10: not connected
+        Bit 11: not connected
+        Bit 12: not connected
+        Bit 13: not connected
+        Bit 14: not connected
+        Bit 15: not connected
+      XS1_PORT_16D: ID = 0x00100300
+        Bit 0: not connected
+        Bit 1: not connected
+        Bit 2: not connected
+        Bit 3: not connected
+        Bit 4: not connected
+        Bit 5: not connected
+        Bit 6: not connected
+        Bit 7: not connected
+        Bit 8: not connected
+        Bit 9: not connected
+        Bit 10: not connected
+        Bit 11: not connected
+        Bit 12: not connected
+        Bit 13: not connected
+        Bit 14: not connected
+        Bit 15: not connected
+  NODE 16384:
+    CORE 0:
+      XS1_PORT_32A: ID = 0x00200000
+        Bit 0: not connected
+        Bit 1: not connected
+        Bit 2: not connected
+        Bit 3: not connected
+        Bit 4: not connected
+        Bit 5: not connected
+        Bit 6: not connected
+        Bit 7: not connected
+        Bit 8: not connected
+        Bit 9: not connected
+        Bit 10: not connected
+        Bit 11: not connected
+        Bit 12: not connected
+        Bit 13: not connected
+        Bit 14: not connected
+        Bit 15: not connected
+        Bit 16: not connected
+        Bit 17: not connected
+        Bit 18: not connected
+        Bit 19: not connected
+        Bit 20: pin (52) name: 'X1D02', package: 'L2'
+        Bit 21: pin (51) name: 'X1D03', package: 'L2'
+        Bit 22: pin (50) name: 'X1D04', package: 'L2'
+        Bit 23: pin (49) name: 'X1D05', package: 'L2'
+        Bit 24: pin (48) name: 'X1D06', package: 'L2'
+        Bit 25: pin (47) name: 'X1D07', package: 'L2'
+        Bit 26: pin (46) name: 'X1D08', package: 'L2'
+        Bit 27: pin (45) name: 'X1D09', package: 'L2'
+        Bit 28: pin (80) name: 'X1D14', package: 'L2'
+        Bit 29: pin (79) name: 'X1D15', package: 'L2'
+        Bit 30: pin (70) name: 'X1D20', package: 'L2'
+        Bit 31: pin (69) name: 'X1D21', package: 'L2'
+      XS1_PORT_16A: ID = 0x00100000
+        Bit 0: pin (52) name: 'X1D02', package: 'L2'
+        Bit 1: pin (51) name: 'X1D03', package: 'L2'
+        Bit 2: pin (50) name: 'X1D04', package: 'L2'
+        Bit 3: pin (49) name: 'X1D05', package: 'L2'
+        Bit 4: pin (48) name: 'X1D06', package: 'L2'
+        Bit 5: pin (47) name: 'X1D07', package: 'L2'
+        Bit 6: pin (46) name: 'X1D08', package: 'L2'
+        Bit 7: pin (45) name: 'X1D09', package: 'L2'
+        Bit 8: pin (80) name: 'X1D14', package: 'L2'
+        Bit 9: pin (79) name: 'X1D15', package: 'L2'
+        Bit 10: pin (78) name: 'X1D16', package: 'L2'
+        Bit 11: pin (77) name: 'X1D17', package: 'L2'
+        Bit 12: pin (75) name: 'X1D18', package: 'L2'
+        Bit 13: pin (73) name: 'X1D19', package: 'L2'
+        Bit 14: pin (70) name: 'X1D20', package: 'L2'
+        Bit 15: pin (69) name: 'X1D21', package: 'L2'
+      XS1_PORT_16B: ID = 0x00100100
+        Bit 0: pin (64) name: 'X1D26', package: 'L2'
+        Bit 1: pin (63) name: 'X1D27', package: 'L2'
+        Bit 2: pin (76) name: 'X1D28', package: 'L2'
+        Bit 3: pin (74) name: 'X1D29', package: 'L2'
+        Bit 4: pin (72) name: 'X1D30', package: 'L2'
+        Bit 5: pin (71) name: 'X1D31', package: 'L2'
+        Bit 6: pin (58) name: 'X1D32', package: 'L2'
+        Bit 7: pin (57) name: 'X1D33', package: 'L2'
+        Bit 8: pin (62) name: 'X1D36', package: 'L2'
+        Bit 9: pin (61) name: 'X1D37', package: 'L2'
+        Bit 10: pin (60) name: 'X1D38', package: 'L2'
+        Bit 11: pin (59) name: 'X1D39', package: 'L2'
+        Bit 12: not connected
+        Bit 13: not connected
+        Bit 14: not connected
+        Bit 15: not connected
+      XS1_PORT_8A: ID = 0x00080000
+        Bit 0: pin (52) name: 'X1D02', package: 'L2'
+        Bit 1: pin (51) name: 'X1D03', package: 'L2'
+        Bit 2: pin (50) name: 'X1D04', package: 'L2'
+        Bit 3: pin (49) name: 'X1D05', package: 'L2'
+        Bit 4: pin (48) name: 'X1D06', package: 'L2'
+        Bit 5: pin (47) name: 'X1D07', package: 'L2'
+        Bit 6: pin (46) name: 'X1D08', package: 'L2'
+        Bit 7: pin (45) name: 'X1D09', package: 'L2'
+      XS1_PORT_8B: ID = 0x00080100
+        Bit 0: pin (80) name: 'X1D14', package: 'L2'
+        Bit 1: pin (79) name: 'X1D15', package: 'L2'
+        Bit 2: pin (78) name: 'X1D16', package: 'L2'
+        Bit 3: pin (77) name: 'X1D17', package: 'L2'
+        Bit 4: pin (75) name: 'X1D18', package: 'L2'
+        Bit 5: pin (73) name: 'X1D19', package: 'L2'
+        Bit 6: pin (70) name: 'X1D20', package: 'L2'
+        Bit 7: pin (69) name: 'X1D21', package: 'L2'
+      XS1_PORT_8C: ID = 0x00080200
+        Bit 0: pin (64) name: 'X1D26', package: 'L2'
+        Bit 1: pin (63) name: 'X1D27', package: 'L2'
+        Bit 2: pin (76) name: 'X1D28', package: 'L2'
+        Bit 3: pin (74) name: 'X1D29', package: 'L2'
+        Bit 4: pin (72) name: 'X1D30', package: 'L2'
+        Bit 5: pin (71) name: 'X1D31', package: 'L2'
+        Bit 6: pin (58) name: 'X1D32', package: 'L2'
+        Bit 7: pin (57) name: 'X1D33', package: 'L2'
+      XS1_PORT_8D: ID = 0x00080300
+        Bit 0: pin (62) name: 'X1D36', package: 'L2'
+        Bit 1: pin (61) name: 'X1D37', package: 'L2'
+        Bit 2: pin (60) name: 'X1D38', package: 'L2'
+        Bit 3: pin (59) name: 'X1D39', package: 'L2'
+        Bit 4: not connected
+        Bit 5: not connected
+        Bit 6: not connected
+        Bit 7: not connected
+      XS1_PORT_4A: ID = 0x00040000
+        Bit 0: pin (52) name: 'X1D02', package: 'L2'
+        Bit 1: pin (51) name: 'X1D03', package: 'L2'
+        Bit 2: pin (46) name: 'X1D08', package: 'L2'
+        Bit 3: pin (45) name: 'X1D09', package: 'L2'
+      XS1_PORT_4B: ID = 0x00040100
+        Bit 0: pin (50) name: 'X1D04', package: 'L2'
+        Bit 1: pin (49) name: 'X1D05', package: 'L2'
+        Bit 2: pin (48) name: 'X1D06', package: 'L2'
+        Bit 3: pin (47) name: 'X1D07', package: 'L2'
+      XS1_PORT_4C: ID = 0x00040200
+        Bit 0: pin (80) name: 'X1D14', package: 'L2'
+        Bit 1: pin (79) name: 'X1D15', package: 'L2'
+        Bit 2: pin (70) name: 'X1D20', package: 'L2'
+        Bit 3: pin (69) name: 'X1D21', package: 'L2'
+      XS1_PORT_4D: ID = 0x00040300
+        Bit 0: pin (78) name: 'X1D16', package: 'L2'
+        Bit 1: pin (77) name: 'X1D17', package: 'L2'
+        Bit 2: pin (75) name: 'X1D18', package: 'L2'
+        Bit 3: pin (73) name: 'X1D19', package: 'L2'
+      XS1_PORT_4E: ID = 0x00040400
+        Bit 0: pin (64) name: 'X1D26', package: 'L2'
+        Bit 1: pin (63) name: 'X1D27', package: 'L2'
+        Bit 2: pin (58) name: 'X1D32', package: 'L2'
+        Bit 3: pin (57) name: 'X1D33', package: 'L2'
+      XS1_PORT_4F: ID = 0x00040500
+        Bit 0: pin (76) name: 'X1D28', package: 'L2'
+        Bit 1: pin (74) name: 'X1D29', package: 'L2'
+        Bit 2: pin (72) name: 'X1D30', package: 'L2'
+        Bit 3: pin (71) name: 'X1D31', package: 'L2'
+      XS1_PORT_1A: ID = 0x00010200
+        Bit 0: pin (54) name: 'X1D00', package: 'L2'
+      XS1_PORT_1B: ID = 0x00010000
+        Bit 0: pin (53) name: 'X1D01', package: 'L2'
+      XS1_PORT_1C: ID = 0x00010100
+        Bit 0: pin (44) name: 'X1D10', package: 'L2'
+      XS1_PORT_1D: ID = 0x00010300
+        Bit 0: pin (83) name: 'X1D11', package: 'L2'
+      XS1_PORT_1E: ID = 0x00010600
+        Bit 0: pin (82) name: 'X1D12', package: 'L2'
+      XS1_PORT_1F: ID = 0x00010400
+        Bit 0: pin (81) name: 'X1D13', package: 'L2'
+      XS1_PORT_1G: ID = 0x00010500
+        Bit 0: pin (68) name: 'X1D22', package: 'L2'
+      XS1_PORT_1H: ID = 0x00010700
+        Bit 0: pin (67) name: 'X1D23', package: 'L2'
+      XS1_PORT_1I: ID = 0x00010a00
+        Bit 0: pin (66) name: 'X1D24', package: 'L2'
+      XS1_PORT_1J: ID = 0x00010800
+        Bit 0: pin (65) name: 'X1D25', package: 'L2'
+      XS1_PORT_1K: ID = 0x00010900
+        Bit 0: pin (56) name: 'X1D34', package: 'L2'
+      XS1_PORT_1L: ID = 0x00010b00
+        Bit 0: pin (55) name: 'X1D35', package: 'L2'
+      XS1_PORT_1M: ID = 0x00010c00
+        Bit 0: pin (62) name: 'X1D36', package: 'L2'
+      XS1_PORT_1N: ID = 0x00010d00
+        Bit 0: pin (61) name: 'X1D37', package: 'L2'
+      XS1_PORT_1O: ID = 0x00010e00
+        Bit 0: pin (60) name: 'X1D38', package: 'L2'
+      XS1_PORT_1P: ID = 0x00010f00
+        Bit 0: pin (59) name: 'X1D39', package: 'L2'
+      XS1_PORT_32B: ID = 0x00200100
+        Bit 0: not connected
+        Bit 1: not connected
+        Bit 2: not connected
+        Bit 3: not connected
+        Bit 4: not connected
+        Bit 5: not connected
+        Bit 6: not connected
+        Bit 7: not connected
+        Bit 8: not connected
+        Bit 9: not connected
+        Bit 10: not connected
+        Bit 11: not connected
+        Bit 12: not connected
+        Bit 13: not connected
+        Bit 14: not connected
+        Bit 15: not connected
+        Bit 16: not connected
+        Bit 17: not connected
+        Bit 18: not connected
+        Bit 19: not connected
+        Bit 20: not connected
+        Bit 21: not connected
+        Bit 22: not connected
+        Bit 23: not connected
+        Bit 24: not connected
+        Bit 25: not connected
+        Bit 26: not connected
+        Bit 27: not connected
+        Bit 28: not connected
+        Bit 29: not connected
+        Bit 30: not connected
+        Bit 31: not connected
+      XS1_PORT_16C: ID = 0x00100200
+        Bit 0: not connected
+        Bit 1: not connected
+        Bit 2: not connected
+        Bit 3: not connected
+        Bit 4: not connected
+        Bit 5: not connected
+        Bit 6: not connected
+        Bit 7: not connected
+        Bit 8: not connected
+        Bit 9: not connected
+        Bit 10: not connected
+        Bit 11: not connected
+        Bit 12: not connected
+        Bit 13: not connected
+        Bit 14: not connected
+        Bit 15: not connected
+      XS1_PORT_16D: ID = 0x00100300
+        Bit 0: not connected
+        Bit 1: not connected
+        Bit 2: not connected
+        Bit 3: not connected
+        Bit 4: not connected
+        Bit 5: not connected
+        Bit 6: not connected
+        Bit 7: not connected
+        Bit 8: not connected
+        Bit 9: not connected
+        Bit 10: not connected
+        Bit 11: not connected
+        Bit 12: not connected
+        Bit 13: not connected
+        Bit 14: not connected
+        Bit 15: not connected
+XLINKS:
+  NODE 0:
+      0:
+      1:
+      2:
+        Input bit 0: pin (5) name: 'X0D05', package: 'L2'
+        Input bit 1: pin (6) name: 'X0D04', package: 'L2'
+        Input bit 2: pin (7) name: 'X0D03', package: 'L2'
+        Input bit 3: pin (8) name: 'X0D02', package: 'L2'
+        Input bit 4: pin (9) name: 'X0D01', package: 'L2'
+        Output bit 0: pin (4) name: 'X0D06', package: 'L2'
+        Output bit 1: pin (3) name: 'X0D07', package: 'L2'
+        Output bit 2: pin (2) name: 'X0D08', package: 'L2'
+        Output bit 3: pin (1) name: 'X0D09', package: 'L2'
+        Output bit 4: pin (0) name: 'X0D10', package: 'L2'
+      3:
+        Input bit 0: pin (37) name: 'X0D17', package: 'L2'
+        Input bit 1: pin (38) name: 'X0D16', package: 'L2'
+        Input bit 2: pin (39) name: 'X0D15', package: 'L2'
+        Input bit 3: pin (40) name: 'X0D14', package: 'L2'
+        Input bit 4: pin (41) name: 'X0D13', package: 'L2'
+        Output bit 0: pin (35) name: 'X0D18', package: 'L2'
+        Output bit 1: pin (33) name: 'X0D19', package: 'L2'
+        Output bit 2: pin (28) name: 'X0D20', package: 'L2'
+        Output bit 3: pin (25) name: 'X0D21', package: 'L2'
+        Output bit 4: pin (24) name: 'X0D22', package: 'L2'
+      4:
+      5:
+      6:
+      7:
+  NODE 16384:
+      0:
+      1:
+      2:
+        Input bit 0: pin (49) name: 'X1D05', package: 'L2'
+        Input bit 1: pin (50) name: 'X1D04', package: 'L2'
+        Input bit 2: pin (51) name: 'X1D03', package: 'L2'
+        Input bit 3: pin (52) name: 'X1D02', package: 'L2'
+        Input bit 4: pin (53) name: 'X1D01', package: 'L2'
+        Output bit 0: pin (48) name: 'X1D06', package: 'L2'
+        Output bit 1: pin (47) name: 'X1D07', package: 'L2'
+        Output bit 2: pin (46) name: 'X1D08', package: 'L2'
+        Output bit 3: pin (45) name: 'X1D09', package: 'L2'
+        Output bit 4: pin (44) name: 'X1D10', package: 'L2'
+      3:
+        Input bit 0: pin (77) name: 'X1D17', package: 'L2'
+        Input bit 1: pin (78) name: 'X1D16', package: 'L2'
+        Input bit 2: pin (79) name: 'X1D15', package: 'L2'
+        Input bit 3: pin (80) name: 'X1D14', package: 'L2'
+        Input bit 4: pin (81) name: 'X1D13', package: 'L2'
+        Output bit 0: pin (75) name: 'X1D18', package: 'L2'
+        Output bit 1: pin (73) name: 'X1D19', package: 'L2'
+        Output bit 2: pin (70) name: 'X1D20', package: 'L2'
+        Output bit 3: pin (69) name: 'X1D21', package: 'L2'
+        Output bit 4: pin (68) name: 'X1D22', package: 'L2'
+      4:
+      5:
+      6:
+      7:
+PINS:
+      X0D10: package = L2, id = 0.
+        xLink: 2, bit 4, direction out
+        Port XS1_PORT_1C: bit 0, priority 0
+      X0D09: package = L2, id = 1.
+        xLink: 2, bit 3, direction out
+        Port XS1_PORT_4A: bit 3, priority 0
+        Port XS1_PORT_8A: bit 7, priority 1
+        Port XS1_PORT_16A: bit 7, priority 2
+        Port XS1_PORT_32A: bit 27, priority 3
+      X0D08: package = L2, id = 2.
+        xLink: 2, bit 2, direction out
+        Port XS1_PORT_4A: bit 2, priority 0
+        Port XS1_PORT_8A: bit 6, priority 1
+        Port XS1_PORT_16A: bit 6, priority 2
+        Port XS1_PORT_32A: bit 26, priority 3
+      X0D07: package = L2, id = 3.
+        xLink: 2, bit 1, direction out
+        Port XS1_PORT_4B: bit 3, priority 0
+        Port XS1_PORT_8A: bit 5, priority 1
+        Port XS1_PORT_16A: bit 5, priority 2
+        Port XS1_PORT_32A: bit 25, priority 3
+      X0D06: package = L2, id = 4.
+        xLink: 2, bit 0, direction out
+        Port XS1_PORT_4B: bit 2, priority 0
+        Port XS1_PORT_8A: bit 4, priority 1
+        Port XS1_PORT_16A: bit 4, priority 2
+        Port XS1_PORT_32A: bit 24, priority 3
+      X0D05: package = L2, id = 5.
+        xLink: 2, bit 0, direction in
+        Port XS1_PORT_4B: bit 1, priority 0
+        Port XS1_PORT_8A: bit 3, priority 1
+        Port XS1_PORT_16A: bit 3, priority 2
+        Port XS1_PORT_32A: bit 23, priority 3
+      X0D04: package = L2, id = 6.
+        xLink: 2, bit 1, direction in
+        Port XS1_PORT_4B: bit 0, priority 0
+        Port XS1_PORT_8A: bit 2, priority 1
+        Port XS1_PORT_16A: bit 2, priority 2
+        Port XS1_PORT_32A: bit 22, priority 3
+      X0D03: package = L2, id = 7.
+        xLink: 2, bit 2, direction in
+        Port XS1_PORT_4A: bit 1, priority 0
+        Port XS1_PORT_8A: bit 1, priority 1
+        Port XS1_PORT_16A: bit 1, priority 2
+        Port XS1_PORT_32A: bit 21, priority 3
+      X0D02: package = L2, id = 8.
+        xLink: 2, bit 3, direction in
+        Port XS1_PORT_4A: bit 0, priority 0
+        Port XS1_PORT_8A: bit 0, priority 1
+        Port XS1_PORT_16A: bit 0, priority 2
+        Port XS1_PORT_32A: bit 20, priority 3
+      X0D01: package = L2, id = 9.
+        xLink: 2, bit 4, direction in
+        Port XS1_PORT_1B: bit 0, priority 0
+      X0D00: package = L2, id = 10.
+        Port XS1_PORT_1A: bit 0, priority 0
+      X0D35: package = L2, id = 11.
+        Port XS1_PORT_1L: bit 0, priority 0
+      X0D34: package = L2, id = 12.
+        Port XS1_PORT_1K: bit 0, priority 0
+      X0D33: package = L2, id = 13.
+        Port XS1_PORT_4E: bit 3, priority 0
+        Port XS1_PORT_8C: bit 7, priority 1
+        Port XS1_PORT_16B: bit 7, priority 2
+      X0D32: package = L2, id = 14.
+        Port XS1_PORT_4E: bit 2, priority 0
+        Port XS1_PORT_8C: bit 6, priority 1
+        Port XS1_PORT_16B: bit 6, priority 2
+      X0D39: package = L2, id = 15.
+        Port XS1_PORT_1P: bit 0, priority 0
+        Port XS1_PORT_8D: bit 3, priority 1
+        Port XS1_PORT_16B: bit 11, priority 2
+      X0D38: package = L2, id = 16.
+        Port XS1_PORT_1O: bit 0, priority 0
+        Port XS1_PORT_8D: bit 2, priority 1
+        Port XS1_PORT_16B: bit 10, priority 2
+      X0D37: package = L2, id = 17.
+        Port XS1_PORT_1N: bit 0, priority 0
+        Port XS1_PORT_8D: bit 1, priority 1
+        Port XS1_PORT_16B: bit 9, priority 2
+      X0D36: package = L2, id = 18.
+        Port XS1_PORT_1M: bit 0, priority 0
+        Port XS1_PORT_8D: bit 0, priority 1
+        Port XS1_PORT_16B: bit 8, priority 2
+      X0D27: package = L2, id = 19.
+        Port XS1_PORT_4E: bit 1, priority 0
+        Port XS1_PORT_8C: bit 1, priority 1
+        Port XS1_PORT_16B: bit 1, priority 2
+      X0D26: package = L2, id = 20.
+        Port XS1_PORT_4E: bit 0, priority 0
+        Port XS1_PORT_8C: bit 0, priority 1
+        Port XS1_PORT_16B: bit 0, priority 2
+      X0D25: package = L2, id = 21.
+        Port XS1_PORT_1J: bit 0, priority 0
+      X0D24: package = L2, id = 22.
+        Port XS1_PORT_1I: bit 0, priority 0
+      X0D23: package = L2, id = 23.
+        Port XS1_PORT_1H: bit 0, priority 0
+      X0D22: package = L2, id = 24.
+        xLink: 3, bit 4, direction out
+        Port XS1_PORT_1G: bit 0, priority 0
+      X0D21: package = L2, id = 25.
+        xLink: 3, bit 3, direction out
+        Port XS1_PORT_4C: bit 3, priority 0
+        Port XS1_PORT_8B: bit 7, priority 1
+        Port XS1_PORT_16A: bit 15, priority 2
+        Port XS1_PORT_32A: bit 31, priority 3
+      X0D43: package = L2, id = 26.
+        Port XS1_PORT_8D: bit 7, priority 0
+        Port XS1_PORT_16B: bit 15, priority 1
+      X0D42: package = L2, id = 27.
+        Port XS1_PORT_8D: bit 6, priority 0
+        Port XS1_PORT_16B: bit 14, priority 1
+      X0D20: package = L2, id = 28.
+        xLink: 3, bit 2, direction out
+        Port XS1_PORT_4C: bit 2, priority 0
+        Port XS1_PORT_8B: bit 6, priority 1
+        Port XS1_PORT_16A: bit 14, priority 2
+        Port XS1_PORT_32A: bit 30, priority 3
+      X0D41: package = L2, id = 29.
+        Port XS1_PORT_8D: bit 5, priority 0
+        Port XS1_PORT_16B: bit 13, priority 1
+      X0D40: package = L2, id = 30.
+        Port XS1_PORT_8D: bit 4, priority 0
+        Port XS1_PORT_16B: bit 12, priority 1
+      X0D31: package = L2, id = 31.
+        Port XS1_PORT_4F: bit 3, priority 0
+        Port XS1_PORT_8C: bit 5, priority 1
+        Port XS1_PORT_16B: bit 5, priority 2
+      X0D30: package = L2, id = 32.
+        Port XS1_PORT_4F: bit 2, priority 0
+        Port XS1_PORT_8C: bit 4, priority 1
+        Port XS1_PORT_16B: bit 4, priority 2
+      X0D19: package = L2, id = 33.
+        xLink: 3, bit 1, direction out
+        Port XS1_PORT_4D: bit 3, priority 0
+        Port XS1_PORT_8B: bit 5, priority 1
+        Port XS1_PORT_16A: bit 13, priority 2
+      X0D29: package = L2, id = 34.
+        Port XS1_PORT_4F: bit 1, priority 0
+        Port XS1_PORT_8C: bit 3, priority 1
+        Port XS1_PORT_16B: bit 3, priority 2
+      X0D18: package = L2, id = 35.
+        xLink: 3, bit 0, direction out
+        Port XS1_PORT_4D: bit 2, priority 0
+        Port XS1_PORT_8B: bit 4, priority 1
+        Port XS1_PORT_16A: bit 12, priority 2
+      X0D28: package = L2, id = 36.
+        Port XS1_PORT_4F: bit 0, priority 0
+        Port XS1_PORT_8C: bit 2, priority 1
+        Port XS1_PORT_16B: bit 2, priority 2
+      X0D17: package = L2, id = 37.
+        xLink: 3, bit 0, direction in
+        Port XS1_PORT_4D: bit 1, priority 0
+        Port XS1_PORT_8B: bit 3, priority 1
+        Port XS1_PORT_16A: bit 11, priority 2
+      X0D16: package = L2, id = 38.
+        xLink: 3, bit 1, direction in
+        Port XS1_PORT_4D: bit 0, priority 0
+        Port XS1_PORT_8B: bit 2, priority 1
+        Port XS1_PORT_16A: bit 10, priority 2
+      X0D15: package = L2, id = 39.
+        xLink: 3, bit 2, direction in
+        Port XS1_PORT_4C: bit 1, priority 0
+        Port XS1_PORT_8B: bit 1, priority 1
+        Port XS1_PORT_16A: bit 9, priority 2
+        Port XS1_PORT_32A: bit 29, priority 3
+      X0D14: package = L2, id = 40.
+        xLink: 3, bit 3, direction in
+        Port XS1_PORT_4C: bit 0, priority 0
+        Port XS1_PORT_8B: bit 0, priority 1
+        Port XS1_PORT_16A: bit 8, priority 2
+        Port XS1_PORT_32A: bit 28, priority 3
+      X0D13: package = L2, id = 41.
+        xLink: 3, bit 4, direction in
+        Port XS1_PORT_1F: bit 0, priority 0
+      X0D12: package = L2, id = 42.
+        Port XS1_PORT_1E: bit 0, priority 0
+      X0D11: package = L2, id = 43.
+        Port XS1_PORT_1D: bit 0, priority 0
+      X1D10: package = L2, id = 44.
+        xLink: 2, bit 4, direction out
+        Port XS1_PORT_1C: bit 0, priority 0
+      X1D09: package = L2, id = 45.
+        xLink: 2, bit 3, direction out
+        Port XS1_PORT_4A: bit 3, priority 0
+        Port XS1_PORT_8A: bit 7, priority 1
+        Port XS1_PORT_16A: bit 7, priority 2
+        Port XS1_PORT_32A: bit 27, priority 3
+      X1D08: package = L2, id = 46.
+        xLink: 2, bit 2, direction out
+        Port XS1_PORT_4A: bit 2, priority 0
+        Port XS1_PORT_8A: bit 6, priority 1
+        Port XS1_PORT_16A: bit 6, priority 2
+        Port XS1_PORT_32A: bit 26, priority 3
+      X1D07: package = L2, id = 47.
+        xLink: 2, bit 1, direction out
+        Port XS1_PORT_4B: bit 3, priority 0
+        Port XS1_PORT_8A: bit 5, priority 1
+        Port XS1_PORT_16A: bit 5, priority 2
+        Port XS1_PORT_32A: bit 25, priority 3
+      X1D06: package = L2, id = 48.
+        xLink: 2, bit 0, direction out
+        Port XS1_PORT_4B: bit 2, priority 0
+        Port XS1_PORT_8A: bit 4, priority 1
+        Port XS1_PORT_16A: bit 4, priority 2
+        Port XS1_PORT_32A: bit 24, priority 3
+      X1D05: package = L2, id = 49.
+        xLink: 2, bit 0, direction in
+        Port XS1_PORT_4B: bit 1, priority 0
+        Port XS1_PORT_8A: bit 3, priority 1
+        Port XS1_PORT_16A: bit 3, priority 2
+        Port XS1_PORT_32A: bit 23, priority 3
+      X1D04: package = L2, id = 50.
+        xLink: 2, bit 1, direction in
+        Port XS1_PORT_4B: bit 0, priority 0
+        Port XS1_PORT_8A: bit 2, priority 1
+        Port XS1_PORT_16A: bit 2, priority 2
+        Port XS1_PORT_32A: bit 22, priority 3
+      X1D03: package = L2, id = 51.
+        xLink: 2, bit 2, direction in
+        Port XS1_PORT_4A: bit 1, priority 0
+        Port XS1_PORT_8A: bit 1, priority 1
+        Port XS1_PORT_16A: bit 1, priority 2
+        Port XS1_PORT_32A: bit 21, priority 3
+      X1D02: package = L2, id = 52.
+        xLink: 2, bit 3, direction in
+        Port XS1_PORT_4A: bit 0, priority 0
+        Port XS1_PORT_8A: bit 0, priority 1
+        Port XS1_PORT_16A: bit 0, priority 2
+        Port XS1_PORT_32A: bit 20, priority 3
+      X1D01: package = L2, id = 53.
+        xLink: 2, bit 4, direction in
+        Port XS1_PORT_1B: bit 0, priority 0
+      X1D00: package = L2, id = 54.
+        Port XS1_PORT_1A: bit 0, priority 0
+      X1D35: package = L2, id = 55.
+        Port XS1_PORT_1L: bit 0, priority 0
+      X1D34: package = L2, id = 56.
+        Port XS1_PORT_1K: bit 0, priority 0
+      X1D33: package = L2, id = 57.
+        Port XS1_PORT_4E: bit 3, priority 0
+        Port XS1_PORT_8C: bit 7, priority 1
+        Port XS1_PORT_16B: bit 7, priority 2
+      X1D32: package = L2, id = 58.
+        Port XS1_PORT_4E: bit 2, priority 0
+        Port XS1_PORT_8C: bit 6, priority 1
+        Port XS1_PORT_16B: bit 6, priority 2
+      X1D39: package = L2, id = 59.
+        Port XS1_PORT_1P: bit 0, priority 0
+        Port XS1_PORT_8D: bit 3, priority 1
+        Port XS1_PORT_16B: bit 11, priority 2
+      X1D38: package = L2, id = 60.
+        Port XS1_PORT_1O: bit 0, priority 0
+        Port XS1_PORT_8D: bit 2, priority 1
+        Port XS1_PORT_16B: bit 10, priority 2
+      X1D37: package = L2, id = 61.
+        Port XS1_PORT_1N: bit 0, priority 0
+        Port XS1_PORT_8D: bit 1, priority 1
+        Port XS1_PORT_16B: bit 9, priority 2
+      X1D36: package = L2, id = 62.
+        Port XS1_PORT_1M: bit 0, priority 0
+        Port XS1_PORT_8D: bit 0, priority 1
+        Port XS1_PORT_16B: bit 8, priority 2
+      X1D27: package = L2, id = 63.
+        Port XS1_PORT_4E: bit 1, priority 0
+        Port XS1_PORT_8C: bit 1, priority 1
+        Port XS1_PORT_16B: bit 1, priority 2
+      X1D26: package = L2, id = 64.
+        Port XS1_PORT_4E: bit 0, priority 0
+        Port XS1_PORT_8C: bit 0, priority 1
+        Port XS1_PORT_16B: bit 0, priority 2
+      X1D25: package = L2, id = 65.
+        Port XS1_PORT_1J: bit 0, priority 0
+      X1D24: package = L2, id = 66.
+        Port XS1_PORT_1I: bit 0, priority 0
+      X1D23: package = L2, id = 67.
+        Port XS1_PORT_1H: bit 0, priority 0
+      X1D22: package = L2, id = 68.
+        xLink: 3, bit 4, direction out
+        Port XS1_PORT_1G: bit 0, priority 0
+      X1D21: package = L2, id = 69.
+        xLink: 3, bit 3, direction out
+        Port XS1_PORT_4C: bit 3, priority 0
+        Port XS1_PORT_8B: bit 7, priority 1
+        Port XS1_PORT_16A: bit 15, priority 2
+        Port XS1_PORT_32A: bit 31, priority 3
+      X1D20: package = L2, id = 70.
+        xLink: 3, bit 2, direction out
+        Port XS1_PORT_4C: bit 2, priority 0
+        Port XS1_PORT_8B: bit 6, priority 1
+        Port XS1_PORT_16A: bit 14, priority 2
+        Port XS1_PORT_32A: bit 30, priority 3
+      X1D31: package = L2, id = 71.
+        Port XS1_PORT_4F: bit 3, priority 0
+        Port XS1_PORT_8C: bit 5, priority 1
+        Port XS1_PORT_16B: bit 5, priority 2
+      X1D30: package = L2, id = 72.
+        Port XS1_PORT_4F: bit 2, priority 0
+        Port XS1_PORT_8C: bit 4, priority 1
+        Port XS1_PORT_16B: bit 4, priority 2
+      X1D19: package = L2, id = 73.
+        xLink: 3, bit 1, direction out
+        Port XS1_PORT_4D: bit 3, priority 0
+        Port XS1_PORT_8B: bit 5, priority 1
+        Port XS1_PORT_16A: bit 13, priority 2
+      X1D29: package = L2, id = 74.
+        Port XS1_PORT_4F: bit 1, priority 0
+        Port XS1_PORT_8C: bit 3, priority 1
+        Port XS1_PORT_16B: bit 3, priority 2
+      X1D18: package = L2, id = 75.
+        xLink: 3, bit 0, direction out
+        Port XS1_PORT_4D: bit 2, priority 0
+        Port XS1_PORT_8B: bit 4, priority 1
+        Port XS1_PORT_16A: bit 12, priority 2
+      X1D28: package = L2, id = 76.
+        Port XS1_PORT_4F: bit 0, priority 0
+        Port XS1_PORT_8C: bit 2, priority 1
+        Port XS1_PORT_16B: bit 2, priority 2
+      X1D17: package = L2, id = 77.
+        xLink: 3, bit 0, direction in
+        Port XS1_PORT_4D: bit 1, priority 0
+        Port XS1_PORT_8B: bit 3, priority 1
+        Port XS1_PORT_16A: bit 11, priority 2
+      X1D16: package = L2, id = 78.
+        xLink: 3, bit 1, direction in
+        Port XS1_PORT_4D: bit 0, priority 0
+        Port XS1_PORT_8B: bit 2, priority 1
+        Port XS1_PORT_16A: bit 10, priority 2
+      X1D15: package = L2, id = 79.
+        xLink: 3, bit 2, direction in
+        Port XS1_PORT_4C: bit 1, priority 0
+        Port XS1_PORT_8B: bit 1, priority 1
+        Port XS1_PORT_16A: bit 9, priority 2
+        Port XS1_PORT_32A: bit 29, priority 3
+      X1D14: package = L2, id = 80.
+        xLink: 3, bit 3, direction in
+        Port XS1_PORT_4C: bit 0, priority 0
+        Port XS1_PORT_8B: bit 0, priority 1
+        Port XS1_PORT_16A: bit 8, priority 2
+        Port XS1_PORT_32A: bit 28, priority 3
+      X1D13: package = L2, id = 81.
+        xLink: 3, bit 4, direction in
+        Port XS1_PORT_1F: bit 0, priority 0
+      X1D12: package = L2, id = 82.
+        Port XS1_PORT_1E: bit 0, priority 0
+      X1D11: package = L2, id = 83.
+        Port XS1_PORT_1D: bit 0, priority 0
