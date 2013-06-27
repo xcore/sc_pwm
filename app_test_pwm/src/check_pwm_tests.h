@@ -40,18 +40,6 @@
 
 #define ADC_DELAY 8 // Fudge-Factor: delay between receiving ADC-trigger from channel and outputting to dummy port
 
-#ifdef MB // Depreciated
-/** Classes of PWM sample patterns*/
-typedef enum PWM_PATN_ETAG
-{
-  PWM_LOW = 0,	// All-bits low (Low portion of pulse)
-  PWM_RISE,			// Rising Edge of pulse
-  PWM_FALL,			// Falling Edge of pulse
-  PWM_HIGH,			// All-bits high (High portion of pulse)
-  NUM_PATN_STATES    // Handy Value!-)
-} PWM_PATN_ENUM;
-#endif //MB~
-
 /** Class of PWM events */
 typedef enum PWM_EVENT_ETAG
 {

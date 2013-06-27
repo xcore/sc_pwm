@@ -56,7 +56,6 @@ void capture_pwm_adc_data( // Captures PWM adc-trigger data
 		inct_byref( c_adc_trig, cntrl_token );
 
 		p8_tst_sync <: (unsigned char)cntrl_token @ port_time; // Ouput dummy data to get timestamp
-// acquire_lock(); printstr("A="); printuintln(port_time); release_lock(); //MB~
 
 		c_adc_chk <: (signed)port_time; // Send PWM ADC timestamp to checker
 	}	// while (1)
@@ -89,7 +88,6 @@ void capture_pwm_leg_data( // Captures PWM data results for one leg
 
 			// NB We need an array of channels, as one channel does NOT get read quick enough (in checker)
 			c_chk[chan_off] <: port_data_s; // Send PWM data to checker
-//	acquire_lock(); printuint(chan_off); printstr(":");printint(leg_id); printstr("="); printint(port_data_s.time_off); printstr(" P="); printhexln(curr_pins); release_lock(); //MB~
 
 			// Update circular channel offset
 			chan_off++; // Increment channel counter

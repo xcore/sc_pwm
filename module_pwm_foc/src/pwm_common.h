@@ -15,8 +15,6 @@
 #ifndef _PWM_COMMON_H_
 #define _PWM_COMMON_H_
 
-// #include "use_locks.h" //MB~ Dbg
-
 #ifndef PWM_SHARED_MEM 
 	#error Define. PWM_SHARED_MEM in app_global.h
 #endif // PWM_SHARED_MEM

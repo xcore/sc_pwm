@@ -225,8 +225,6 @@ static void do_pwm_test( // Performs one PWM test
 	// Load test data into PWM phase under test
 	tst_data_s.pwm_comms.params.widths[tst_data_s.curr_vect.comp_state[PHASE]] = tst_data_s.width;
 
-// acquire_lock(); printstr( "GP=" ); printuintln( tst_data_s.width ); release_lock(); //MB~
-
 	if (0 == tst_data_s.print)
 	{
 		printchar('.'); // Progress indicator

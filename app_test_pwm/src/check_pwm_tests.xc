@@ -222,7 +222,6 @@ static void check_dead_time( // Check dead-time between edges in High and Low le
 	int gap_time; // Time gap between edges
 
 
-// acquire_lock(); printstr("E="); printuint(early_time); printstr(" L="); printuintln(later_time); release_lock(); //MB~
 	gap_time = later_time - early_time; // Time difference between edges
 
 	gap_time &= PORT_TIME_MASK; // mask into range [0..PORT_TIME_MASK]
@@ -281,7 +280,6 @@ static void update_pwm_data( // Update PWM data
 			wave_data_s.lo_wid = wave_data_s.time_sum + diff_time; // Finalise time for low portion of pulse
 			wave_data_s.time_sum = 0; // Initialise time sum for high portion of pulse
 			wave_data_s.new_edge = 1; // Set flag for new edge
-// if (chk_data_s.curr_leg == PWM_HI_LEG) { //	acquire_lock(); printstr("R="); printintln(curr_time); release_lock(); } //MB~ 
 		} // else !(prev_pwm_s.last)
 	} // if (curr_pwm_s.last)
 	else
@@ -294,7 +292,6 @@ static void update_pwm_data( // Update PWM data
 			wave_data_s.hi_wid = wave_data_s.time_sum + diff_time; // Finalise time for high portion of pulse
 			wave_data_s.time_sum = 0; // Initialise time sum for low portion of pulse
 			wave_data_s.new_edge = 1; // Set flag for new edge
-// if (chk_data_s.curr_leg == PWM_HI_LEG) { acquire_lock(); printstr("F="); printintln(curr_time); release_lock(); } //MB~ 
 		} // if (prev_pwm_s.last)
 		else
 		{ // Constant Low
@@ -674,12 +671,10 @@ void check_pwm_server_data( // Checks PWM results for all motors
 	initialise_pwm_width_test( chk_data_s ,motor_s ); 
 
 	while (do_loop) {
-// #pragma ordered // If multiple cases fire at same time, service top-most first
 		select {
 			// Service any new PWM data on High-Leg input channel
 			case c_hi_leg[hi_chan_off] :> hi_bufs[hi_write_off].port_data :
 				hi_bufs[hi_write_off].id = PWM_HI_LEG;
-// acquire_lock(); printstr("            "); printuint(hi_write_off); printstr(":H="); printint(hi_bufs[hi_write_off].port_data.time_off ); printstr(" P="); printhexln(hi_bufs[hi_write_off].port_data.pattern); release_lock(); //MB~
 
 				// Update circular buffer offsets
 				hi_inp_cnt++; // Increment write counter
@@ -690,7 +685,6 @@ void check_pwm_server_data( // Checks PWM results for all motors
 			// Service any new PWM data on Low-Leg input channel
 			case c_lo_leg[lo_chan_off] :> lo_bufs[lo_write_off].port_data :
 				lo_bufs[lo_write_off].id = PWM_LO_LEG;
-// acquire_lock(); printstr("            "); printuint(lo_write_off); printstr(":L="); printint(lo_bufs[lo_write_off].port_data.time_off ); printstr(" P="); printhexln(lo_bufs[lo_write_off].port_data.pattern); release_lock(); //MB~
 
 				// Update circular buffer offsets
 				lo_inp_cnt++; // Increment write counter
@@ -701,7 +695,6 @@ void check_pwm_server_data( // Checks PWM results for all motors
 			// Service any new PWM data on ADC input channel
 			case c_adc :> adc_bufs[adc_write_off].port_data.time_off :
 				adc_bufs[adc_write_off].id = ADC_PATN;
-// acquire_lock(); printstr("            "); printuint(adc_write_off); printstr(":A="); printintln(adc_bufs[adc_write_off].port_data.time_off); release_lock(); //MB~
 
 				// Update circular buffer offsets
 				adc_inp_cnt++; // Increment write counter
@@ -732,7 +725,6 @@ void check_pwm_server_data( // Checks PWM results for all motors
 						{
 							assert(lo_inp_cnt <= (lo_read_cnt + NUM_INP_BUFS)); // Check we have enough input buffers
 							motor_s.lines[TEST_PHASE].waves[PWM_LO_LEG].curr_data.port_data = lo_bufs[lo_read_off].port_data; // Update High-Leg PWM data
-// acquire_lock(); printuint(lo_read_off); printstr("LR="); printint(lo_bufs[lo_read_off].port_data.time_off); printstr(" P="); printhexln(lo_bufs[lo_read_off].port_data.pattern); release_lock(); //MB~
 
 							chk_data_s.curr_leg = PWM_LO_LEG; // Set PWM-leg under test
 							test_all_pwm( chk_data_s ,motor_s ); // test new PWM data
@@ -749,7 +741,6 @@ void check_pwm_server_data( // Checks PWM results for all motors
 						{
 							assert(hi_inp_cnt <= (hi_read_cnt + NUM_INP_BUFS)); // Check we have enough input buffers
 							motor_s.lines[TEST_PHASE].waves[PWM_HI_LEG].curr_data.port_data = hi_bufs[hi_read_off].port_data; // Update High-Leg PWM data
-// acquire_lock(); printuint(hi_read_off); printstr("HR="); printint(hi_bufs[hi_read_off].port_data.time_off); printstr(" P="); printhexln(hi_bufs[hi_read_off].port_data.pattern); release_lock(); //MB~
 
 							chk_data_s.curr_leg = PWM_HI_LEG; // Set PWM-leg under test
 							test_all_pwm( chk_data_s ,motor_s ); // test new PWM data
@@ -766,8 +757,6 @@ void check_pwm_server_data( // Checks PWM results for all motors
 						{
 							assert(adc_inp_cnt <= (adc_read_cnt + NUM_INP_BUFS)); // Check we have enough input buffers
 							chk_data_s.adc_time = adc_bufs[adc_read_off].port_data.time_off; // Update ADC trigger time
-// acquire_lock(); printuint(adc_read_off); printstr(" A="); printuintln(chk_data_s.adc_time); release_lock(); //MB~
-// acquire_lock(); printstr("A="); printuintln(chk_data_s.adc_time); release_lock(); //MB~
 
 							// Update circular buffer offset
 							adc_read_cnt++; // Increment write counter

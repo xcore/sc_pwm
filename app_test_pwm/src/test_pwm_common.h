@@ -37,7 +37,6 @@
 
 /** Define value for Minimum Speed test */
 #define MINI_PWM PWM_PORT_WID
-//MB~ #define MINI_PWM (PWM_PORT_WID << 1)
 
 /** Define value for Low Speed test */
 #define SMALL_PWM (1 << SMALL_RES_BITS)
