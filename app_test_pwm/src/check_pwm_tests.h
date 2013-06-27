@@ -72,7 +72,6 @@ typedef struct PWM_WAVE_TAG // Structure containing data for one PWM Wave
 	int lo_sum;	// sum of low-times
 	int hi_num;	// No. of high-times
 	int lo_num;	// No. of high-times
-	int hi_on;	// Flag set when in High(one) portion of pulse 
 	int new_edge;	// Flag set when new edge found
 	PORT_TIME_TYP rise_time; // Time-stamp of rising edge
 	PORT_TIME_TYP fall_time; // Time-stamp of falling edge

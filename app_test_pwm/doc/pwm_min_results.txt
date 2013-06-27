@@ -56,38 +56,38 @@ PWM:3840
 Large-width Phase_A No_ADC DeadT_On :VALID
                                              Large-width Phase_A No_ADC DeadT_On :VALID
                                              Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
 PWM:3840
+                                             Lo-Leg Hi_Width= 3960 
                                              Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
 PWM:3840
+                                             Lo-Leg Hi_Width= 3960 
                                              Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
 PWM:3840
+                                             Lo-Leg Hi_Width= 3960 
                                              Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
 PWM:3840
+                                             Lo-Leg Hi_Width= 3960 
                                              Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
 PWM:3840
+                                             Lo-Leg Hi_Width= 3960 
                                              Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
 PWM:3840
+                                             Lo-Leg Hi_Width= 3960 
                                              Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
 PWM:3840
+                                             Lo-Leg Hi_Width= 3960 
                                              Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
 PWM:3840
+                                             Lo-Leg Hi_Width= 3960 
                                              Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
 PWM:3840
+                                             Lo-Leg Hi_Width= 3960 
                                              Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
 PWM:3840
+                                             Lo-Leg Hi_Width= 3960 
                                              Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
 PWM:3840
+                                             Lo-Leg Hi_Width= 3960 
 Large-width Phase_A No_ADC DeadT_On :QUIT 
                                              Large-width Phase_A No_ADC DeadT_On :QUIT 
                                              Hi-Leg  Mean_Width 3840 

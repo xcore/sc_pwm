@@ -54,7 +54,6 @@ static void init_wave_data( // Initialise data structure for one PWM wave
 	wave_data_s.lo_sum = 0;
 	wave_data_s.hi_num = 0;
 	wave_data_s.lo_num = 0;
-	wave_data_s.hi_on= 0; // Set flag to Low (zero) portion of pulse
 	wave_data_s.new_edge = 0; // Set to no edge detected
 
 	wave_data_s.curr_data.first = 0;
@@ -274,24 +273,39 @@ static void update_pwm_data( // Update PWM data
 		} // if (prev_pwm_s.last)
 		else
 		{ // Rising edge
-			assert(0 == wave_data_s.hi_on); // ERROR: pulse already high
-			wave_data_s.hi_on = 1; // Set flag to pulse high
 			wave_data_s.rise_time = curr_time; // Store Rising-edge time-stamp
 			wave_data_s.lo_wid = wave_data_s.time_sum + diff_time; // Finalise time for low portion of pulse
 			wave_data_s.time_sum = 0; // Initialise time sum for high portion of pulse
 			wave_data_s.new_edge = 1; // Set flag for new edge
+
+			// Check if this current test vector is valid
+			if (VALID == chk_data_s.curr_vect.comp_state[CNTRL])
+			{ // update accumulators for test of low-pulse-width
+				wave_data_s.lo_sum += wave_data_s.lo_wid;
+				wave_data_s.lo_num++;
+			} // if (VALID == chk_data_s.curr_vect.comp_state[CNTRL])
 		} // else !(prev_pwm_s.last)
 	} // if (curr_pwm_s.last)
 	else
 	{ // Currently Low
 		if (prev_pwm_s.last)
 		{ // Falling Edge
-			assert(1 == wave_data_s.hi_on); // ERROR: pulse already low
-			wave_data_s.hi_on = 0; // Set flag to pulse low
 			wave_data_s.fall_time = curr_time; // Store Falling-edge time-stamp
 			wave_data_s.hi_wid = wave_data_s.time_sum + diff_time; // Finalise time for high portion of pulse
 			wave_data_s.time_sum = 0; // Initialise time sum for low portion of pulse
 			wave_data_s.new_edge = 1; // Set flag for new edge
+
+			// Check if this current test vector is valid
+			if (VALID == chk_data_s.curr_vect.comp_state[CNTRL])
+			{ // update accumulators for test of high-pulse-width
+				wave_data_s.hi_sum += wave_data_s.hi_wid;
+				wave_data_s.hi_num++;
+	
+				if (chk_data_s.print)
+				{
+					print_pwm_pulse( chk_data_s ,wave_data_s.hi_wid ,"Hi_Width" ); // Print new PWM pulse data
+				} // if (chk_data_s.print)
+			} // if (VALID == chk_data_s.curr_vect.comp_state[CNTRL])
 		} // if (prev_pwm_s.last)
 		else
 		{ // Constant Low
@@ -299,33 +313,6 @@ static void update_pwm_data( // Update PWM data
 		} // else !(prev_pwm_s.last)
 	} // else !(curr_pwm_s.last)
 } // update_pwm_data
-/*****************************************************************************/
-static void update_statistics( // Updates accumulators used to evaluate statistics
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
-	PWM_WAVE_TYP &wave_data_s // Reference to a structure containing wave data for one PWM-leg
-)
-{
-	// Accumulate pulse times ...
-
-	if (wave_data_s.new_edge)
-	{ // New-edge
-		if (wave_data_s.hi_on)
-		{ // End-of low period of pulse
-				wave_data_s.lo_sum += wave_data_s.lo_wid;
-				wave_data_s.lo_num++;
-		} // else !(wave_data_s.new_fall)
-		else
-		{ // End-of high period of pulse
-			wave_data_s.hi_sum += wave_data_s.hi_wid;
-			wave_data_s.hi_num++;
-	
-			if (chk_data_s.print)
-			{
-				print_pwm_pulse( chk_data_s ,wave_data_s.hi_wid ,"Hi_Width" ); // Print new PWM pulse data
-			} // if (chk_data_s.print)
-		} // if (wave_data_s.new_fall)
-	} // if (wave_data_s.new_edge)
-} // update_statistics
 /*****************************************************************************/
 static void check_pwm_pulse_levels( // Check PWM mean voltage
 	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
@@ -484,12 +471,6 @@ static void test_pwm_wave( // test new PWM input value
 
 		update_pwm_data( chk_data_s ,wave_data_s ); // Update PWM-leg data
 
-		// Check if this current test vector is valid
-		if (VALID == chk_data_s.curr_vect.comp_state[CNTRL])
-		{
-			update_statistics( chk_data_s ,wave_data_s );
-		} // if (VALID == chk_data_s.curr_vect.comp_state[CNTRL])
-
 		// Store previous PWM data
 		wave_data_s.prev_data = wave_data_s.curr_data;
 	} // if (do_test)
@@ -506,23 +487,7 @@ static void test_pwm_phase( // test new PWM data against PWM data for phase unde
 	// Check if new edge detected in wave-train
 	if (phase_data_s.waves[chk_data_s.curr_leg].new_edge)
 	{
-		// Check if this current test vector is valid
-		if (VALID == chk_data_s.curr_vect.comp_state[CNTRL])
-		{
-			// Check if ADC-trigger being tested
-			if (chk_data_s.common.options.flags[TST_ADC])
-			{ /* Check if falling edge.
-				 * NB After a pulse width change we required the new pulse-width to have been calculated
-				 * before we can check whether the ADC-trigger is centred in the pulse!-)
-				 */
-				if (0 == phase_data_s.waves[chk_data_s.curr_leg].hi_on)
-				{ // Check adc-trigger against High-Leg falling edge
-					check_adc_trigger( chk_data_s ,phase_data_s.waves[PWM_HI_LEG] );
-				} // if (0 == phase_data_s.waves[chk_data_s.curr_leg].hi_on)
-			} // if (chk_data_s.common.options.flags[TST_ADC])
-		} // if (VALID == chk_data_s.curr_vect.comp_state[CNTRL])
-
-		// Check which PWM event is expected
+		// Check which PWM event expected
 		switch(chk_data_s.event)
 		{
 			case PWM_LO_RISE : // Low-leg rising edge 
@@ -537,7 +502,19 @@ static void test_pwm_phase( // test new PWM data against PWM data for phase unde
 				chk_data_s.event = PWM_ADC_TRIG; // set next event
 			break; // case PWM_HI_RISE
 
-			case PWM_HI_FALL :  // High-leg falling edge 
+			case PWM_HI_FALL :  // High-leg falling edge
+				/* NB The ADC test sits here, because, before we can check whether the ADC-trigger is centred in the pulse.
+				 * We require the new high-pulse-width to have been calculated
+				 */
+				if (VALID == chk_data_s.curr_vect.comp_state[CNTRL]) // Check if this current test vector is valid
+				{
+					// Check if ADC-trigger being tested
+					if (chk_data_s.common.options.flags[TST_ADC])
+					{ // Check adc-trigger against High-Leg falling edge
+						check_adc_trigger( chk_data_s ,phase_data_s.waves[PWM_HI_LEG] );
+					} // if (chk_data_s.common.options.flags[TST_ADC])
+				} // if (VALID == chk_data_s.curr_vect.comp_state[CNTRL])
+
 				check_dead_time( chk_data_s ,phase_data_s.waves[PWM_LO_LEG].rise_time ,phase_data_s.waves[PWM_HI_LEG].fall_time );
 
 				chk_data_s.event = PWM_LO_FALL; // set next event

@@ -219,7 +219,7 @@ Maxim-width Phase_A ADC_On DeadT_On :QUIT
                                              Hi-Leg  Mean_Width 3943 
                                              Lo-Leg  Mean_Width 4063 
  
-                                             394 tests run
+                                             337 tests run
 ALL TESTS PASSED
  
 PWM:3943
