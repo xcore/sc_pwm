@@ -1,0 +1,438 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Pulse Width Modulation (PWM) Simulator Testbench &mdash; Pulse Width Modulation (PWM) Simulator Testbench v documentation</title>
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/framework.css"  type="text/css" />
+    <link rel="stylesheet" href="_static/xde.css"
+    type="text/css" /><script type="text/javascript" src="_static/scripts.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Pulse Width Modulation (PWM) Simulator Testbench v documentation" href="#" /> 
+  </head>
+  <body class="indented-content" onload="prepareContents();">
+    <div id="menubar">
+    <div id="breadcrumbs">
+      <ul>
+        
+
+<!--        <li><a href="#">Pulse Width Modulation (PWM) Simulator Testbench</a></li>-->
+          <li>Pulse Width Modulation (PWM) Simulator Testbench</li> 
+      </ul>
+    </div>
+    </div>  
+          <div id="body">
+             <div id="content">
+             <h1>Pulse Width Modulation (PWM) Simulator Testbench</h1>
+
+             <div class='content'>
+            
+  <p id="test-pwm-quickstart">This application is an xSIM test harness for the pulse width modulation interface using xTIMEcomposer Studio. It tests the PWM functions in the <tt class="docutils literal"><span class="pre">Pulse</span> <span class="pre">Width</span> <span class="pre">Modulation</span> <span class="pre">(PWM)</span> <span class="pre">Interface</span> <span class="pre">Component</span></tt> xSOFTip component and directs test results to STDOUT.</p>
+<p>No hardware is required to run the test harness.</p>
+<dl class="docutils">
+<dt>The test application uses a maximum of 6 cores containing the following components:-</dt>
+<dd><ol class="first last arabic simple">
+<li>A test-vector generator and the PWM Client under test</li>
+<li>The PWM Server under test (generates raw PWM data)</li>
+<li>2 PWM-Leg capture cores (captures raw PWM data from either the High-Leg or Low-Leg ports via &#8216;loopback&#8217;)</li>
+<li>A PWM-adc capture core (captures raw PWM data from the pwm-to-adc trigger channel via &#8216;loopback&#8217;)</li>
+<li>The test results checker</li>
+</ol>
+</dd>
+<dt>The test application uses the following channels:-</dt>
+<dd><ol class="first last arabic simple">
+<li>c_tst: Transmits test vectors from Generator to Checker core</li>
+<li>c_pwm2adc_trig: Transmits synchronisation trigger pulse from PWM server to ADC server</li>
+<li>c_pwm: Transmits required pulse-width from PWM client to PWM server</li>
+<li>c_adc: Transmitting raw PWM data from the ADC-Capture to the Checker core</li>
+<li>c_hi_leg[]: An array of channels for transmitting raw PWM data from the High-Leg-Capture to the Checker core</li>
+<li>c_lo_leg[]: An array of channels for transmitting raw PWM data from the Low-Leg-Capture to the Checker core</li>
+</ol>
+</dd>
+<dt>The test application uses the following ports:-</dt>
+<dd><ol class="first last arabic simple">
+<li>pb32_pwm_hi[]: An array of buffered output ports for setting the High-Leg PWM voltage</li>
+<li>pb32_pwm_lo[]: An array of buffered output ports for setting the Low-Leg PWM voltage</li>
+<li>p16_adc_sync: A dummy 16-bit input port used for synchronising the PWM to ADC trigger</li>
+<li>pb32_tst_hi[]: An array of buffered input ports for the testing the High-Leg PWM voltage</li>
+<li>pb32_tst_lo[]: An array of buffered input ports for the testing the Low-Leg PWM voltage</li>
+<li>p8_tst_sync: A dummy 8-bit ouput port used for testing the PWM to ADC trigger</li>
+</ol>
+</dd>
+<dt>The test application uses the following clocks:-</dt>
+<dd><ol class="first last arabic simple">
+<li>pwm_clk: Used for timing the PWM output wave-train</li>
+<li>comm_clk: A common clock used to synchronise the timers on all test ports</li>
+</ol>
+</dd>
+</dl>
+<p>The output pins driven by the PWM server are looped back to the PWM Capture input pins using the <em>loopback plugin</em> functionality included within the xSIM simulator, which allows arbitrary definition of pin level loopbacks.</p>
+<p>The generator runs through a set of tests, these are specified formally as a <em>test vector</em> and transmitted to the test checker. For each test the generator creates the required pulse-width and sends this to the PWM Client. The PWM Client in turn sends the pulse-width to the PWM Server. The PWM Server converts the pulse-width into a PWM wave-train and drives this onto the output pins. The 3 PWM Capture cores sample their respective input pins every 32-bits, if a new sample is detected this is transmitted to the PWM Checker. The PWM Checker stores the raw PWM data in a buffer until such time when it can be checked. The PWM test checker also reads the specification in the received test vector. The received PWM data is then checked for correctness against the test vector specification.</p>
+<dl class="docutils">
+<dt>The following tests are always performed</dt>
+<dd><ol class="first last arabic simple">
+<li>A Small width pulse: for slow speeds</li>
+<li>A Large width pulse: for fast speeds</li>
+<li>The &#8216;Dead-Time&#8217; gap between adjacent High-Leg and Low-Leg edges</li>
+</ol>
+</dd>
+<dt>The following tests are optional</dt>
+<dd><ol class="first last arabic simple">
+<li>A Narrow width pulse: A 32-bit wide pulse for testing Minimum and Maximum speeds</li>
+<li>An Equal width pulse: for Square Wave</li>
+<li>ADC tests: Measures accurracy of PWM to ADC trigger</li>
+</ol>
+</dd>
+</dl>
+<p>The options are selected by editing the flags in the file pwm_tests.txt</p>
+<h2 class="topic" id="import-and-build-the-application">Import and Build the Application</h2>
+<div><blockquote>
+<div><ol class="arabic simple">
+<li>Open xTIMEcomposer and check that it is operating in online mode. Open the edit perspective (Window-&gt;Open Perspective-&gt;XMOS Edit).</li>
+<li>Locate the <tt class="docutils literal"><span class="pre">Pulse</span> <span class="pre">Width</span> <span class="pre">Modulation</span> <span class="pre">Test</span> <span class="pre">Harness</span></tt> item in the xSOFTip pane on the bottom left of the window and drag it into the Project Explorer window in the xTIMEcomposer. This will also cause the modules on which this application depends to be imported as well. These modules are: <tt class="docutils literal"><span class="pre">module_pwm_foc</span></tt>, and <tt class="docutils literal"><span class="pre">module_locks</span></tt>.</li>
+<li>Click on the app_test_pwm item in the Explorer pane then click on the build icon (hammer) in xTIMEcomposer.</li>
+<li>Check the console window to verify that the application has built successfully.</li>
+</ol>
+</div></blockquote>
+<p>For help in using xTIMEcomposer, try the xTIMEcomposer tutorial, that can be found by selecting Help-&gt;Tutorials from the xTIMEcomposer menu.</p>
+<p>Note that the Developer Column in the xTIMEcomposer on the right hand side of your screen
+provides information on the xSOFTip components you are using.
+Select the <tt class="docutils literal"><span class="pre">module_pwm_foc</span></tt> component in the Project Explorer, and you will see its description together with API documentation.
+Having done this, click the <tt class="docutils literal"><span class="pre">back</span></tt> icon until you return to this quickstart guide within the Developer Column.</p>
+</div><h2 class="topic" id="configure-and-run-the-simulator">Configure And Run The Simulator</h2>
+<div><blockquote>
+<div><ol class="arabic">
+<li>Double click <tt class="docutils literal"><span class="pre">app_test_pwm</span></tt> in the left hand <tt class="docutils literal"><span class="pre">Project</span> <span class="pre">Explorer</span></tt> window.</li>
+<li>Click on the arrow next to the <tt class="docutils literal"><span class="pre">Run</span></tt> icon (the white arrow in the green circle) in the top menu bar. Select <tt class="docutils literal"><span class="pre">Run</span> <span class="pre">Configurations</span></tt></li>
+<li>In <tt class="docutils literal"><span class="pre">Run</span> <span class="pre">Configurations</span></tt> window, double click on <tt class="docutils literal"><span class="pre">xCORE</span> <span class="pre">Application</span></tt>.</li>
+<li>You should find that the left hand side of the <tt class="docutils literal"><span class="pre">Run</span> <span class="pre">Configurations</span></tt> window, should be populated with details from the <tt class="docutils literal"><span class="pre">app_test_pwm</span></tt> project. If the details are blank, this is probably because the project was not selected correctly in the first step. If this has happened, and the problem persists, browse to the correct project, and select the executable.</li>
+<li>Select the <tt class="docutils literal"><span class="pre">run</span> <span class="pre">on</span> <span class="pre">simulator</span></tt> button.</li>
+<li>Now setup the loopbacks between the stimulus generator and the
+PWM component.<ol class="arabic">
+<li>Select the <tt class="docutils literal"><span class="pre">Simulator</span></tt> tab.</li>
+<li>Select the <tt class="docutils literal"><span class="pre">Loopback</span></tt> tab.</li>
+<li>Click <tt class="docutils literal"><span class="pre">Enable</span> <span class="pre">pin</span> <span class="pre">connections</span></tt>.</li>
+<li>Click <tt class="docutils literal"><span class="pre">Add</span></tt> and dialogue boxes will appear for Tile, Port, Offset and Width. These should be filled in with the following information and steps shown in the table below. The second time the simulator is run, it is only necessary to click on the <tt class="docutils literal"><span class="pre">Run</span></tt> icon (the white arrow in the green circle) in the top menu.<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="20%" />
+<col width="30%" />
+<col width="18%" />
+<col width="15%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><p>From:</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>XS1_PORT_1A</p>
+</td>
+<td><p>0</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+<tr><td><p>To:</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>XS1_PORT_1K</p>
+</td>
+<td><p>0</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</li>
+<li>Click <tt class="docutils literal"><span class="pre">Add</span></tt> again and then do the below<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="20%" />
+<col width="30%" />
+<col width="18%" />
+<col width="15%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><p>From:</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>XS1_PORT_1B</p>
+</td>
+<td><p>0</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+<tr><td><p>To:</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>XS1_PORT_1L</p>
+</td>
+<td><p>0</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</li>
+<li>Click <tt class="docutils literal"><span class="pre">Add</span></tt> again and then do the below<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="20%" />
+<col width="30%" />
+<col width="18%" />
+<col width="15%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><p>From:</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>XS1_PORT_1C</p>
+</td>
+<td><p>0</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+<tr><td><p>To:</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>XS1_PORT_1M</p>
+</td>
+<td><p>0</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</li>
+<li>Click <tt class="docutils literal"><span class="pre">Add</span></tt> again and then do the below<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="20%" />
+<col width="30%" />
+<col width="18%" />
+<col width="15%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><p>From:</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>XS1_PORT_1D</p>
+</td>
+<td><p>0</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+<tr><td><p>To:</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>XS1_PORT_1N</p>
+</td>
+<td><p>0</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</li>
+<li>Click <tt class="docutils literal"><span class="pre">Add</span></tt> again and then do the below<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="20%" />
+<col width="30%" />
+<col width="18%" />
+<col width="15%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><p>From:</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>XS1_PORT_1E</p>
+</td>
+<td><p>0</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+<tr><td><p>To:</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>XS1_PORT_1O</p>
+</td>
+<td><p>0</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</li>
+<li>Click <tt class="docutils literal"><span class="pre">Add</span></tt> again and then do the below<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="20%" />
+<col width="30%" />
+<col width="18%" />
+<col width="15%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><p>From:</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>XS1_PORT_1F</p>
+</td>
+<td><p>0</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+<tr><td><p>To:</p>
+</td>
+<td><p>1</p>
+</td>
+<td><p>XS1_PORT_1P</p>
+</td>
+<td><p>0</p>
+</td>
+<td><p>1</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</li>
+<li>Click <tt class="docutils literal"><span class="pre">Apply</span></tt></li>
+<li>Click <tt class="docutils literal"><span class="pre">Run</span></tt></li>
+</ol>
+</li>
+</ol>
+</div></blockquote>
+</div><h2 class="topic" id="test-results">Test Results</h2>
+<div><p>After a few seconds, output will start to appear in the console window. A dot is printed every time a PWM client request is made. This gives confidence that the test harness is doing something! The test lasts about 2 minutes. It should complete with the message &#8220;ALL TESTS PASSED&#8221;. If any tests fail, extra output will be generated giving details on the test(s) that failed.</p>
+<p>For background on the PWM protocol see the <tt class="docutils literal"><span class="pre">Overview</span></tt> document for module_pwm_foc</p>
+<p>An example of working test output from a working PWM component can be found in a file named <tt class="docutils literal"><span class="pre">pwm_results.txt</span></tt></p>
+</div><h2 class="topic" id="using-the-value-change-dump-vcd-file">Using The <tt class="docutils literal"><span class="pre">Value</span> <span class="pre">Change</span> <span class="pre">Dump</span></tt> (VCD) File</h2>
+<div><p>The waveforms on the output pins can be inspected by using a VCD file. This requires a lot of memory and considerably slows down the simulator. First ensure enough memory has been requested in the xTIMEcomposer init file. Go to the root directory where the XMOS tools are installed. Then edit file <tt class="docutils literal"><span class="pre">xtimecomposer_bin/xtimecomposer.exe.ini</span></tt> and ensure the requested memory is at least 4 GBytes (<tt class="docutils literal"><span class="pre">-Xmx4096m</span></tt>)</p>
+<dl class="docutils">
+<dt>Now launch xTIMEcomposer and switch on VCD tracing as follows ...</dt>
+<dd><ol class="first last arabic simple">
+<li>Repeat the actions described above up to but NOT including ...</li>
+<li>Click <tt class="docutils literal"><span class="pre">Apply</span></tt></li>
+<li>Now select the <tt class="docutils literal"><span class="pre">Signal</span> <span class="pre">Tracing</span></tt> tab.</li>
+<li>Tick the <tt class="docutils literal"><span class="pre">Enable</span> <span class="pre">Signal</span> <span class="pre">Tracing</span></tt> box</li>
+<li>Click the <tt class="docutils literal"><span class="pre">Add</span></tt> button</li>
+<li>Select <tt class="docutils literal"><span class="pre">tile[1]</span></tt></li>
+<li>Tick the <tt class="docutils literal"><span class="pre">+details</span></tt> box</li>
+<li>Click <tt class="docutils literal"><span class="pre">Apply</span></tt></li>
+<li>Click <tt class="docutils literal"><span class="pre">Run</span></tt></li>
+</ol>
+</dd>
+</dl>
+</div><h2 class="topic" id="id1">Test Results</h2>
+<div><p>You may want to kill the simulations before testing has finished. This can be done by clicking on the red square button in the view-bar for the console window.</p>
+<dl class="docutils">
+<dt>When the executable has stopped running, view the VCD file as follows:-</dt>
+<dd><ol class="first last arabic simple">
+<li>In the main toolbar select Tools-&gt;Waveform_Analyzer-&gt;Load_VCD_File</li>
+<li>Browse to the application root directory or where the VCD file was created.</li>
+<li>Select the VCD file and click the <tt class="docutils literal"><span class="pre">OK</span></tt> button.</li>
+<li>The VCD file will start loading, this may take some time,</li>
+<li>WARNING If an <tt class="docutils literal"><span class="pre">out-of-memory</span></tt> error occurs, increase the xTIMEcomposer memory (described above) to be larger than the VCD file.</li>
+<li>When the VCD file has loaded correctly, a list of ports should appear in the <tt class="docutils literal"><span class="pre">Signals</span></tt> window.</li>
+<li>If not already active, open a <tt class="docutils literal"><span class="pre">Waveform</span></tt> window as follows:-</li>
+<li>In the main toolbar, select Window-&gt;Show_View-&gt;Waves</li>
+<li>Now add some signals to the Waves window as follows:-</li>
+<li>In the Signals window, select tile[1]-&gt;ports-&gt;XS1_PORT_1N, and drag this to the left-hand column of the Waveform window</li>
+<li>This may not work first time, but try leaving a few seconds between selecting and dragging</li>
+<li>When successful a set of 12 waveforms should appear in the right column of the Waveform window. These are for Phase_A of the High-Leg</li>
+<li>Repeat the above process for tile[1]-&gt;ports-&gt;XS1_PORT_1K, (Phase_A of the Low-Leg), and tile[1]-&gt;ports-&gt;XS1_PORT_8C, (the ADC trigger)</li>
+<li>To view all the trace click the <tt class="docutils literal"><span class="pre">Zoom</span> <span class="pre">Fit</span></tt> icon (House) at the right of the Waveform window view-bar</li>
+<li>It should be possible to see a train of different pulse widths in traces in PORT_M2_HI_A and PORT_M2_LO_A, and a series of spikes in trace XS1_PORT_8C[Waiting]</li>
+</ol>
+</dd>
+</dl>
+<p>Notice that the pulses in PORT_M2_LO_A are slighlty wider than the pulses in PORT_M2_HI_A. This is because the Low-leg has been extended to prevent the potentially dangerous situation of the High-Leg and Low-leg switching at the same time. The ADC trigger should occur 1/4 of a PWM period before the centre of the pulse.</p>
+</div><h2 class="topic" id="look-at-the-code">Look at the Code</h2>
+<div><blockquote>
+<div><ol class="arabic">
+<li>Examine the application code. In xTIMEcomposer, navigate to the <tt class="docutils literal"><span class="pre">src</span></tt> directory under <tt class="docutils literal"><span class="pre">app_test_pwm</span></tt>  and double click on the <tt class="docutils literal"><span class="pre">main.xc</span></tt> file within it. The file will open in the central editor window.</li>
+<li><dl class="docutils">
+<dt>Review the <tt class="docutils literal"><span class="pre">main.xc</span></tt> and note that main() runs 6 tasks on 6 logical cores in parallel.</dt>
+<dd><ul class="first last">
+<li><tt class="docutils literal"><span class="pre">gen_all_pwm_test_data()</span></tt> Generates test data and pulse-widths on channels c_tst and c_pwm respectively.</li>
+<li><tt class="docutils literal"><span class="pre">foc_pwm_do_triggered()</span></tt> is the PWM Server, receiving pulse-widths on channel c_pwm, and generating raw PWM data on an array of 32-bit buffered output ports(<tt class="docutils literal"><span class="pre">pb32_pwm_hi</span></tt> and <tt class="docutils literal"><span class="pre">pb32_pwm_lo</span></tt>), and the PWM to ADC trigger on channel <tt class="docutils literal"><span class="pre">c_pwm2adc_trig</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">capture_pwm_leg_data()</span></tt> captures the raw PWM data from either the High-Leg or Low-leg ports which has been looped back onto a set of input pins, and transmits this over a channel to the Checker core</li>
+<li><tt class="docutils literal"><span class="pre">capture_pwm_adc_data()</span></tt> captures the raw PWM data from the pwm-to-adc trigger channel which has been looped back onto a set of input pins, and transmits this over a channel to the Checker core</li>
+<li><tt class="docutils literal"><span class="pre">check_pwm_server_data()</span></tt> receives raw PWM data from a number of channels connected to Capture cores, checks it, and displays the results. <tt class="docutils literal"><span class="pre">gen_all_pwm_test_data()</span></tt> and <tt class="docutils literal"><span class="pre">check_all_pwm_server_data()</span></tt> both produce display information in parallel.</li>
+<li><tt class="docutils literal"><span class="pre">config_all_ports()</span></tt> configures the timers on all ports used to capture PWM-data. These ports are all configured to run from the same clock so that their times are all synchronised.</li>
+<li>The other 2 functions in <tt class="docutils literal"><span class="pre">main.xc</span></tt> are <tt class="docutils literal"><span class="pre">init_locks()</span></tt> and <tt class="docutils literal"><span class="pre">free_locks()</span></tt>. These are used to control a MutEx which allows only one core at a time to print to the display.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>Find the file <tt class="docutils literal"><span class="pre">generate_pwm_tests.xc</span></tt>. In here the function <tt class="docutils literal"><span class="pre">do_pwm_test()</span></tt> handles the PWM output data via the PWM Client function <tt class="docutils literal"><span class="pre">foc_pwm_put_parameters()</span></tt>. It communicates with the PWM server function <tt class="docutils literal"><span class="pre">foc_pwm_do_triggered()</span></tt> via channel <tt class="docutils literal"><span class="pre">c_pwm</span></tt>.</li>
+<li>Find the <tt class="docutils literal"><span class="pre">app_global.h</span></tt> header. At the top are the motor definitions. Next down are the PWM definitions.</li>
+<li>Note in <tt class="docutils literal"><span class="pre">app_global.h</span></tt> the define PRINT_TST_PWM used to switch on verbose printing. An example of this can be found in file <tt class="docutils literal"><span class="pre">pwm_results.txt</span></tt>.</li>
+<li>Find the <tt class="docutils literal"><span class="pre">pwm_tests.txt</span></tt> file. In the left hand column are a set of flags to switch On/Off various sets of tests.</li>
+<li>Now that the application has been run with the default settings, you could try switching off all the optional tests, by setting the flags in the left hand column to 0 (zero). Make this change and then re-run the simulation (no need to re-build). The test harness will run a lot quicker. An example of the verbose printout for the minimum set of tests is in file <tt class="docutils literal"><span class="pre">pwm_min_results.txt</span></tt>.</li>
+<li>To further explore the capabilities of the simulator, find the items under <tt class="docutils literal"><span class="pre">XMOS</span> <span class="pre">Examples:Simulator</span></tt> in the xSOFTip browser pane. Drag one of them into the Project Explorer to get started.</li>
+</ol>
+</div></blockquote>
+</div>
+
+             </div>
+             </div>
+
+
+          </div>
+
+          <div>
+             <!--seealsos-->
+          </div>
+    <div class="footer">
+    </div>
+  </body>
+</html>

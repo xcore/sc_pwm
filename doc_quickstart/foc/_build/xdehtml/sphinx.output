@@ -1,0 +1,20 @@
+Running Sphinx v1.0.7
+!!!!!!!
+/tmp/_MEIDO6uvn/docutils/writers/html4css1/html4css1.css
+Running XMOS Documentation setup:xdehtml
+loading pickled environment... not yet created
+building [xdehtml]: all documents
+updating environment: 1 added, 0 changed, 0 removed
+reading sources... [100%] index
+
+looking for now-outdated files... none found
+pickling environment... done
+checking consistency... done
+preparing documents... done
+['index']
+writing output... [100%] index
+
+writing additional files...
+copying static files... done
+dumping object inventory... done
+build succeeded.

@@ -1,11 +1,12 @@
 <?xml version="1.0" ?>
 <xpd>
     <components>
-        <component name = "Pulse Wave Modulation (PWM) Interface Component" type = "component" buildresults_path = "module_pwm_foc/.module_pwm_foc.buildinfo" scope = "Early Development" path = "module_pwm_foc" metainfo_path = "module_pwm_foc/module_pwm_foc.metainfo" local = "false" id = "module_pwm_foc" description = "The PWM module is a xSoftIP component of the FOC Motor control suite for generating a set of PWM Voltages to be applied to the motor">
-            <board>XP-MC-CTRL-L2</board>
-            <board>XA-MC-PWR-DLV</board>
+        <component description = "xSIM testbench for PWM component" type = "demoCode" scope = "Example" path = "app_test_pwm" local = "false" id = "app_test_pwm" name = "Pulse Width Modulation (PWM) Test Harness">
+            <board>None (works on simulator)</board>
+            <componentDependency>module_pwm_foc</componentDependency>
+            <componentDependency>module_locks</componentDependency>
             <keyword>PWM</keyword>
-            <keyword>"Pulse Wave Modulation"</keyword>
+            <keyword>"Pulse Width Modulation"</keyword>
             <keyword>FOC</keyword>
             <keyword>Motor Control</keyword>
         </component>
@@ -16,6 +17,10 @@
             <keyword>LED</keyword>
         </component>
     </components>
+    <dependency repo = "sc_util">
+        <githash>2e01d7324df84ad199833e012b5942e43fb0ccbb</githash>
+        <uri>https://github.com/xcore/sc_util</uri>
+    </dependency>
     <description>Various PWM driver components for single bit and multi bit ports</description>
     <location>git@github.com:xcore/sc_pwm.git</location>
     <name>sc_pwm</name>

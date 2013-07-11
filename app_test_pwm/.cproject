@@ -161,212 +161,122 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                     <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
                                     <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
                                     <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <inputType id = "com.xmos.cdt.xc.compiler.input.60975383" name="XC Sources" superClass="com.xmos.cdt.xc.compiler.input" />
                                 <option id = "gnu.c.compiler.option.include.paths.37994533" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
                             <tool id = "com.xmos.cdt.xc.compiler.base.7259856" name="com.xmos.cdt.xc.compiler.base" superClass="com.xmos.cdt.xc.compiler.base">
                                 <option id = "gnu.c.compiler.option.include.paths.82231923" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <option id = "com.xmos.c.compiler.option.include.paths.72335840" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
                             <tool id = "com.xmos.cdt.c.compiler.base.69642449" name="com.xmos.cdt.c.compiler.base" superClass="com.xmos.cdt.c.compiler.base">
                                 <option id = "gnu.c.compiler.option.include.paths.40407611" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <option id = "com.xmos.c.compiler.option.include.paths.6343695" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
                             <tool id = "com.xmos.cdt.cpp.compiler.base.5511623" name="com.xmos.cdt.cpp.compiler.base" superClass="com.xmos.cdt.cpp.compiler.base">
                                 <option id = "gnu.c.compiler.option.include.paths.53814904" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <option id = "com.xmos.c.compiler.option.include.paths.27145795" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
                             <tool id = "com.xmos.cdt.core.assembler.base.45285530" name="com.xmos.cdt.core.assembler.base" superClass="com.xmos.cdt.core.assembler.base">
                                 <option id = "gnu.c.compiler.option.include.paths.92747856" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <option id = "com.xmos.c.compiler.option.include.paths.61124192" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
@@ -625,212 +535,122 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                     <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
                                     <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
                                     <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <inputType id = "com.xmos.cdt.xc.compiler.input.2939530" name="XC Sources" superClass="com.xmos.cdt.xc.compiler.input" />
                                 <option id = "gnu.c.compiler.option.include.paths.82157280" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
                             <tool id = "com.xmos.cdt.xc.compiler.base.46488407" name="com.xmos.cdt.xc.compiler.base" superClass="com.xmos.cdt.xc.compiler.base">
                                 <option id = "gnu.c.compiler.option.include.paths.99105057" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <option id = "com.xmos.c.compiler.option.include.paths.87990521" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
                             <tool id = "com.xmos.cdt.c.compiler.base.21211404" name="com.xmos.cdt.c.compiler.base" superClass="com.xmos.cdt.c.compiler.base">
                                 <option id = "gnu.c.compiler.option.include.paths.50947626" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <option id = "com.xmos.c.compiler.option.include.paths.13295052" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
                             <tool id = "com.xmos.cdt.cpp.compiler.base.52316181" name="com.xmos.cdt.cpp.compiler.base" superClass="com.xmos.cdt.cpp.compiler.base">
                                 <option id = "gnu.c.compiler.option.include.paths.56879670" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <option id = "com.xmos.c.compiler.option.include.paths.18848224" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
                             <tool id = "com.xmos.cdt.core.assembler.base.90270533" name="com.xmos.cdt.core.assembler.base" superClass="com.xmos.cdt.core.assembler.base">
                                 <option id = "gnu.c.compiler.option.include.paths.43277066" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <option id = "com.xmos.c.compiler.option.include.paths.14077608" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
@@ -1089,212 +909,122 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                     <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/gcc&quot;' />
                                     <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1&quot;' />
                                     <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <inputType id = "com.xmos.cdt.xc.compiler.input.94929467" name="XC Sources" superClass="com.xmos.cdt.xc.compiler.input" />
                                 <option id = "gnu.c.compiler.option.include.paths.36178553" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
                             <tool id = "com.xmos.cdt.xc.compiler.base.51188436" name="com.xmos.cdt.xc.compiler.base" superClass="com.xmos.cdt.xc.compiler.base">
                                 <option id = "gnu.c.compiler.option.include.paths.79150252" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <option id = "com.xmos.c.compiler.option.include.paths.7337971" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
                             <tool id = "com.xmos.cdt.c.compiler.base.96249970" name="com.xmos.cdt.c.compiler.base" superClass="com.xmos.cdt.c.compiler.base">
                                 <option id = "gnu.c.compiler.option.include.paths.67971405" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <option id = "com.xmos.c.compiler.option.include.paths.1522231" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
                             <tool id = "com.xmos.cdt.cpp.compiler.base.12663108" name="com.xmos.cdt.cpp.compiler.base" superClass="com.xmos.cdt.cpp.compiler.base">
                                 <option id = "gnu.c.compiler.option.include.paths.84695265" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <option id = "com.xmos.c.compiler.option.include.paths.9644512" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>
                             <tool id = "com.xmos.cdt.core.assembler.base.84033499" name="com.xmos.cdt.core.assembler.base" superClass="com.xmos.cdt.core.assembler.base">
                                 <option id = "gnu.c.compiler.option.include.paths.661344" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                                 <option id = "com.xmos.c.compiler.option.include.paths.84510106" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.settings}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/bin/Release}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/fake_inc}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/app_test_pwm/.build_Release/m_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
 
                                 </option>
                             </tool>

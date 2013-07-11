@@ -163,7 +163,6 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                     <listOptionValue builtIn="false" value='&quot;${XMOS_DOC_PATH}/../target/include/c++/4.2.1/xcore-xmos-elf&quot;' />
                                     <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src/server}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical}&quot;' />
@@ -174,7 +173,6 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                 <option id = "gnu.c.compiler.option.include.paths.20184088" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
                                     <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src/server}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical}&quot;' />
@@ -186,7 +184,6 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                 <option id = "gnu.c.compiler.option.include.paths.57204625" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
                                     <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src/server}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical}&quot;' />
@@ -196,7 +193,6 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                 <option id = "com.xmos.c.compiler.option.include.paths.87975826" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
                                     <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src/server}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical}&quot;' />
@@ -208,7 +204,6 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                 <option id = "gnu.c.compiler.option.include.paths.72170625" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
                                     <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src/server}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical}&quot;' />
@@ -218,7 +213,6 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                 <option id = "com.xmos.c.compiler.option.include.paths.79039041" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
                                     <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src/server}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical}&quot;' />
@@ -230,7 +224,6 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                 <option id = "gnu.c.compiler.option.include.paths.9668007" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
                                     <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src/server}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical}&quot;' />
@@ -240,7 +233,6 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                 <option id = "com.xmos.c.compiler.option.include.paths.52577433" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
                                     <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src/server}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical}&quot;' />
@@ -252,7 +244,6 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                 <option id = "gnu.c.compiler.option.include.paths.46059697" valueType="includePath" superClass="gnu.c.compiler.option.include.paths">
                                     <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src/server}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical}&quot;' />
@@ -262,7 +253,6 @@ targetID="org.eclipse.cdt.build.MakeTargetBuilder">
                                 <option id = "com.xmos.c.compiler.option.include.paths.71902973" valueType="includePath" superClass="com.xmos.c.compiler.option.include.paths">
                                     <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src/server}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common/src}&quot;' />
-<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_common}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_symmetrical}&quot;' />
