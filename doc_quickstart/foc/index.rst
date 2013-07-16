@@ -3,7 +3,7 @@ Pulse Width Modulation (PWM) Simulator Testbench
 
 .. _test_pwm_Quickstart:
 
-This application is an xSIM test harness for the pulse width modulation interface using xTIMEcomposer Studio. It tests the PWM functions in the ``Pulse Width Modulation (PWM) Interface Component`` xSOFTip component and directs test results to STDOUT.
+This application is an xSIM test harness for the pulse width modulation interface using xTIMEcomposer Studio. It tests the PWM functions in the ``Symmetrical Pulse Wave Modulation (PWM) Component for FOC`` xSOFTip component and directs test results to STDOUT.
 
 No hardware is required to run the test harness.
 
@@ -13,42 +13,6 @@ The test application uses a maximum of 6 cores containing the following componen
    #. 2 PWM-Leg capture cores (captures raw PWM data from either the High-Leg or Low-Leg ports via 'loopback')
    #. A PWM-adc capture core (captures raw PWM data from the pwm-to-adc trigger channel via 'loopback')
    #. The test results checker
-
-The test application uses the following channels:-
-   #. c_tst: Transmits test vectors from Generator to Checker core
-   #. c_pwm2adc_trig: Transmits synchronisation trigger pulse from PWM server to ADC server
-   #. c_pwm: Transmits required pulse-width from PWM client to PWM server
-   #. c_adc: Transmitting raw PWM data from the ADC-Capture to the Checker core
-   #. c_hi_leg[]: An array of channels for transmitting raw PWM data from the High-Leg-Capture to the Checker core
-   #. c_lo_leg[]: An array of channels for transmitting raw PWM data from the Low-Leg-Capture to the Checker core
-
-The test application uses the following ports:-
-   #. pb32_pwm_hi[]: An array of buffered output ports for setting the High-Leg PWM voltage
-   #. pb32_pwm_lo[]: An array of buffered output ports for setting the Low-Leg PWM voltage
-   #. p16_adc_sync: A dummy 16-bit input port used for synchronising the PWM to ADC trigger
-   #. pb32_tst_hi[]: An array of buffered input ports for the testing the High-Leg PWM voltage
-   #. pb32_tst_lo[]: An array of buffered input ports for the testing the Low-Leg PWM voltage
-   #. p8_tst_sync: A dummy 8-bit ouput port used for testing the PWM to ADC trigger
-
-The test application uses the following clocks:-
-   #. pwm_clk: Used for timing the PWM output wave-train
-   #. comm_clk: A common clock used to synchronise the timers on all test ports
-
-The output pins driven by the PWM server are looped back to the PWM Capture input pins using the *loopback plugin* functionality included within the xSIM simulator, which allows arbitrary definition of pin level loopbacks.
-
-The generator runs through a set of tests, these are specified formally as a *test vector* and transmitted to the test checker. For each test the generator creates the required pulse-width and sends this to the PWM Client. The PWM Client in turn sends the pulse-width to the PWM Server. The PWM Server converts the pulse-width into a PWM wave-train and drives this onto the output pins. The 3 PWM Capture cores sample their respective input pins every 32-bits, if a new sample is detected this is transmitted to the PWM Checker. The PWM Checker stores the raw PWM data in a buffer until such time when it can be checked. The PWM test checker also reads the specification in the received test vector. The received PWM data is then checked for correctness against the test vector specification.
-
-The following tests are always performed
-   #. A Small width pulse: for slow speeds
-   #. A Large width pulse: for fast speeds
-   #. The 'Dead-Time' gap between adjacent High-Leg and Low-Leg edges
-
-The following tests are optional
-   #. A Narrow width pulse: A 32-bit wide pulse for testing Minimum and Maximum speeds
-   #. An Equal width pulse: for Square Wave
-   #. ADC tests: Measures accurracy of PWM to ADC trigger
-
-The options are selected by editing the flags in the file pwm_tests.txt
 
 Import and Build the Application
 --------------------------------
@@ -134,10 +98,9 @@ Configure And Run The Simulator
 Test Results 
 ------------
 
-After a few seconds, output will start to appear in the console window. A dot is printed every time a PWM client request is made. This gives confidence that the test harness is doing something! The test lasts about 2 minutes. It should complete with the message "ALL TESTS PASSED". If any tests fail, extra output will be generated giving details on the test(s) that failed.
+After a few seconds, output will start to appear in the console window. A dot is printed every time a PWM client request is made. This gives confidence that the test harness is doing something. The test lasts about 2 minutes and should complete with the message "ALL TESTS PASSED". If any tests fail, extra output will be generated giving details on the test(s) that failed.
 
-
-For background on the PWM protocol see the ``Overview`` document for module_pwm_foc
+For background on the PWM component refer to the documentation for ``Symmetrical Pulse Wave Modulation (PWM) Component for FOC`` which can be accessed via the xSOFTip Explorer pane in xTIMEcomposer.
 
 An example of working test output from a working PWM component can be found in a file named ``pwm_results.txt``
 
@@ -145,10 +108,11 @@ An example of working test output from a working PWM component can be found in a
 Using The ``Value Change Dump`` (VCD) File
 ------------------------------------------
 
-The waveforms on the output pins can be inspected by using a VCD file. This requires a lot of memory and considerably slows down the simulator. First ensure enough memory has been requested in the xTIMEcomposer init file. Go to the root directory where the XMOS tools are installed. Then edit file ``xtimecomposer_bin/xtimecomposer.exe.ini`` and ensure the requested memory is at least 4 GBytes (``-Xmx4096m``)
+Having run the testbench once, now re-run it to dump a VCD trace so that the waveform output of the PWM can be visualised. This can require a lot of memory and may slow down the simulator so first ensure enough memory has been requested in the xTIMEcomposer init file. Go to the root directory where the XMOS tools are installed. Then edit file ``xtimecomposer_bin/xtimecomposer.exe.ini`` and ensure the requested memory is at least 4 GBytes (``-Xmx4096m``)
 
-Now launch xTIMEcomposer and switch on VCD tracing as follows ...
-   #. Repeat the actions described above up to but NOT including ...
+Now launch xTIMEcomposer and switch on VCD tracing as follows
+
+   #. Repeat the actions described above but in the Run Configurations dialog perform the additional steps as follows:
    #. Click ``Apply``
    #. Now select the ``Signal Tracing`` tab.
    #. Tick the ``Enable Signal Tracing`` box
@@ -158,12 +122,10 @@ Now launch xTIMEcomposer and switch on VCD tracing as follows ...
    #. Click ``Apply``
    #. Click ``Run``
 
-Test Results 
-------------
+After the simulation has been running for approximately 30 seconds, kill the simulations before testing has finished by clicking on the red square button in the view-bar for the console window. 
 
-You may want to kill the simulations before testing has finished. This can be done by clicking on the red square button in the view-bar for the console window. 
+When the executable has stopped running, view the VCD file as follows
 
-When the executable has stopped running, view the VCD file as follows:-
    #. In the main toolbar select Tools->Waveform_Analyzer->Load_VCD_File
    #. Browse to the application root directory or where the VCD file was created.
    #. Select the VCD file and click the ``OK`` button.
@@ -174,16 +136,20 @@ When the executable has stopped running, view the VCD file as follows:-
    #. In the main toolbar, select Window->Show_View->Waves
    #. Now add some signals to the Waves window as follows:-
    #. In the Signals window, select tile[1]->ports->XS1_PORT_1N, and drag this to the left-hand column of the Waveform window
-   #. This may not work first time, but try leaving a few seconds between selecting and dragging
+   #. If this does not work first time, try leaving a few seconds between selecting and dragging
    #. When successful a set of 12 waveforms should appear in the right column of the Waveform window. These are for Phase_A of the High-Leg
    #. Repeat the above process for tile[1]->ports->XS1_PORT_1K, (Phase_A of the Low-Leg), and tile[1]->ports->XS1_PORT_8C, (the ADC trigger) 
    #. To view all the trace click the ``Zoom Fit`` icon (House) at the right of the Waveform window view-bar
-   #. It should be possible to see a train of different pulse widths in traces in PORT_M2_HI_A and PORT_M2_LO_A, and a series of spikes in trace XS1_PORT_8C[Waiting]
+   #. You should now see a train of different pulse widths in traces in PORT_M2_HI_A and PORT_M2_LO_A, and a series of spikes in trace XS1_PORT_8C[Waiting]
 
 Notice that the pulses in PORT_M2_LO_A are slighlty wider than the pulses in PORT_M2_HI_A. This is because the Low-leg has been extended to prevent the potentially dangerous situation of the High-Leg and Low-leg switching at the same time. The ADC trigger should occur 1/4 of a PWM period before the centre of the pulse.
 
+
 Look at the Code
 ----------------
+
+The steps below are designed to guide an initial understanding of how the testbench is constructed. More detail on the testbench structure can also be found in the section below (``Testbench Structure``).
+
    #. Examine the application code. In xTIMEcomposer, navigate to the ``src`` directory under ``app_test_pwm``  and double click on the ``main.xc`` file within it. The file will open in the central editor window.
    #. Review the ``main.xc`` and note that main() runs 6 tasks on 6 logical cores in parallel.
          * ``gen_all_pwm_test_data()`` Generates test data and pulse-widths on channels c_tst and c_pwm respectively.
@@ -199,3 +165,43 @@ Look at the Code
    #. Find the ``pwm_tests.txt`` file. In the left hand column are a set of flags to switch On/Off various sets of tests.
    #. Now that the application has been run with the default settings, you could try switching off all the optional tests, by setting the flags in the left hand column to 0 (zero). Make this change and then re-run the simulation (no need to re-build). The test harness will run a lot quicker. An example of the verbose printout for the minimum set of tests is in file ``pwm_min_results.txt``.
    #. To further explore the capabilities of the simulator, find the items under ``XMOS Examples:Simulator`` in the xSOFTip browser pane. Drag one of them into the Project Explorer to get started.
+
+Testbench Structure
+-------------------
+
+The test application uses the following channels:-
+   #. c_tst: Transmits test vectors from Generator to Checker core
+   #. c_pwm2adc_trig: Transmits synchronisation trigger pulse from PWM server to ADC server
+   #. c_pwm: Transmits required pulse-width from PWM client to PWM server
+   #. c_adc: Transmitting raw PWM data from the ADC-Capture to the Checker core
+   #. c_hi_leg[]: An array of channels for transmitting raw PWM data from the High-Leg-Capture to the Checker core
+   #. c_lo_leg[]: An array of channels for transmitting raw PWM data from the Low-Leg-Capture to the Checker core
+
+The test application uses the following ports:-
+   #. pb32_pwm_hi[]: An array of buffered output ports for setting the High-Leg PWM voltage
+   #. pb32_pwm_lo[]: An array of buffered output ports for setting the Low-Leg PWM voltage
+   #. p16_adc_sync: A dummy 16-bit input port used for synchronising the PWM to ADC trigger
+   #. pb32_tst_hi[]: An array of buffered input ports for the testing the High-Leg PWM voltage
+   #. pb32_tst_lo[]: An array of buffered input ports for the testing the Low-Leg PWM voltage
+   #. p8_tst_sync: A dummy 8-bit ouput port used for testing the PWM to ADC trigger
+
+The test application uses the following clocks:-
+   #. pwm_clk: Used for timing the PWM output wave-train
+   #. comm_clk: A common clock used to synchronise the timers on all test ports
+
+The output pins driven by the PWM server are looped back to the PWM Capture input pins using the *loopback plugin* functionality included within the xSIM simulator, which allows arbitrary definition of pin level loopbacks.
+
+The generator runs through a set of tests, these are specified formally as a *test vector* and transmitted to the test checker. For each test the generator creates the required pulse-width and sends this to the PWM Client. The PWM Client in turn sends the pulse-width to the PWM Server. The PWM Server converts the pulse-width into a PWM wave-train and drives this onto the output pins. The 3 PWM Capture cores sample their respective input pins every 32-bits, if a new sample is detected this is transmitted to the PWM Checker. The PWM Checker stores the raw PWM data in a buffer until such time when it can be checked. The PWM test checker also reads the specification in the received test vector. The received PWM data is then checked for correctness against the test vector specification.
+
+The following tests are always performed
+   #. A Small width pulse: for slow speeds
+   #. A Large width pulse: for fast speeds
+   #. The 'Dead-Time' gap between adjacent High-Leg and Low-Leg edges
+
+The following tests are optional
+   #. A Narrow width pulse: A 32-bit wide pulse for testing Minimum and Maximum speeds
+   #. An Equal width pulse: for Square Wave
+   #. ADC tests: Measures accurracy of PWM to ADC trigger
+
+The options are selected by editing the flags in the file pwm_tests.txt
+
