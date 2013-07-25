@@ -1,8 +1,9 @@
 # PWM Test Options Set-up File
 # ============================
-# In left column type 1 to select test, 0 to skip.
+# Unless otherwise instructed, in left column type 1 to select test, 0 to skip.
 # NB Text after a hash is a comment
 #
+A # Phase_ID: Select which phase to test [A B C]
 1 # Narrow Width tests
 1 # Equal Width tests
 1 # ADC trigger tests

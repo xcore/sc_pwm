@@ -61,32 +61,6 @@ static void init_width_info( // Initialise PWM Test data for PWM width test vect
 	// Add any new component states here 
 } // init_width_info
 /*****************************************************************************/
-static void init_phase_component( // Initialise PWM Test data for phase test vector component
-	VECT_COMP_TYP &vect_comp_s, // Reference to structure of common data for one test vector component
-	int inp_states, // No. of states for this test vector component
-	const char inp_name[] // input name for current test vector component
-)
-{
-	// Check enough room for all states
-	if (MAX_COMP_STATES < inp_states)
-	{
-		acquire_lock(); // Acquire Display Mutex
-		printstr( "ERROR on line "); printint( __LINE__ ); printstr( " of "); printstr( __FILE__ );
-		printstrln( ": MAX_COMP_STATES < inp_states, Update value for MAX_COMP_STATES in test_pwm_common.h" );
-		release_lock(); // Release Display Mutex
-		assert(0 == 1);
-	} // if (MAX_COMP_STATES < inp_states)
-
-	vect_comp_s.num_states = inp_states; // Assign number of states for current component
-	safestrcpy( vect_comp_s.comp_name.str ,inp_name );
-
-	safestrcpy( vect_comp_s.state_names[PWM_PHASE_A].str ,"Phase_A " );
-	safestrcpy( vect_comp_s.state_names[PWM_PHASE_B].str ,"Phase_B " );
-	safestrcpy( vect_comp_s.state_names[PWM_PHASE_C].str ,"Phase_C " );
-
-	// Add any new component states here 
-} // init_phase_component
-/*****************************************************************************/
 static void init_leg_component( // Initialise PWM Test data for PWM-leg test vector component
 	VECT_COMP_TYP &vect_comp_s, // Reference to structure of common data for one test vector component
 	int inp_states, // No. of states for this test vector component
@@ -235,7 +209,6 @@ void init_common_data( // Initialise PWM Test data
 {
 	init_width_info( comm_pwm_s ,NUM_PWM_WIDTHS	," Width " );
 
-	init_phase_component(			comm_pwm_s.comp_data[PHASE]			,NUM_PWM_PHASES			," Phase " );
 	init_leg_component(				comm_pwm_s.comp_data[LEG]				,(NUM_PWM_LEGS + 1)	,"  Leg  " );
 	init_adc_component(				comm_pwm_s.comp_data[ADC_TRIG]	,NUM_PWM_ADCS				,"  ADC  " );
 	init_deadtime_component(	comm_pwm_s.comp_data[DEAD]			,NUM_PWM_DEADS			," DeadT " );

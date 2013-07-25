@@ -14,6 +14,13 @@
 #ifndef _APP_GLOBAL_H_
 #define _APP_GLOBAL_H_
 
+/** Define this to include XSCOPE support */
+#define USE_XSCOPE 1
+
+#if (USE_XSCOPE)
+#include <xscope.h>
+#endif // (USE_XSCOPE)
+
 /** Define this to switch on error checks */
 #define CHECK_ERRORS 1
 

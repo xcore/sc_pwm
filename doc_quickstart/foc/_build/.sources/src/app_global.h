@@ -14,6 +14,13 @@
 #ifndef _APP_GLOBAL_H_
 #define _APP_GLOBAL_H_
 
+/** Define this to include XSCOPE support */
+#define USE_XSCOPE 1
+
+#if (USE_XSCOPE)
+#include <xscope.h>
+#endif // (USE_XSCOPE)
+
 /** Define this to switch on error checks */
 #define CHECK_ERRORS 1
 
@@ -45,7 +52,7 @@
 #define PWM_SHARED_MEM 0 // 0: Use c_pwm channel for pwm data transfer
 
 /** Define flag for verbose printing */
-#define PRINT_TST_PWM 0
+#define PRINT_TST_PWM 1
 
 /* This is a bit of a cludge, we are using a non-standard configuration
  * where the timer on the tile for inner_loop() is running at 250 MHz,

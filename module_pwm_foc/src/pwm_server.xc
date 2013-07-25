@@ -104,7 +104,7 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 			{ // Shared Memory NOT used, so receive pulse widths from channel and calculate port data on server side.
 		
 				c_pwm :> pwm_comms_s.params; // Receive PWM parameters from Client
-		
+
 				// Convert all PWM pulse widths to pattern/time_offset port data
 				convert_all_pulse_widths( pwm_comms_s ,pwm_ctrl_s.buf_data[pwm_comms_s.buf] ); // Max 178 Cycles
 			} // if (0 == PWM_SHARED_MEM)
@@ -119,6 +119,7 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 		 */
     // Rising edges - these have negative time offsets - 44 Cycles
 		p32_pwm_hi[PWM_PHASE_A] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_A].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_A].hi.pattern;
+
 		p32_pwm_lo[PWM_PHASE_A] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_A].lo.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_A].lo.pattern;
 	
 		p32_pwm_hi[PWM_PHASE_B] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_B].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_B].hi.pattern;
@@ -126,7 +127,7 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 	
 		p32_pwm_hi[PWM_PHASE_C] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_C].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_C].hi.pattern;
 		p32_pwm_lo[PWM_PHASE_C] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_C].lo.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].rise_edg.phase_data[PWM_PHASE_C].lo.pattern;
-	
+
 		if (1 == LOCK_ADC_TO_PWM)
 		{
 			/* This trigger is used to signal to the ADC block the location of the PWM High-pulse mid-point.
@@ -151,7 +152,6 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 	
 		p32_pwm_hi[PWM_PHASE_C] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_C].hi.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_C].hi.pattern;
 		p32_pwm_lo[PWM_PHASE_C] @ (PORT_TIME_TYP)(pwm_serv_s.ref_time + pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_C].lo.time_off) <: pwm_ctrl_s.buf_data[pwm_comms_s.buf].fall_edg.phase_data[PWM_PHASE_C].lo.pattern;
-	
 
 		// Check if new data is ready  - ~8 cycles
 		select

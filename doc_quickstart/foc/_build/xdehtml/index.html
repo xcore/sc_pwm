@@ -57,10 +57,10 @@
 </dd>
 <dt>The test application uses the following channels:-</dt>
 <dd><ol class="first last arabic simple">
-<li>c_tst: Transmits test vectors from Generator to Checker core</li>
+<li>c_gen_chk: Transmits test vectors from Generator to Checker core</li>
 <li>c_pwm2adc_trig: Transmits synchronisation trigger pulse from PWM server to ADC server</li>
-<li>c_pwm: Transmits required pulse-width from PWM client to PWM server</li>
-<li>c_adc: Transmitting raw PWM data from the ADC-Capture to the Checker core</li>
+<li>c_gen_pwm: Transmits required pulse-width from PWM client (in Generator core) to PWM server core</li>
+<li>c_cap_chk: Channel for sending PWM-to-ADC trigger data from Capture to Checker core</li>
 <li>c_hi_leg[]: An array of channels for transmitting raw PWM data from the High-Leg-Capture to the Checker core</li>
 <li>c_lo_leg[]: An array of channels for transmitting raw PWM data from the Low-Leg-Capture to the Checker core</li>
 </ol>
@@ -385,39 +385,68 @@ PWM component.<ol class="arabic">
 <li>If not already active, open a <tt class="docutils literal"><span class="pre">Waveform</span></tt> window as follows:-</li>
 <li>In the main toolbar, select Window-&gt;Show_View-&gt;Waves</li>
 <li>Now add some signals to the Waves window as follows:-</li>
-<li>In the Signals window, select tile[1]-&gt;ports-&gt;XS1_PORT_1N, and drag this to the left-hand column of the Waveform window</li>
-<li>This may not work first time, but try leaving a few seconds between selecting and dragging</li>
+<li>In the Signals window, find tile[1]-&gt;ports-&gt;XS1_PORT_1D, and double-click on it.</li>
 <li>When successful a set of 12 waveforms should appear in the right column of the Waveform window. These are for Phase_A of the High-Leg</li>
-<li>Repeat the above process for tile[1]-&gt;ports-&gt;XS1_PORT_1K, (Phase_A of the Low-Leg), and tile[1]-&gt;ports-&gt;XS1_PORT_8C, (the ADC trigger)</li>
+<li>Repeat the above process for tile[1]-&gt;ports-&gt;XS1_PORT_1A, (Phase_A of the Low-Leg), and tile[1]-&gt;ports-&gt;XS1_PORT_8C, (the PWM-to-ADC trigger)</li>
 <li>To view all the trace click the <tt class="docutils literal"><span class="pre">Zoom</span> <span class="pre">Fit</span></tt> icon (House) at the right of the Waveform window view-bar</li>
-<li>It should be possible to see a train of different pulse widths in traces in PORT_M2_HI_A and PORT_M2_LO_A, and a series of spikes in trace XS1_PORT_8C[Waiting]</li>
+<li>It should be possible to see a train of different pulse widths in traces in PORT_M1_HI_A and PORT_M1_LO_A, and a series of spikes in trace XS1_PORT_8C[Waiting]</li>
 </ol>
 </dd>
 </dl>
-<p>Notice that the pulses in PORT_M2_LO_A are slighlty wider than the pulses in PORT_M2_HI_A. This is because the Low-leg has been extended to prevent the potentially dangerous situation of the High-Leg and Low-leg switching at the same time. The ADC trigger should occur 1/4 of a PWM period before the centre of the pulse.</p>
+<p>Notice that the pulses in PORT_M1_LO_A are slighlty wider than the pulses in PORT_M1_HI_A. This is because the Low-leg has been extended to prevent the potentially dangerous situation of the High-Leg and Low-leg switching at the same time. The PWM-to-ADC trigger should occur 1/4 of a PWM period before the centre of the pulse.</p>
+</div><h2 class="topic" id="using-the-xscope-xmt-file">Using The <tt class="docutils literal"><span class="pre">xSCOPE</span></tt> (xmt) File</h2>
+<div><p>The values of variables in the program can be inspected using the xSCOPE functionality. This allow time-varying changes in variable values to be plotted in a similar manner to using an oscilloscope for real-signals. In order to use xSCOPE the following actions are required. (For this application they have already been done) :-</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>In the <tt class="docutils literal"><span class="pre">Makefile</span></tt> the option <tt class="docutils literal"><span class="pre">-fxscope</span></tt> needs to be added to the <tt class="docutils literal"><span class="pre">XCC</span></tt> flags.</li>
+<li>In the <tt class="docutils literal"><span class="pre">xC</span></tt> files that use xSCOPE functions, the header file &lt;xscope.h&gt; needs to be included.</li>
+<li>In the <tt class="docutils literal"><span class="pre">main.xc</span></tt> file, the xSCOPE initialisation function xscope_user_init() needs to be added.</li>
+<li>In each <tt class="docutils literal"><span class="pre">xC</span></tt> file that uses xSCOPE to plot variables, one or more xSCOPE capture functions are required.</li>
+</ol>
+</div></blockquote>
+<p>The above requirements are discussed in more detail below in the section <tt class="docutils literal"><span class="pre">Look</span> <span class="pre">at</span> <span class="pre">the</span> <span class="pre">Code</span></tt>. Now rebuild the code as follows:-</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>In the <tt class="docutils literal"><span class="pre">Run</span> <span class="pre">Configurations</span></tt> dialogue box (see above), select the xSCOPE tab</li>
+<li>Now select the <tt class="docutils literal"><span class="pre">Offline</span></tt> button, then click <tt class="docutils literal"><span class="pre">Apply</span></tt>, then click <tt class="docutils literal"><span class="pre">Run</span></tt></li>
+</ol>
+</div></blockquote>
+<p>The program will build and start to produce test output in the Console window. When the test has completed, move to the Project explorer window. In the app_test_hall directory there should be a file called <tt class="docutils literal"><span class="pre">xscope.xmt</span></tt>. Double click on this file, and the xSCOPE viewer should launch. On the left-hand side of the viewer, under <tt class="docutils literal"><span class="pre">Captured</span> <span class="pre">Metrics</span></tt>, select the arrow next to <tt class="docutils literal"><span class="pre">n</span></tt>. A sub menu will open with 3 signals listed: <tt class="docutils literal"><span class="pre">PWM_A</span></tt>, <tt class="docutils literal"><span class="pre">PWM_B</span></tt>, and <tt class="docutils literal"><span class="pre">PWM_C</span></tt>. Use the boxes to the left of each signal to switch the traces on and off. The tests take about 2.71ms. The tick marks at the bottom of the window show at what time xSCOPE sampled the signals. The signal is only sampled when the test generator writes a new value to the Output-pins. This is currently approximately every 41.us:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>First, switch off all traces except the <tt class="docutils literal"><span class="pre">PWM_A</span></tt> trace. This shows the pulse width being requested of the PWM Server. It starts off at a value of 32 for a narrow width, moves through 256, 2048, 3840 and ending on 3944 for the maximum width.</li>
+<li>Traces PWM_B and PWM_C will be empty. Due to timing constraints, only one PWM phase can be tested at a time. The other phases can be tested by selecting them in the test options file <tt class="docutils literal"><span class="pre">pwm_tests.txt</span></tt>.</li>
+</ol>
+</div></blockquote>
+<p>Note well, to view all the trace click the <tt class="docutils literal"><span class="pre">Zoom</span> <span class="pre">Fit</span></tt> icon (House) at the right of the Waveform window view-bar. To zoom in/out click the &#8216;plus/minus&#8217; icons to the left of the <tt class="docutils literal"><span class="pre">Zoom</span> <span class="pre">Fit</span></tt> icon</p>
+<p>To learn more about xSCOPE look at the <tt class="docutils literal"><span class="pre">How</span> <span class="pre">To</span></tt> by selecting <tt class="docutils literal"><span class="pre">Window</span> <span class="pre">--&gt;</span> <span class="pre">Show_View</span> <span class="pre">--&gt;</span> <span class="pre">How_To_Browser</span></tt>. Then in the search box type <tt class="docutils literal"><span class="pre">xscope</span></tt>. This should find the section titled <tt class="docutils literal"><span class="pre">XMOS</span> <span class="pre">Examples:</span> <span class="pre">Instrumentation</span> <span class="pre">and</span> <span class="pre">xSCOPE</span></tt>. In the sub-section <tt class="docutils literal"><span class="pre">Event</span> <span class="pre">Examples</span></tt> you will find more information on capturing events. In the sub-section <tt class="docutils literal"><span class="pre">IO</span> <span class="pre">Examples</span></tt> you will find more information on re-directing I/O using xSCOPE.</p>
 </div><h2 class="topic" id="look-at-the-code">Look at the Code</h2>
 <div><blockquote>
 <div><ol class="arabic">
 <li>Examine the application code. In xTIMEcomposer, navigate to the <tt class="docutils literal"><span class="pre">src</span></tt> directory under <tt class="docutils literal"><span class="pre">app_test_pwm</span></tt>  and double click on the <tt class="docutils literal"><span class="pre">main.xc</span></tt> file within it. The file will open in the central editor window.</li>
-<li><dl class="docutils">
-<dt>Review the <tt class="docutils literal"><span class="pre">main.xc</span></tt> and note that main() runs 6 tasks on 6 logical cores in parallel.</dt>
-<dd><ul class="first last">
-<li><tt class="docutils literal"><span class="pre">gen_all_pwm_test_data()</span></tt> Generates test data and pulse-widths on channels c_tst and c_pwm respectively.</li>
-<li><tt class="docutils literal"><span class="pre">foc_pwm_do_triggered()</span></tt> is the PWM Server, receiving pulse-widths on channel c_pwm, and generating raw PWM data on an array of 32-bit buffered output ports(<tt class="docutils literal"><span class="pre">pb32_pwm_hi</span></tt> and <tt class="docutils literal"><span class="pre">pb32_pwm_lo</span></tt>), and the PWM to ADC trigger on channel <tt class="docutils literal"><span class="pre">c_pwm2adc_trig</span></tt></li>
+<li>Review the <tt class="docutils literal"><span class="pre">main.xc</span></tt> and note that main() runs 6 tasks on 6 logical cores in parallel.<blockquote>
+<div><ul>
+<li><tt class="docutils literal"><span class="pre">gen_all_pwm_test_data()</span></tt> Generates test data and pulse-widths on channels c_gen_chk and c_gen_pwm respectively.</li>
+<li><tt class="docutils literal"><span class="pre">foc_pwm_do_triggered()</span></tt> is the PWM Server, receiving pulse-widths on channel c_gen_pwm, and generating raw PWM data on an array of 32-bit buffered output ports(<tt class="docutils literal"><span class="pre">pb32_pwm_hi</span></tt> and <tt class="docutils literal"><span class="pre">pb32_pwm_lo</span></tt>), and the PWM-to-ADC trigger on channel <tt class="docutils literal"><span class="pre">c_pwm2adc_trig</span></tt></li>
 <li><tt class="docutils literal"><span class="pre">capture_pwm_leg_data()</span></tt> captures the raw PWM data from either the High-Leg or Low-leg ports which has been looped back onto a set of input pins, and transmits this over a channel to the Checker core</li>
-<li><tt class="docutils literal"><span class="pre">capture_pwm_adc_data()</span></tt> captures the raw PWM data from the pwm-to-adc trigger channel which has been looped back onto a set of input pins, and transmits this over a channel to the Checker core</li>
+<li><tt class="docutils literal"><span class="pre">capture_pwm_trigger_data()</span></tt> captures the raw PWM data from the PWM-to-ADC trigger channel which has been looped back onto a set of input pins, and transmits this over channel c_cap_chk to the Checker core.</li>
 <li><tt class="docutils literal"><span class="pre">check_pwm_server_data()</span></tt> receives raw PWM data from a number of channels connected to Capture cores, checks it, and displays the results. <tt class="docutils literal"><span class="pre">gen_all_pwm_test_data()</span></tt> and <tt class="docutils literal"><span class="pre">check_all_pwm_server_data()</span></tt> both produce display information in parallel.</li>
 <li><tt class="docutils literal"><span class="pre">config_all_ports()</span></tt> configures the timers on all ports used to capture PWM-data. These ports are all configured to run from the same clock so that their times are all synchronised.</li>
 <li>The other 2 functions in <tt class="docutils literal"><span class="pre">main.xc</span></tt> are <tt class="docutils literal"><span class="pre">init_locks()</span></tt> and <tt class="docutils literal"><span class="pre">free_locks()</span></tt>. These are used to control a MutEx which allows only one core at a time to print to the display.</li>
+<li>As well as <tt class="docutils literal"><span class="pre">main()</span></tt>, there is a function called <tt class="docutils literal"><span class="pre">xscope_user_init()</span></tt>, this is called before main to initialise xSCOPE capability. In here are registered the 3 PWM signals that were described above, and seen in the xSCOPE viewer.</li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </li>
-<li>Find the file <tt class="docutils literal"><span class="pre">generate_pwm_tests.xc</span></tt>. In here the function <tt class="docutils literal"><span class="pre">do_pwm_test()</span></tt> handles the PWM output data via the PWM Client function <tt class="docutils literal"><span class="pre">foc_pwm_put_parameters()</span></tt>. It communicates with the PWM server function <tt class="docutils literal"><span class="pre">foc_pwm_do_triggered()</span></tt> via channel <tt class="docutils literal"><span class="pre">c_pwm</span></tt>.</li>
-<li>Find the <tt class="docutils literal"><span class="pre">app_global.h</span></tt> header. At the top are the motor definitions. Next down are the PWM definitions.</li>
+<li>Find the <tt class="docutils literal"><span class="pre">app_global.h</span></tt> header. At the top are the xSCOPE definitions, followed by the motor definitions which are specific to the type of motor being used and are currently set up for the LDO motors supplied with the development kit. Next down are the PWM definitions.</li>
 <li>Note in <tt class="docutils literal"><span class="pre">app_global.h</span></tt> the define PRINT_TST_PWM used to switch on verbose printing. An example of this can be found in file <tt class="docutils literal"><span class="pre">pwm_results.txt</span></tt>.</li>
+<li>Find the file <tt class="docutils literal"><span class="pre">generate_pwm_tests.xc</span></tt>. In here the function <tt class="docutils literal"><span class="pre">do_pwm_test()</span></tt> handles the PWM output data via the PWM Client function <tt class="docutils literal"><span class="pre">foc_pwm_put_parameters()</span></tt>. It communicates with the PWM server function <tt class="docutils literal"><span class="pre">foc_pwm_do_triggered()</span></tt> via channel <tt class="docutils literal"><span class="pre">c_gen_pwm</span></tt>. Before <tt class="docutils literal"><span class="pre">foc_pwm_put_parameters()</span></tt>, are the xSCOPE instructions used to capture the values seen in the xSCOPE viewer.</li>
 <li>Find the <tt class="docutils literal"><span class="pre">pwm_tests.txt</span></tt> file. In the left hand column are a set of flags to switch On/Off various sets of tests.</li>
-<li>Now that the application has been run with the default settings, you could try switching off all the optional tests, by setting the flags in the left hand column to 0 (zero). Make this change and then re-run the simulation (no need to re-build). The test harness will run a lot quicker. An example of the verbose printout for the minimum set of tests is in file <tt class="docutils literal"><span class="pre">pwm_min_results.txt</span></tt>.</li>
+<li>Now that the application has been run with the default settings, you could try the following alterations.<ul>
+<li>Test PWM Phase_B, by altering &#8216;A&#8217; to &#8216;B&#8217; in the left hand column.</li>
+<li>Switch off all the optional tests, by setting the flags in the left hand column to 0 (zero).</li>
+</ul>
+</li>
+<li>Make this change and then re-run the simulation (no need to re-build). The test harness will run a lot quicker. An example of the verbose printout for the minimum set of tests is in file <tt class="docutils literal"><span class="pre">pwm_min_results.txt</span></tt>.</li>
 <li>To further explore the capabilities of the simulator, find the items under <tt class="docutils literal"><span class="pre">XMOS</span> <span class="pre">Examples:Simulator</span></tt> in the xSOFTip browser pane. Drag one of them into the Project Explorer to get started.</li>
 </ol>
 </div></blockquote>

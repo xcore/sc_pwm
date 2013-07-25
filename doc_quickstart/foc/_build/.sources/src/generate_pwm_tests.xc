@@ -68,6 +68,21 @@ static void parse_control_file( // Parse PWM control file and set up test option
 				tst_line = 1; // Flag test-option found
     	break; // case '1' :
 
+    	case 'A' : // Opt for this test
+				tst_data_s.common.options.flags[test_cnt] = PWM_PHASE_A;
+				tst_line = 1; // Flag test-option found
+    	break; // case 'A' :
+
+    	case 'B' : // Opt for this test
+				tst_data_s.common.options.flags[test_cnt] = PWM_PHASE_B;
+				tst_line = 1; // Flag test-option found
+    	break; // case 'B' :
+
+    	case 'C' : // Opt for this test
+				tst_data_s.common.options.flags[test_cnt] = PWM_PHASE_C;
+				tst_line = 1; // Flag test-option found
+    	break; // case 'C' :
+
     	case '#' : // Start of comment
 				new_line = 1; // Set flag for new-line
     	break; // case '1' :
@@ -168,6 +183,8 @@ static void init_test_data( // Initialise PWM Test data
 	parse_control_file( tst_data_s ); 
 
 	c_tst <: tst_data_s.common.options; // Send test options to checker core
+
+  tst_data_s.phase_id = tst_data_s.common.options.flags[TST_PHASE]; // Store phase to be tested
 } // init_test_data
 /*****************************************************************************/
 static void assign_test_vector_width( // Assign Width-state of test vector
@@ -179,14 +196,6 @@ static void assign_test_vector_width( // Assign Width-state of test vector
 
 	tst_data_s.width = tst_data_s.common.pwm_wids[wid_state]; // Set pulse width for current width-state
 } // assign_test_vector_width
-/*****************************************************************************/
-static void assign_test_vector_phase( // Assign Phase-state of test vector
-	GENERATE_PWM_TYP &tst_data_s, // Reference to structure of PWM test data
-	PWM_PHASE_ENUM inp_phase // Input phase-state
-)
-{
-	tst_data_s.curr_vect.comp_state[PHASE] = inp_phase; // Update phase-state of test vector
-} // assign_test_vector_phase
 /*****************************************************************************/
 static void assign_test_vector_leg( // Assign PWM-leg of test vector
 	GENERATE_PWM_TYP &tst_data_s, // Reference to structure of PWM test data
@@ -223,12 +232,19 @@ static void do_pwm_test( // Performs one PWM test
 	tst_data_s.time += tst_data_s.period; // Update time for next PWM pulse generation
 
 	// Load test data into PWM phase under test
-	tst_data_s.pwm_comms.params.widths[tst_data_s.curr_vect.comp_state[PHASE]] = tst_data_s.width;
+	tst_data_s.pwm_comms.params.widths[tst_data_s.phase_id] = tst_data_s.width;
 
 	if (0 == tst_data_s.print)
 	{
 		printchar('.'); // Progress indicator
 	} // if (0 == tst_data_s.print)
+
+#if (USE_XSCOPE)
+	// NB These signals have to be registered in the file main.xc for the target application
+	xscope_int( 0 ,tst_data_s.pwm_comms.params.widths[PWM_PHASE_A] );
+	xscope_int( 1 ,tst_data_s.pwm_comms.params.widths[PWM_PHASE_B] );
+	xscope_int( 2 ,tst_data_s.pwm_comms.params.widths[PWM_PHASE_C] );
+#endif // (USE_XSCOPE)
 
 	chronometer when timerafter(tst_data_s.time) :> void;	// Wait till test period elapsed
 
@@ -327,7 +343,8 @@ static void gen_motor_pwm_test_data( // Generate PWM Test data for one motor
 	if (tst_data_s.print)
 	{
 		acquire_lock(); // Acquire Display Mutex
-		printstrln( " Start Test Generation");
+		printstr( " Start Test Generation For Phase_");
+		printcharln( ('A' + tst_data_s.phase_id) );
 		release_lock(); // Release Display Mutex
 	} // if (tst_data_s.print)
 
@@ -343,7 +360,6 @@ static void gen_motor_pwm_test_data( // Generate PWM Test data for one motor
 	} // if (tst_data_s.common.options.flags[TST_ADC])
 
 	assign_test_vector_deadtime( tst_data_s ,DEAD_ON ); // Set test Dead-time
-	assign_test_vector_phase( tst_data_s ,TEST_PHASE ); // Set PWM-phase to test
 	assign_test_vector_leg( tst_data_s ,NUM_PWM_LEGS ); // Set test both PWM-legs
 
 	// Do pulse-width tests ...

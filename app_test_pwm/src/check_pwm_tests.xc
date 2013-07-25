@@ -78,20 +78,6 @@ static void init_line_data( // Initialise wave data for one PWM balanced-line (p
 	} // for leg_cnt
 } // init_line_data
 /*****************************************************************************/
-static void init_motor_data( // Initialise wave data for one motor
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
-	PWM_MOTOR_TYP &motor_s // input wave-data structure to be initialised
-)
-{
-	PWM_PHASE_ENUM phase_cnt; // phase counter
-
-
-	for (phase_cnt=0; phase_cnt<NUM_TST_PHASES; phase_cnt++)
-	{ 
-		init_line_data( chk_data_s ,motor_s.lines[phase_cnt] );
-	} // for phase_cnt
-} // init_motor_data
-/*****************************************************************************/
 static void print_pwm_pulse( // Print PWM Pulse data
 	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
 	unsigned pulse_width, // Width of input pulse
@@ -372,11 +358,11 @@ static void measure_pwm_width( // Calculate PWM-width from captured PWM wave dat
 /*****************************************************************************/
 static void initialise_pwm_width_test( // Initialise data for new Pulse-width test
 	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
-	PWM_MOTOR_TYP &motor_s // Reference to all wave data for one motor
+	PWM_LINE_TYP &line_s // Reference to all wave data for one motor
 )
 {
 	// Clear accumulated data
-	init_motor_data( chk_data_s ,motor_s ); // Initialise all wave data for one motor
+	init_line_data( chk_data_s ,line_s ); // Initialise all wave data for one balanced line (phase)
 
 	// Evaluate error bounds for Pulse-width checks (~2%)
 	chk_data_s.bound = 1 + (chk_data_s.common.pwm_wids[chk_data_s.curr_vect.comp_state[WIDTH]] >> 6); 
@@ -423,16 +409,10 @@ static void finalise_pwm_phase( // Terminate pulse-width test for one phase
 /*****************************************************************************/
 static void finalise_pwm_width_test( // Terminate pulse-width test for all phases under test
 	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
-	PWM_MOTOR_TYP &motor_s // Reference to all wave data for one motor
+	PWM_LINE_TYP &line_s // Reference to all wave data for one motor
 )
 {
-	PWM_PHASE_ENUM phase_cnt; // phase counter
-
-
-	for (phase_cnt=0; phase_cnt<NUM_TST_PHASES; phase_cnt++)
-	{ 
-		finalise_pwm_phase( chk_data_s ,motor_s.lines[phase_cnt] );
-	} // for phase_cnt
+	finalise_pwm_phase( chk_data_s ,line_s );
 } // finalise_pwm_width_test 
 /*****************************************************************************/
 static int pwm_data_compare( // Check if 2 sets of PWM data are different
@@ -535,16 +515,16 @@ static void test_pwm_phase( // test new PWM data against PWM data for phase unde
 /*****************************************************************************/
 static void test_all_pwm( // test new PWM data against all previous PWM data
 	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
-	PWM_MOTOR_TYP &motor_s // Reference to a structure containing wave data for one PWM-leg
+	PWM_LINE_TYP &line_s // Reference to a structure containing wave data for one PWM-leg
 )
 {
 	// test new PWM data against PWM data for phase under test
-	test_pwm_phase( chk_data_s ,motor_s.lines[TEST_PHASE] );
+	test_pwm_phase( chk_data_s ,line_s );
 } // test_all_pwm
 /*****************************************************************************/
 static void process_new_test_vector( // Process new test vector
 	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
-	PWM_MOTOR_TYP &motor_s // Reference to all wave data for one motor
+	PWM_LINE_TYP &line_s // Reference to all wave data for one motor
 )
 {
 	int change = 0; // Clear flag indicating change in test vector detected
@@ -553,9 +533,9 @@ static void process_new_test_vector( // Process new test vector
 	// Check for change in Pulse-width
 	if (chk_data_s.curr_vect.comp_state[WIDTH] != chk_data_s.prev_vect.comp_state[WIDTH])
 	{
-		finalise_pwm_width_test( chk_data_s ,motor_s );
+		finalise_pwm_width_test( chk_data_s ,line_s );
 
-		initialise_pwm_width_test( chk_data_s ,motor_s );
+		initialise_pwm_width_test( chk_data_s ,line_s );
 
 		change = 1; // Set flag indicating change in test vector detected
 	} // if ((chk_data_s.curr_vect.comp_state[WIDTH] ...
@@ -565,12 +545,6 @@ static void process_new_test_vector( // Process new test vector
 	{
 		change = 1; // Set flag indicating change in test vector detected
 	} // if ((chk_data_s.curr_vect.comp_state[ADC_TRIG] ...
-
-	// Check for change in PWM-phase
-	if (chk_data_s.curr_vect.comp_state[PHASE] != chk_data_s.prev_vect.comp_state[PHASE])
-	{
-		change = 1; // Set flag indicating change in test vector detected
-	} // if ((chk_data_s.curr_vect.comp_state[PHASE] ...
 
 	// Check if test vector changed
 	if (change)
@@ -598,7 +572,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
  */
 {
 	CHECK_PWM_TYP chk_data_s; // Structure containing test check data
-	PWM_MOTOR_TYP motor_s; // All PWM data for one motor
+	PWM_LINE_TYP line_s; // All PWM data for one motor
 	PWM_CAPTURE_TYP hi_bufs[NUM_INP_BUFS]; // Set of buffers for capturing High-leg PWM data
 	PWM_CAPTURE_TYP lo_bufs[NUM_INP_BUFS]; // Set of buffers for capturing Low-leg PWM data
 	PWM_CAPTURE_TYP adc_bufs[NUM_INP_BUFS]; // Set of buffers for capturing ADC-trigger PWM data
@@ -624,6 +598,11 @@ void check_pwm_server_data( // Checks PWM results for all motors
 
 
 	c_tst :> chk_data_s.common.options; // Get test options from generator core
+	chk_data_s.phase_id = chk_data_s.common.options.flags[TST_PHASE];
+
+	// Send Phase option to capture cores
+	c_hi_leg[0] <: chk_data_s.phase_id;
+	c_lo_leg[0] <: chk_data_s.phase_id;
 
 	c_tst :> chk_data_s.curr_vect; // Initialise test-vector structure with 1st test
 
@@ -632,10 +611,11 @@ void check_pwm_server_data( // Checks PWM results for all motors
 	acquire_lock(); // Acquire Display Mutex
 	printcharln(' ');
 	printstr( chk_data_s.padstr1 );
-	printstrln("Start Checks"); 
+	printstr("Start Checks For Phase_"); 
+	printcharln( ('A' + chk_data_s.phase_id) );
 	release_lock(); // Release Display Mutex
 
-	init_motor_data( chk_data_s ,motor_s ); // Initialise all wave data for one motor
+	init_line_data( chk_data_s ,line_s ); // Initialise all wave data for one balanced line (phase)
 
 	// special case: initialisation for first test
   chk_data_s.prev_vect = chk_data_s.curr_vect;
@@ -645,7 +625,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 		print_test_vector( chk_data_s.common ,chk_data_s.curr_vect ,chk_data_s.padstr1 ); // Print new test vector details
 	} // if (chk_data_s.print)
 
-	initialise_pwm_width_test( chk_data_s ,motor_s ); 
+	initialise_pwm_width_test( chk_data_s ,line_s ); 
 
 	while (do_loop) {
 		select {
@@ -681,7 +661,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 			// Service any change on test channel
 			case c_tst :> chk_data_s.curr_vect :
 				// New test vector detected.
-				process_new_test_vector( chk_data_s ,motor_s ); // Process new test vector
+				process_new_test_vector( chk_data_s ,line_s ); // Process new test vector
 
 				// Check if testing has ended for current motor
 				if (QUIT == chk_data_s.curr_vect.comp_state[CNTRL])
@@ -701,10 +681,10 @@ void check_pwm_server_data( // Checks PWM results for all motors
 						if (lo_inp_cnt > lo_read_cnt)
 						{
 							assert(lo_inp_cnt <= (lo_read_cnt + NUM_INP_BUFS)); // Check we have enough input buffers
-							motor_s.lines[TEST_PHASE].waves[PWM_LO_LEG].curr_data.port_data = lo_bufs[lo_read_off].port_data; // Update High-Leg PWM data
+							line_s.waves[PWM_LO_LEG].curr_data.port_data = lo_bufs[lo_read_off].port_data; // Update High-Leg PWM data
 
 							chk_data_s.curr_leg = PWM_LO_LEG; // Set PWM-leg under test
-							test_all_pwm( chk_data_s ,motor_s ); // test new PWM data
+							test_all_pwm( chk_data_s ,line_s ); // test new PWM data
 
 							// Update circular buffer offset
 							lo_read_cnt++; // Increment write counter
@@ -717,10 +697,10 @@ void check_pwm_server_data( // Checks PWM results for all motors
 						if (hi_inp_cnt > hi_read_cnt)
 						{
 							assert(hi_inp_cnt <= (hi_read_cnt + NUM_INP_BUFS)); // Check we have enough input buffers
-							motor_s.lines[TEST_PHASE].waves[PWM_HI_LEG].curr_data.port_data = hi_bufs[hi_read_off].port_data; // Update High-Leg PWM data
+							line_s.waves[PWM_HI_LEG].curr_data.port_data = hi_bufs[hi_read_off].port_data; // Update High-Leg PWM data
 
 							chk_data_s.curr_leg = PWM_HI_LEG; // Set PWM-leg under test
-							test_all_pwm( chk_data_s ,motor_s ); // test new PWM data
+							test_all_pwm( chk_data_s ,line_s ); // test new PWM data
 
 							// Update circular buffer offset
 							hi_read_cnt++; // Increment write counter
@@ -752,7 +732,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 	}	// while (do_loop)
 
 	// special case: finalisation for last pulse-width test
-	finalise_pwm_width_test( chk_data_s ,motor_s ); 
+	finalise_pwm_width_test( chk_data_s ,line_s ); 
 
 	// Update error statistics for current motor
 	for (comp_cnt=1; comp_cnt<NUM_VECT_COMPS; comp_cnt++)

@@ -49,6 +49,7 @@ typedef struct GENERATE_PWM_TAG // Structure containing PWM test generation data
 	TEST_VECT_TYP curr_vect; // Structure of containing current QEI test vector (QEI conditions to be tested)
 	TEST_VECT_TYP prev_vect; // Structure of containing previous QEI test vector (QEI conditions to be tested)
 	PWM_COMMS_TYP pwm_comms;	// Structure containing current PWM communication data (sent to Server)
+	PWM_PHASE_ENUM phase_id; // Identifier of phase being tested
 	int scale; // velocity scaling factor (used for acceleration and deceleration)
 	unsigned time; // timer value
 	unsigned period; // period (in ticks) between tests

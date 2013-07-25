@@ -49,13 +49,13 @@ void config_all_ports( // Configure all ports to use the same clock
 /*****************************************************************************/
 /** Captures PWM data from PWM-to-ADC trigger channel
  * \param p8_tst_sync, // NB Dummy output port
- * \param c_adc_trig // ADC trigger channel 
- * \param c_adc_chk // Channel for transmitting PWM ADC data to test checker
+ * \param c_trigger // PWM-to-ADC trigger channel 
+ * \param c_chk // Channel for transmitting trigger data to test checker
  */
-void capture_pwm_adc_data( // Captures PWM adc-trigger data
+void capture_pwm_trigger_data( // Captures PWM to ADC trigger data
 	out port p8_tst_sync, // NB Dummy output port
-	chanend c_adc_trig, // ADC trigger channel from PWM server 
-	streaming chanend c_adc_chk // Channel for transmitting PWM ADC data to test checker
+	chanend c_trigger, // PWM-to-ADC trigger channel from PWM server 
+	streaming chanend c_chk // Channel for transmitting trigger data to test checker
 );
 /*****************************************************************************/
 /** Captures PWM data from input pins for one PWM-leg

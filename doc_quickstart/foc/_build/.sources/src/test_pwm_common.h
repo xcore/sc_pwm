@@ -27,11 +27,6 @@
 /** Define string size */
 #define STR_LEN 256
 
-/** Define PWM-Phase under test */
-#define TEST_PHASE PWM_PHASE_A
-
-#define NUM_TST_PHASES 1 // NB Currently only one phase is tested
-
 /** Define samll PWM width resolution */
 #define SMALL_RES_BITS ((PORT_RES_BITS + PWM_RES_BITS - 1) >> 1) // NB Geometric mean of MINI and EQUAL widths
 
@@ -56,10 +51,11 @@
 /** Enumeration of PWM Test Options */
 typedef enum PWM_TEST_ETAG
 {
-  TST_NARROW = 0,	// Test Narrow PWM Widths
-  TST_EQUAL,	// Test Equal PWM Widths
+  TST_PHASE = 0,	// Select which PWM Phase to test
+  TST_NARROW,			// Test Narrow PWM Widths
+  TST_EQUAL,			// Test Equal PWM Widths
   TST_ADC,				// Test ADC Trigger
-  NUM_TEST_OPTS	// Handy Value!-)
+  NUM_TEST_OPTS		// Handy Value!-)
 } PWM_TEST_ENUM;
 
 /** Enumeration of PWM Test Vector Components */
@@ -67,7 +63,6 @@ typedef enum VECT_COMP_ETAG
 {
   CNTRL = 0,	// Special Case: Control/Comunications state
   WIDTH,			// PWM Width-state
-  PHASE,			// PWM-Phase
 	LEG,				// PWM-Leg
   ADC_TRIG,		// ADC Trigger
 	DEAD,				// Dead-Time

@@ -15,10 +15,10 @@ The test application uses a maximum of 6 cores containing the following componen
    #. The test results checker
 
 The test application uses the following channels:-
-   #. c_tst: Transmits test vectors from Generator to Checker core
+   #. c_gen_chk: Transmits test vectors from Generator to Checker core
    #. c_pwm2adc_trig: Transmits synchronisation trigger pulse from PWM server to ADC server
-   #. c_pwm: Transmits required pulse-width from PWM client to PWM server
-   #. c_adc: Transmitting raw PWM data from the ADC-Capture to the Checker core
+   #. c_gen_pwm: Transmits required pulse-width from PWM client (in Generator core) to PWM server core
+   #. c_cap_chk: Channel for sending PWM-to-ADC trigger data from Capture to Checker core
    #. c_hi_leg[]: An array of channels for transmitting raw PWM data from the High-Leg-Capture to the Checker core
    #. c_lo_leg[]: An array of channels for transmitting raw PWM data from the Low-Leg-Capture to the Checker core
 
@@ -173,29 +173,61 @@ When the executable has stopped running, view the VCD file as follows:-
    #. If not already active, open a ``Waveform`` window as follows:-
    #. In the main toolbar, select Window->Show_View->Waves
    #. Now add some signals to the Waves window as follows:-
-   #. In the Signals window, select tile[1]->ports->XS1_PORT_1N, and drag this to the left-hand column of the Waveform window
-   #. This may not work first time, but try leaving a few seconds between selecting and dragging
+   #. In the Signals window, find tile[1]->ports->XS1_PORT_1D, and double-click on it.
    #. When successful a set of 12 waveforms should appear in the right column of the Waveform window. These are for Phase_A of the High-Leg
-   #. Repeat the above process for tile[1]->ports->XS1_PORT_1K, (Phase_A of the Low-Leg), and tile[1]->ports->XS1_PORT_8C, (the ADC trigger) 
+   #. Repeat the above process for tile[1]->ports->XS1_PORT_1A, (Phase_A of the Low-Leg), and tile[1]->ports->XS1_PORT_8C, (the PWM-to-ADC trigger) 
    #. To view all the trace click the ``Zoom Fit`` icon (House) at the right of the Waveform window view-bar
-   #. It should be possible to see a train of different pulse widths in traces in PORT_M2_HI_A and PORT_M2_LO_A, and a series of spikes in trace XS1_PORT_8C[Waiting]
+   #. It should be possible to see a train of different pulse widths in traces in PORT_M1_HI_A and PORT_M1_LO_A, and a series of spikes in trace XS1_PORT_8C[Waiting]
 
-Notice that the pulses in PORT_M2_LO_A are slighlty wider than the pulses in PORT_M2_HI_A. This is because the Low-leg has been extended to prevent the potentially dangerous situation of the High-Leg and Low-leg switching at the same time. The ADC trigger should occur 1/4 of a PWM period before the centre of the pulse.
+Notice that the pulses in PORT_M1_LO_A are slighlty wider than the pulses in PORT_M1_HI_A. This is because the Low-leg has been extended to prevent the potentially dangerous situation of the High-Leg and Low-leg switching at the same time. The PWM-to-ADC trigger should occur 1/4 of a PWM period before the centre of the pulse.
+
+Using The ``xSCOPE`` (xmt) File
+-------------------------------
+
+The values of variables in the program can be inspected using the xSCOPE functionality. This allow time-varying changes in variable values to be plotted in a similar manner to using an oscilloscope for real-signals. In order to use xSCOPE the following actions are required. (For this application they have already been done) :-
+
+   #. In the ``Makefile`` the option ``-fxscope`` needs to be added to the ``XCC`` flags.
+   #. In the ``xC`` files that use xSCOPE functions, the header file <xscope.h> needs to be included.
+   #. In the ``main.xc`` file, the xSCOPE initialisation function xscope_user_init() needs to be added.
+   #. In each ``xC`` file that uses xSCOPE to plot variables, one or more xSCOPE capture functions are required.
+
+The above requirements are discussed in more detail below in the section ``Look at the Code``. Now rebuild the code as follows:-
+
+   #. In the ``Run Configurations`` dialogue box (see above), select the xSCOPE tab
+   #. Now select the ``Offline`` button, then click ``Apply``, then click ``Run``
+
+The program will build and start to produce test output in the Console window. When the test has completed, move to the Project explorer window. In the app_test_hall directory there should be a file called ``xscope.xmt``. Double click on this file, and the xSCOPE viewer should launch. On the left-hand side of the viewer, under ``Captured Metrics``, select the arrow next to ``n``. A sub menu will open with 3 signals listed: ``PWM_A``, ``PWM_B``, and ``PWM_C``. Use the boxes to the left of each signal to switch the traces on and off. The tests take about 2.71ms. The tick marks at the bottom of the window show at what time xSCOPE sampled the signals. The signal is only sampled when the test generator writes a new value to the Output-pins. This is currently approximately every 41.us:
+
+   #. First, switch off all traces except the ``PWM_A`` trace. This shows the pulse width being requested of the PWM Server. It starts off at a value of 32 for a narrow width, moves through 256, 2048, 3840 and ending on 3944 for the maximum width.
+   #. Traces PWM_B and PWM_C will be empty. Due to timing constraints, only one PWM phase can be tested at a time. The other phases can be tested by selecting them in the test options file ``pwm_tests.txt``.
+
+Note well, to view all the trace click the ``Zoom Fit`` icon (House) at the right of the Waveform window view-bar. To zoom in/out click the 'plus/minus' icons to the left of the ``Zoom Fit`` icon
+
+To learn more about xSCOPE look at the ``How To`` by selecting ``Window --> Show_View --> How_To_Browser``. Then in the search box type ``xscope``. This should find the section titled ``XMOS Examples: Instrumentation and xSCOPE``. In the sub-section ``Event Examples`` you will find more information on capturing events. In the sub-section ``IO Examples`` you will find more information on re-directing I/O using xSCOPE.
 
 Look at the Code
 ----------------
+
    #. Examine the application code. In xTIMEcomposer, navigate to the ``src`` directory under ``app_test_pwm``  and double click on the ``main.xc`` file within it. The file will open in the central editor window.
    #. Review the ``main.xc`` and note that main() runs 6 tasks on 6 logical cores in parallel.
-         * ``gen_all_pwm_test_data()`` Generates test data and pulse-widths on channels c_tst and c_pwm respectively.
-         * ``foc_pwm_do_triggered()`` is the PWM Server, receiving pulse-widths on channel c_pwm, and generating raw PWM data on an array of 32-bit buffered output ports(``pb32_pwm_hi`` and ``pb32_pwm_lo``), and the PWM to ADC trigger on channel ``c_pwm2adc_trig``
+
+         * ``gen_all_pwm_test_data()`` Generates test data and pulse-widths on channels c_gen_chk and c_gen_pwm respectively.
+         * ``foc_pwm_do_triggered()`` is the PWM Server, receiving pulse-widths on channel c_gen_pwm, and generating raw PWM data on an array of 32-bit buffered output ports(``pb32_pwm_hi`` and ``pb32_pwm_lo``), and the PWM-to-ADC trigger on channel ``c_pwm2adc_trig``
          * ``capture_pwm_leg_data()`` captures the raw PWM data from either the High-Leg or Low-leg ports which has been looped back onto a set of input pins, and transmits this over a channel to the Checker core
-         * ``capture_pwm_adc_data()`` captures the raw PWM data from the pwm-to-adc trigger channel which has been looped back onto a set of input pins, and transmits this over a channel to the Checker core
+         * ``capture_pwm_trigger_data()`` captures the raw PWM data from the PWM-to-ADC trigger channel which has been looped back onto a set of input pins, and transmits this over channel c_cap_chk to the Checker core.
          * ``check_pwm_server_data()`` receives raw PWM data from a number of channels connected to Capture cores, checks it, and displays the results. ``gen_all_pwm_test_data()`` and ``check_all_pwm_server_data()`` both produce display information in parallel. 
          * ``config_all_ports()`` configures the timers on all ports used to capture PWM-data. These ports are all configured to run from the same clock so that their times are all synchronised.
          * The other 2 functions in ``main.xc`` are ``init_locks()`` and ``free_locks()``. These are used to control a MutEx which allows only one core at a time to print to the display.
-   #. Find the file ``generate_pwm_tests.xc``. In here the function ``do_pwm_test()`` handles the PWM output data via the PWM Client function ``foc_pwm_put_parameters()``. It communicates with the PWM server function ``foc_pwm_do_triggered()`` via channel ``c_pwm``. 
-   #. Find the ``app_global.h`` header. At the top are the motor definitions. Next down are the PWM definitions.
+         * As well as ``main()``, there is a function called ``xscope_user_init()``, this is called before main to initialise xSCOPE capability. In here are registered the 3 PWM signals that were described above, and seen in the xSCOPE viewer.
+
+   #. Find the ``app_global.h`` header. At the top are the xSCOPE definitions, followed by the motor definitions which are specific to the type of motor being used and are currently set up for the LDO motors supplied with the development kit. Next down are the PWM definitions.
    #. Note in ``app_global.h`` the define PRINT_TST_PWM used to switch on verbose printing. An example of this can be found in file ``pwm_results.txt``.
+   #. Find the file ``generate_pwm_tests.xc``. In here the function ``do_pwm_test()`` handles the PWM output data via the PWM Client function ``foc_pwm_put_parameters()``. It communicates with the PWM server function ``foc_pwm_do_triggered()`` via channel ``c_gen_pwm``. Before ``foc_pwm_put_parameters()``, are the xSCOPE instructions used to capture the values seen in the xSCOPE viewer.
    #. Find the ``pwm_tests.txt`` file. In the left hand column are a set of flags to switch On/Off various sets of tests.
-   #. Now that the application has been run with the default settings, you could try switching off all the optional tests, by setting the flags in the left hand column to 0 (zero). Make this change and then re-run the simulation (no need to re-build). The test harness will run a lot quicker. An example of the verbose printout for the minimum set of tests is in file ``pwm_min_results.txt``.
+   #. Now that the application has been run with the default settings, you could try the following alterations.
+
+      * Test PWM Phase_B, by altering 'A' to 'B' in the left hand column.
+      * Switch off all the optional tests, by setting the flags in the left hand column to 0 (zero).
+
+   #. Make this change and then re-run the simulation (no need to re-build). The test harness will run a lot quicker. An example of the verbose printout for the minimum set of tests is in file ``pwm_min_results.txt``.
    #. To further explore the capabilities of the simulator, find the items under ``XMOS Examples:Simulator`` in the xSOFTip browser pane. Drag one of them into the Project Explorer to get started.

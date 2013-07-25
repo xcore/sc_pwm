@@ -83,12 +83,6 @@ typedef struct PWM_LINE_TAG
 	PWM_WAVE_TYP waves[NUM_PWM_LEGS]; // Array of structures containing PWM wave data for each leg of a balanced line
 } PWM_LINE_TYP;
 
-/** Type containing data for all PWM motor data (3 phases + ADC) */
-typedef struct PWM_MOTOR_TAG
-{
-	PWM_LINE_TYP lines[NUM_TST_PHASES]; // Array of structures containing PWM wave data for a balanced-line (PWM phase)
-} PWM_MOTOR_TYP;
-
 /** Type containing all check data */
 typedef struct CHECK_PWM_TAG // Structure containing PWM check data
 {
@@ -99,6 +93,7 @@ typedef struct CHECK_PWM_TAG // Structure containing PWM check data
 	TEST_VECT_TYP prev_vect; // Structure of containing previous PWM test vector
 	int motor_errs[NUM_VECT_COMPS]; // Array of error counters for one motor
 	int motor_tsts[NUM_VECT_COMPS]; // Array of test counters for one motor
+	PWM_PHASE_ENUM phase_id; // Identifier of phase being tested
 	PWM_EVENT_ENUM event; // Current PWM event being processed
 	PWM_LEG_ENUM curr_leg; // Current PWM-leg under test
 	PWM_LEG_ENUM prev_leg; // Previous PWM-leg under test
