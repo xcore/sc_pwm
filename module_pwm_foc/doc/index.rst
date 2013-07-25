@@ -1,5 +1,5 @@
-XMOS xSOFTip FOC Motor Control PWM Function Library
-===================================================
+Symmetrical Pulse Wave Modulation (PWM) Component Documentation
+===============================================================
 
 .. toctree::
 

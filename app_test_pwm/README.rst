@@ -1,5 +1,5 @@
-Pulse Width Modulation (PWM) Test Harness
-=========================================
+Pulse Width Modulation (PWM) For FOC Test Harness
+=================================================
 
 :scope: Example
 :description: xSIM testbench for PWM component
