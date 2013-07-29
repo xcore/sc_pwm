@@ -1,6 +1,6 @@
 Running Sphinx v1.0.7
 !!!!!!!
-/tmp/_MEIRX850b/docutils/writers/html4css1/html4css1.css
+/tmp/_MEIQilw31/docutils/writers/html4css1/html4css1.css
 Running XMOS Documentation setup:xdehtml
 loading pickled environment... not yet created
 building [xdehtml]: all documents
@@ -15,6 +15,9 @@ preparing documents... done
 writing output... [100%] index
 
 writing additional files...
+copying images... [ 50%] xscope_pwm.jpg
+copying images... [100%] vcd_pwm.jpg
+
 copying static files... done
 dumping object inventory... done
 build succeeded.

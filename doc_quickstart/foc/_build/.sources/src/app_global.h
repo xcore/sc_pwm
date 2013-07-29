@@ -52,7 +52,7 @@
 #define PWM_SHARED_MEM 0 // 0: Use c_pwm channel for pwm data transfer
 
 /** Define flag for verbose printing */
-#define PRINT_TST_PWM 1
+#define PRINT_TST_PWM 0
 
 /* This is a bit of a cludge, we are using a non-standard configuration
  * where the timer on the tile for inner_loop() is running at 250 MHz,

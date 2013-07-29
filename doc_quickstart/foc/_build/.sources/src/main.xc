@@ -32,11 +32,10 @@ on tile[MOTOR_TILE]: clock comm_clk = XS1_CLKBLK_1; // Common clock for all test
 /*****************************************************************************/
 void xscope_user_init()
 {
-	xscope_register( 4
+	xscope_register( 3
 		,XSCOPE_CONTINUOUS, "PWM_A", XSCOPE_INT , "n"
 		,XSCOPE_CONTINUOUS, "PWM_B", XSCOPE_INT , "n"
 		,XSCOPE_CONTINUOUS, "PWM_C", XSCOPE_INT , "n"
-		,XSCOPE_CONTINUOUS, "TRIG", XSCOPE_INT , "n"
 	); // xscope_register 
 } // xscope_user_init
 /*****************************************************************************/
