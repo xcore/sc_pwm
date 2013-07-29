@@ -53,26 +53,11 @@ void capture_pwm_trigger_data( // Captures PWM-to-ADC trigger data
 	// Loop forever
 	while (1)
 	{
-#if (USE_XSCOPE)
-		// NB These signals have to be registered in the file main.xc for the target application
-		xscope_int( 3 ,0 );
-#endif // (USE_XSCOPE)
-
 		inct_byref( c_trigger, cntrl_token );
 
 		p8_tst_sync <: (unsigned char)cntrl_token @ port_time; // Ouput dummy data to get timestamp
 
-#if (USE_XSCOPE)
-		// NB These signals have to be registered in the file main.xc for the target application
-		xscope_int( 3 ,0 );
-#endif // (USE_XSCOPE)
-
 		c_chk <: (signed)port_time; // Send timestamp of trigger to checker
-
-#if (USE_XSCOPE)
-		// NB These signals have to be registered in the file main.xc for the target application
-		xscope_int( 3 ,1 );
-#endif // (USE_XSCOPE)
 	}	// while (1)
 
 } // capture_pwm_trigger_data
