@@ -7,12 +7,6 @@ API
 
 Configuration Defines
 ---------------------
-.. doxygendefine:: MOTOR_ID 
-.. doxygendefine:: NUM_POLE_PAIRS 
-.. doxygendefine:: SECS_PER_MIN
-.. doxygendefine:: MAX_SPEC_RPM 
-.. doxygendefine:: PWM_RES_BITS
-.. doxygendefine:: LOCK_ADC_TO_PWM
 .. doxygendefine:: PWM_SHARED_MEM
 .. doxygendefine:: PLATFORM_REFERENCE_HZ
 

@@ -3,12 +3,9 @@
 
 This module contains a Pulse-Width-Modulation (PWM) interface component for Motor Control systems.
 
-**FIXME: I moved most of the detail that was here before to the programming guide. The programming guide should contain further guidance on using the API contained ion API.rst, which is currently missing. Including some usage example code from the existing motor control application (not the test harness) would be a good idea.**
+It currently has the following specification:-
 
-**FIXME: This overview section should contain a much pithier summary of what the component can do including - 
-  * what is the maximum loop frequency that can be sustained using this PWM block
-  * what is the timestep minimum size (e.g. the lentgh of time taken for one PWM cycle (e.g. one of the 4096)
-  * how does it different from bog standard PWM with just one channel per leg?
-  * what other xSOFip components was it designed to be used with?
-
- 
+  * Maximum loop frequency: 360 kHz if using a reference frequency of 100 MHz (inner PWM loop requires 276 cycles)
+  * PWM duty cycle: 4096 cycles, (allows 2048 different voltages)
+  * A trigger pulse is output at a fixed offset into the PWM duty cycle. This can be used to synchronise with the ADC xSOFTip module.
+  * For each PWM phase, voltages are driven on both a high-leg and low-leg of a balanced line. The low-leg pulse is inverted with respect to the high-leg pulse. The high-leg and low-leg pulse widths can be different sizes. This avoids dangerous current overload of the FET's. Both high-leg and low-leg pulses are symmetrically aligned around a centre line.

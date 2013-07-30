@@ -1,0 +1,103 @@
+-------------------------------------------------------------------------------
+-- Descriptive metadata
+-------------------------------------------------------------------------------
+
+componentName = "Symmetric PWM with Trigger FOC Component"
+componentFullName = "Symmetric PWM with Trigger Field-Oriented-Control Interface Function Library"
+alternativeNames = { }
+componentDescription = ""
+componentVersion = "1v0"
+
+-------------------------------------------------------------------------------
+-- Parameter descriptions.
+-------------------------------------------------------------------------------
+
+configPoints =
+{
+  PWM_SharedMemory= {
+    short   = "PWM Shared Memory Flag",
+    help    = "Data can be passed between Client and Server using either shared memory or using XMOS channels, Currently set in app_global.h",
+    long    = "",
+    units   = "",
+    define  = "PWM_SHARED_MEM",
+    type    = "int",
+    options = {0,1},
+    resourceUsageFlags = {"orthogonal"},
+    default = 0
+  },
+  ReferenceFrequency= {
+    short   = "Platform Reference Frequency",
+    help    = "This must macth the value set in the Platform Configuration File (.XN), Currently set in app_global.h",
+    long    = "",
+    units   = "",
+    define  = "PLATFORM_REFERENCE_HZ",
+    type    = "int",
+    options = {100,250,500},
+    resourceUsageFlags = {"linear"},
+    default = 250 
+  },
+}
+
+derivedValues = {}
+
+ports = {
+  p32_pwm_hi = {
+    short   = "PWM High-leg output data port (32-bit buffered)",
+    long    = "raw PWM data sent to Motor",
+    help    = "",
+    width   = 1
+  },
+  p32_pwm_lo = {
+    short   = "PWM Low-leg output data port (32-bit buffered)",
+    long    = "raw PWM data sent to Motor",
+    help    = "",
+    width   = 1
+  },
+  p16_adc_sync = {
+    short   = "Dummy input port used with ADC trigger",
+    long    = "Time-stamp obtained by reading dummy data",
+    help    = "",
+    width   = 16
+  },
+}
+
+channels = {
+  c_pwm = {
+    short = "Connects PWM Client and Server",
+    type = "non-streaming",
+    long  = "Client sends PWM parameters (e.g. width), Server clocks out PWM Wave-train on output ports",
+    help  = "",
+  },
+  c_adc_trig = {
+    short = "ADC trigger channel",
+    type = "non-streaming",
+    long  = "PWM Server transmits a synchronisation pulse, typically used to synchronise with an ADC module",
+    help  = "",
+  },
+}        
+
+function getConfigStatus()
+  local status = "Valid Configuration"
+  local issues = {}
+
+  -- Everything *should* be valid...
+
+  return status, issues
+end
+
+-------------------------------------------------------------------------------
+-- Source generation functions
+-------------------------------------------------------------------------------
+
+generatedCode = {
+	includes = 
+	{ 
+		"module_pwm_foc_example_conf.h"
+	},
+  globals = "",
+  body = ""
+}
+
+api = {'foc_pwm_put_parameters','foc_pwm_do_triggered'}
+
+files = {["module_pwm_foc/src/module_pwm_foc_example_conf.h"] = "src/app_global.h"}

@@ -128,16 +128,16 @@ When the executable has stopped running, view the VCD file as follows
    #. If not already active, open a ``Waveform`` window as follows:-
    #. In the main toolbar, select Window->Show_View->Waves
    #. Now add some signals to the Waves window as follows:-
-   #. In the Signals window, select tile[1]->ports->XS1_PORT_1N, and drag this to the left-hand column of the Waveform window
-   #. If this does not work first time, try leaving a few seconds between selecting and dragging
-   #. When successful a set of 12 waveforms should appear in the right column of the Waveform window. These are for Phase_A of the High-Leg
-   #. Repeat the above process for tile[1]->ports->XS1_PORT_1A, (Phase_A of the Low-Leg), and tile[1]->ports->XS1_PORT_8C, (the PWM-to-ADC trigger) 
+   #. In the Signals window, expand the signal tree as far as tile[1]->ports->XS1_PORT_1D, now double click on the signal PORT_M1_HI_A
+   #. A waveform should appear in the right column of the Waveform window. This is for Phase_A of the High-Leg.
+   #. Repeat the above process for tile[1]->ports->XS1_PORT_1A->PORT_M1_LO_A, Phase_A of the Low-Leg. 
+   #. Finally, repeat the above process for tile[1]->ports->XS1_PORT_8C->tWaiting, the PWM-to-ADC trigger. 
    #. To view all the trace click the ``Zoom Fit`` icon (House) at the right of the Waveform window view-bar
-   #. You should now see a train of different pulse widths in traces in PORT_M2_HI_A and PORT_M2_LO_A, and a series of spikes in trace XS1_PORT_8C[Waiting]
+   #. You should now see a train of different pulse widths in traces in PORT_M1_HI_A and PORT_M1_LO_A, and a series of spikes in trace tWaiting
 
 Notice that the pulses in PORT_M1_LO_A are slighlty wider than the pulses in PORT_M1_HI_A. This is because the Low-leg has been extended to prevent the potentially dangerous situation of the High-Leg and Low-leg switching at the same time. The PWM-to-ADC trigger should occur 1/4 of a PWM period before the centre of the pulse.
 
-.. figure:: vcd_pwm.jpg
+.. figure:: vcd_pwm.*
    :width: 100%
    :align: center
    :alt: Example VCD Waveform
@@ -161,7 +161,7 @@ The program will build and start to produce test output in the Console window. W
 
 Note well, to view all the trace click the ``Zoom Fit`` icon (House) at the right of the Waveform window view-bar. To zoom in/out click the 'plus/minus' icons to the left of the ``Zoom Fit`` icon
 
-.. figure:: xscope_pwm.jpg
+.. figure:: xscope_pwm.*
    :align: center
    :width: 100%
    :alt: Example xSCOPE trace
