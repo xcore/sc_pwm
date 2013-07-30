@@ -1,7 +1,16 @@
 <?xml version="1.0" ?>
 <xpd>
     <components>
-        <component description = "PWM driver component for FOC Motor control" type = "demoCode" scope = "Early Development" path = "module_pwm_foc" local = "false" id = "module_pwm_foc" name = "Symmetrical Pulse Wave Modulation (PWM) Component for FOC">
+        <component description = "xSIM testbench for PWM component" type = "demoCode" scope = "Example" path = "app_test_pwm" local = "false" id = "app_test_pwm" name = "Pulse Width Modulation (PWM) For FOC Test Harness">
+            <board>None (works on simulator)</board>
+            <componentDependency>module_pwm_foc</componentDependency>
+            <componentDependency>module_locks</componentDependency>
+            <keyword>PWM</keyword>
+            <keyword>"Pulse Width Modulation"</keyword>
+            <keyword>FOC</keyword>
+            <keyword>Motor Control</keyword>
+        </component>
+        <component name = "Symmetrical Pulse Wave Modulation (PWM) Component for FOC" type = "component" buildresults_path = "module_pwm_foc/.module_pwm_foc.buildinfo" scope = "Early Development" path = "module_pwm_foc" metainfo_path = "module_pwm_foc/module_pwm_foc.metainfo" local = "false" id = "module_pwm_foc" description = "PWM driver component for FOC Motor control">
             <board>XP-MC-CTRL-L2</board>
             <board>XA-MC-PWR-DLV</board>
             <keyword>PWM</keyword>
@@ -14,19 +23,26 @@
             <keyword>tutorial</keyword>
             <keyword>LED</keyword>
         </component>
-        <component description = "xSIM testbench for PWM component" type = "demoCode" scope = "Example" path = "app_test_pwm" local = "false" id = "app_test_pwm" name = "Pulse Width Modulation (PWM) For FOC Test Harness">
-            <board>None (works on simulator)</board>
-            <componentDependency>module_pwm_foc</componentDependency>
-            <componentDependency>module_locks</componentDependency>
-            <keyword>PWM</keyword>
-            <keyword>"Pulse Width Modulation"</keyword>
-            <keyword>FOC</keyword>
-            <keyword>Motor Control</keyword>
-        </component>
     </components>
     <dependency repo = "sc_util">
-        <githash>6d6b92f618f55d5378e56831b5930bf384c88a01</githash>
+        <githash>2e01d7324df84ad199833e012b5942e43fb0ccbb</githash>
         <uri>https://github.com/xcore/sc_util</uri>
+    </dependency>
+    <dependency repo = "sc_can">
+        <githash>3ec6bf50a5de2b5e9dbd57400b69439f30ee7e02</githash>
+        <uri>https://github.com/xcore/sc_can</uri>
+    </dependency>
+    <dependency repo = "sc_xtcp">
+        <githash>a9e68fadfd28eb79294cd9239dd3ddc8bb0712d4</githash>
+        <uri>https://github.com/beaumontm/sc_xtcp.git</uri>
+    </dependency>
+    <dependency repo = "sc_lib_fixed_point">
+        <githash>91958a108e363a99290b53ca99aae669ed5600d7</githash>
+        <uri>https://github.com/xcore/sc_lib_fixed_point</uri>
+    </dependency>
+    <dependency repo = "sc_ethernet">
+        <githash>495505ee09b0d1d4ef94e4296d386eb0040db2ae</githash>
+        <uri>https://github.com/beaumontm/sc_ethernet.git</uri>
     </dependency>
     <description>Various PWM driver components for single bit and multi bit ports</description>
     <location>git@github.com:xcore/sc_pwm.git</location>
@@ -37,7 +53,7 @@
     <release parenthash = "0e91ddce77b61f061bcbdc44710400d55a13cf1b" version = "1.0.0alpha1" githash = "4e7eafbbbc0c48b75184b5cee64bec1990117d31"></release>
     <release parenthash = "39bcbdb423cccf3b2c6d540e6890fbefc64c1400" version = "1.0.0alpha2" githash = "90c10781cd7d1a7f82543ffe2ddb765d8620e191"></release>
     <release parenthash = "90c10781cd7d1a7f82543ffe2ddb765d8620e191" version = "1.0.0rc0" githash = "53f275204764669c9d8ae10378453aa279a5bc47"></release>
-    <release parenthash = "9086e5cb343ba39208c1ef637276f6eb24e07236" version = "1.0.1beta0"></release>
+    <release parenthash = "9086e5cb343ba39208c1ef637276f6eb24e07236" version = "1.0.1beta0" githash = "ec7ded3699a5286fcdbfdf25e23f8341f0295ace"></release>
     <subpartnumber>XM-001843-SM</subpartnumber>
     <vendor>XMOS</vendor>
     <xcore_repo>sc_pwm.git</xcore_repo>
