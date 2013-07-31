@@ -36,10 +36,6 @@
         <githash>a9e68fadfd28eb79294cd9239dd3ddc8bb0712d4</githash>
         <uri>https://github.com/beaumontm/sc_xtcp.git</uri>
     </dependency>
-    <dependency repo = "sc_lib_fixed_point">
-        <githash>91958a108e363a99290b53ca99aae669ed5600d7</githash>
-        <uri>https://github.com/xcore/sc_lib_fixed_point</uri>
-    </dependency>
     <dependency repo = "sc_ethernet">
         <githash>495505ee09b0d1d4ef94e4296d386eb0040db2ae</githash>
         <uri>https://github.com/beaumontm/sc_ethernet.git</uri>
