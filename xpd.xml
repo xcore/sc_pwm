@@ -59,21 +59,21 @@
     <xcore_repo>sc_pwm.git</xcore_repo>
     <xpd_version>1.0</xpd_version>
     <exclude_dir>module_pwm_common</exclude_dir>
-    <exclude_dir>module_pwm_multibit_port</exclude_dir>
-    <exclude_dir>module_pwm_singlebit_port</exclude_dir>
-    <exclude_dir>module_pwm_symmetrical</exclude_dir>
     <exclude_dir>module_pwm_multibit_fast</exclude_dir>
+    <exclude_dir>module_pwm_multibit_port</exclude_dir>
     <exclude_dir>module_pwm_singlebit_bldc</exclude_dir>
+    <exclude_dir>module_pwm_singlebit_port</exclude_dir>
     <exclude_dir>module_pwm_singlebit_simple</exclude_dir>
+    <exclude_dir>module_pwm_symmetrical</exclude_dir>
     <exclude_dir>app_pwm_multibit_fast_demo</exclude_dir>
-    <exclude_dir>app_pwm_multibit_port_test</exclude_dir>
-    <exclude_dir>app_pwm_singlebit_port_test</exclude_dir>
     <exclude_dir>app_pwm_multibit_port_demo</exclude_dir>
+    <exclude_dir>app_pwm_multibit_port_test</exclude_dir>
     <exclude_dir>app_pwm_singlebit_port_demo</exclude_dir>
+    <exclude_dir>app_pwm_singlebit_port_test</exclude_dir>
     <exclude_dir>app_pwm_singlebit_simple_demo</exclude_dir>
     <exclude_dir>app_pwm_tutorial_example</exclude_dir>
+    <exclude_dir>app_pwm_tutorial_simulator</exclude_dir>
     <exclude_dir>testbench_multibit_fast</exclude_dir>
     <exclude_dir>testbench_singlebit_simple</exclude_dir>
     <exclude_dir>plugin_pwm</exclude_dir>
-    <exclude_dir>app_pwm_tutorial_simulator</exclude_dir>
 </xpd>
