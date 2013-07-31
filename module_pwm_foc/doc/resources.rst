@@ -25,5 +25,5 @@ Resource Requirements
 Performance
 +++++++++++
 
-The PWM resolution is 2^n. The default value of n is 12, giving a resolution of 4096 steps. Accordingly the main loop of the PWM server lasts 4096 xcore reference clock cycles. Currently only 276 cycles of processing are required in the main loop, giving 3820 idle cycles.
+The PWM resolution is 2^n. The default value of n is 12, giving a resolution of 4096 steps. Accordingly the main loop of the PWM server lasts 4096 xCORE reference clock cycles. Currently only 276 cycles of processing are required in the main loop, giving 3820 idle cycles.
 

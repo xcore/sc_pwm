@@ -9,7 +9,10 @@
     <title>Pulse Width Modulation (PWM) Simulator Testbench &mdash; Pulse Width Modulation (PWM) Simulator Testbench v documentation</title>
 
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/framework.css"  type="text/css" />
+    <link rel="stylesheet" href="_static/globals.css"  type="text/css" />
+    <link rel="stylesheet" href="_static/ui.css" type="text/css" />
+    <link rel="stylesheet" href="_static/app.css"  type="text/css" />
+    <link rel="stylesheet" href="_static/mobile.css"  type="text/css" />
     <link rel="stylesheet" href="_static/xde.css"
     type="text/css" /><script type="text/javascript" src="_static/scripts.js"></script>
     <script type="text/javascript">
@@ -26,22 +29,12 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Pulse Width Modulation (PWM) Simulator Testbench v documentation" href="#" /> 
   </head>
-  <body class="indented-content" onload="prepareContents();">
-    <div id="menubar">
-    <div id="breadcrumbs">
-      <ul>
-        
-
-<!--        <li><a href="#">Pulse Width Modulation (PWM) Simulator Testbench</a></li>-->
-          <li>Pulse Width Modulation (PWM) Simulator Testbench</li> 
-      </ul>
-    </div>
-    </div>  
+  <body class="xde indented-content" onload="prepareContents();">  
           <div id="body">
              <div id="content">
              <h1>Pulse Width Modulation (PWM) Simulator Testbench</h1>
 
-             <div class='content'>
+             <div class='columns'>
             
   <p id="test-pwm-quickstart">This application is an xSIM test harness for the pulse width modulation interface using xTIMEcomposer Studio. It tests the PWM functions in the <tt class="docutils literal"><span class="pre">Symmetrical</span> <span class="pre">Pulse</span> <span class="pre">Wave</span> <span class="pre">Modulation</span> <span class="pre">(PWM)</span> <span class="pre">Component</span> <span class="pre">for</span> <span class="pre">FOC</span></tt> xSOFTip component and directs test results to STDOUT.</p>
 <p>No hardware is required to run the test harness.</p>
@@ -327,12 +320,12 @@ PWM component.<ol class="arabic">
 <li>If not already active, open a <tt class="docutils literal"><span class="pre">Waveform</span></tt> window as follows:-</li>
 <li>In the main toolbar, select Window-&gt;Show_View-&gt;Waves</li>
 <li>Now add some signals to the Waves window as follows:-</li>
-<li>In the Signals window, select tile[1]-&gt;ports-&gt;XS1_PORT_1N, and drag this to the left-hand column of the Waveform window</li>
-<li>If this does not work first time, try leaving a few seconds between selecting and dragging</li>
-<li>When successful a set of 12 waveforms should appear in the right column of the Waveform window. These are for Phase_A of the High-Leg</li>
-<li>Repeat the above process for tile[1]-&gt;ports-&gt;XS1_PORT_1A, (Phase_A of the Low-Leg), and tile[1]-&gt;ports-&gt;XS1_PORT_8C, (the PWM-to-ADC trigger)</li>
+<li>In the Signals window, expand the signal tree as far as tile[1]-&gt;ports-&gt;XS1_PORT_1D, now double click on the signal PORT_M1_HI_A</li>
+<li>A waveform should appear in the right column of the Waveform window. This is for Phase_A of the High-Leg.</li>
+<li>Repeat the above process for tile[1]-&gt;ports-&gt;XS1_PORT_1A-&gt;PORT_M1_LO_A, Phase_A of the Low-Leg.</li>
+<li>Finally, repeat the above process for tile[1]-&gt;ports-&gt;XS1_PORT_8C-&gt;tWaiting, the PWM-to-ADC trigger.</li>
 <li>To view all the trace click the <tt class="docutils literal"><span class="pre">Zoom</span> <span class="pre">Fit</span></tt> icon (House) at the right of the Waveform window view-bar</li>
-<li>You should now see a train of different pulse widths in traces in PORT_M2_HI_A and PORT_M2_LO_A, and a series of spikes in trace XS1_PORT_8C[Waiting]</li>
+<li>You should now see a train of different pulse widths in traces in PORT_M1_HI_A and PORT_M1_LO_A, and a series of spikes in trace tWaiting</li>
 </ol>
 </div></blockquote>
 <p>Notice that the pulses in PORT_M1_LO_A are slighlty wider than the pulses in PORT_M1_HI_A. This is because the Low-leg has been extended to prevent the potentially dangerous situation of the High-Leg and Low-leg switching at the same time. The PWM-to-ADC trigger should occur 1/4 of a PWM period before the centre of the pulse.</p>

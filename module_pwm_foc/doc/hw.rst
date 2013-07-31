@@ -4,7 +4,7 @@ Evaluation Platforms
 
 .. _sec_hardware_platforms:
 
-.. XcoreSimulator:
+.. xCORESimulator:
 
 Recommended Hardware
 --------------------
@@ -24,7 +24,7 @@ Demonstration Applications
 Test Harness
 ++++++++++++
 
-This application runs on the Xcore Simulator. Example stand alone usage of this module can be found within the XSoftIP suite as follows:
+This application runs on the xCORE Simulator. Example stand alone usage of this module can be found within the xSOFTip suite as follows:
 
    * Package: sw_foc_motor_control
    * Application: app_test_pwm

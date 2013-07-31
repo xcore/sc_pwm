@@ -5,10 +5,9 @@ For each motor, the main Motor Control loop, test harness, or other supervisory 
 
 The pulse-width information is transmitted from the PWM Client to the PWM Server, either down a channel, or via shared memory. If a channel is used, the PWM server evaluates the bit-pattern and time-stamp information. Conversly, if shared memory is used, the PWM Client evaluates this information. By default the information is passed over a channel. If memory is plentiful, but timing on the PWM server core can NOT be met, then the shared memory option should be tried.
 
-The PWM resolution determines how many different voltages may be applied to the motor coils. For example, a resolution of 12 bits will allow a PWM wave with a period of 4096 bits. Assuming this period starts low (at zero) and finishes high (at one), then there are 4095 points inbetween at which the pulse can rise. If the pulse rises early, the majority of the pulse will consist of ones, this will create a large voltage in the motor, and a fast speed. Conversly a pulse which rises late will consist mainly of zeros, this will create a small voltage in the motor, and a slow speed. If the patterns of all-ones and all-zeros (no voltage) are included, 4096 different voltages are possible.
+The PWM resolution determines how many different voltages may be applied to the motor coils. For example, a resolution of 12 bits will allow a PWM wave with a period of 4096 bits. Assuming this period starts low (at zero) and finishes high (at one), then there are 4095 points inbetween at which the pulse can rise. If the pulse rises early, the majority of the pulse will consist of ones, this will create a large voltage in the motor, and a fast speed. Conversly a pulse which rises late will consist mainly of zeros, this will create a small voltage in the motor, and a slow speed. If the patterns of all-ones and all-zeros (no voltage) are included, 4096 different voltages are possible. Due to symmetry constraints, there should be an even number of ones in a pulse. This reduces the PWM resolution from 4096 to 2048 possible voltages.
 
-The PWM to ADC trigger is used to signal to the ADC module when it should sample the motor current, in order to estimate the back EMF in the motor coils. The trigger is required because the sampling should be done in the middle of a high portion of the pulse. That is, when the PWM bitstream is held at one. Due to symmetry constraints, this means there should be an even number of ones in a pulse. This reduces the PWM resolution from 4096 to 2048 possible voltages. 
-
+The PWM to ADC trigger is used to signal to the ADC module when it should sample the motor current, in order to estimate the back EMF in the motor coils. The trigger is required because the sampling should be done in the middle of a high portion of the PWM pulse. That is, when the PWM bitstream is held at one.
 
 Key Files
 ---------
@@ -21,7 +20,7 @@ Usage
 
 The following 2 functions are designed to be called from an XC file.
 
-   * ``foc_pwm_put_parameters()`` Client function designed to be called from an XC file each time a new set of PWM parameters are required.
+   * ``foc_pwm_put_parameters()`` Client function designed to be called from an XC file each time a new set of PWM parameters is required.
    * ``foc_pwm_do_triggered()``, Server function designed to be called from an XC file. It continually runs in its own core, and receives data from the PWM Client.
 
 The following PWM definitions are required. These are set in ``pwm_common.h`` or ``app_global.h``
@@ -30,7 +29,7 @@ The following PWM definitions are required. These are set in ``pwm_common.h`` or
    * LOCK_ADC_TO_PWM 1 // Define sync. mode for ADC sampling. Default 1 is 'ADC synchronised to PWM'
    * PWM_SHARED_MEM 0 // 0: Use c_pwm channel for pwm data transfer
    * NUM_PWM_BUFS 2  // Double-buffered
-   * PORT_RES_BITS 5 // PWM port width resoltion (e.g. 5 for 32-bits) 
+   * PORT_RES_BITS 5 // PWM port width resolution (e.g. 5 for 32-bits) 
    * PWM_DEAD_TIME ((12 * MICRO_SEC + 5) / 10) // 1200ns PWM Dead-Time WARNING: Safety critical
    * PLATFORM_REFERENCE_HZ // Platform Reference Frequency
    * MAX_SPEC_RPM // Maximium specified motor speed
@@ -38,7 +37,7 @@ The following PWM definitions are required. These are set in ``pwm_common.h`` or
 Test Applications
 =================
 
-Pulse-Width-Modulation Interface (PWM) Xcore Simulator
+Pulse-Width-Modulation Interface (PWM) xCORE Simulator
 ------------------------------------------------------
 
 To get started with this application, run through the instructions in the Quickstart Guide, accessible via the ``Pulse Width Modulation (PWM) For FOC Test Harness`` item in the xSOFTip explorer pane within xTIMEcomposer.
@@ -53,7 +52,7 @@ The Makefile is found in the top level directory of the application (e.g. app_te
 
 The application is for the simulator. 
 However the platform being simulated is a Motor control board.
-The Makefile TARGET variable needs to be set to Motor control board being used.
+The Makefile TARGET variable needs to be set to the Motor control board being used.
 E.g. If the platform configuration file is XP-MC-CTRL-L2.xn, then
 TARGET = XP-MC-CTRL-L2
 
@@ -74,7 +73,7 @@ To start the test type
 Test results will be printed to standard-out.
 The whole test takes up to 2 minutes to run.
 
-For a explanation of the test results refer to the quickstart guide in doc_quickstart/pwm/index.rst
+For an explanation of the test results refer to the quickstart guide ``Pulse Width Modulation (PWM) Simulator Testbench``.
 
 Trouble-shooting
 ................

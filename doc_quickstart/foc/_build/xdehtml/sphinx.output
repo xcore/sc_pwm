@@ -1,6 +1,6 @@
 Running Sphinx v1.0.7
 !!!!!!!
-/tmp/_MEIQilw31/docutils/writers/html4css1/html4css1.css
+/home/markb/XMOS.dir/xSoftIPTools.dir/v1_0_8/xdoc/docutils/writers/html4css1/html4css1.css
 Running XMOS Documentation setup:xdehtml
 loading pickled environment... not yet created
 building [xdehtml]: all documents
@@ -13,6 +13,7 @@ checking consistency... done
 preparing documents... done
 ['index']
 writing output... [100%] index
+Adding scope descriptions
 
 writing additional files...
 copying images... [ 50%] xscope_pwm.jpg
