@@ -30,11 +30,11 @@ configPoints =
     help    = "This must macth the value set in the Platform Configuration File (.XN), Currently set in app_global.h",
     long    = "",
     units   = "",
-    define  = "PLATFORM_REFERENCE_HZ",
+    define  = "PLATFORM_REFERENCE_MHZ",
     type    = "int",
     options = {100,250,500},
     resourceUsageFlags = {"linear"},
-    default = 250 
+    default = 100 
   },
 }
 
