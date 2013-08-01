@@ -87,8 +87,7 @@ As mentioned above, depending on the speed of your PC (or Mac), there can be up 
 Example Usage In A Motor Control Loop
 -------------------------------------
 
-The code example below demonstrates how to use the PWM-to-ADC trigger to synchronise the ADC sampling to the PWM pulse.
-It shows part of a main.xc file.
+The PWM component can be used in conjunction with the ADC component. For more detail on the ADC component refer to the quick-start guide ``Analogue to Digital Conversion (ADC) Simulator Test-bench``. The code example below demonstrates how to use the PWM-to-ADC trigger to synchronise the ADC sampling to the PWM pulse. It shows part of a main.xc file. In here a set of ``par`` statements are used to run the PWM server and the ADC Server in parallel with a function called ``run_motor``, which contains all the code for a motor control loop.
 
 ::
 
