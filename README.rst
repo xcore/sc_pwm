@@ -1,7 +1,7 @@
 XCORE.com Multi Channel PWM SOFTWARE COMPONENT
 ..............................................
 
-:Latest release: 1.0.1beta1
+:Latest release: 1.0.1beta2
 :Maintainer: djpwilk
 :Description: Various PWM driver components for single bit and multi bit ports
 
@@ -38,7 +38,4 @@ Required software (dependencies)
 ================================
 
   * sc_util (https://github.com/xcore/sc_util)
-  * sc_can (https://github.com/xcore/sc_can)
-  * sc_xtcp (https://github.com/beaumontm/sc_xtcp.git)
-  * sc_ethernet (https://github.com/beaumontm/sc_ethernet.git)
 
