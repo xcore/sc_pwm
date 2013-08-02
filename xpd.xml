@@ -29,18 +29,6 @@
         <uri>https://github.com/xcore/sc_util</uri>
         <version>1.0.3rc0</version>
     </dependency>
-    <dependency repo = "sc_can">
-        <githash>3ec6bf50a5de2b5e9dbd57400b69439f30ee7e02</githash>
-        <uri>https://github.com/xcore/sc_can</uri>
-    </dependency>
-    <dependency repo = "sc_xtcp">
-        <githash>a9e68fadfd28eb79294cd9239dd3ddc8bb0712d4</githash>
-        <uri>https://github.com/beaumontm/sc_xtcp.git</uri>
-    </dependency>
-    <dependency repo = "sc_ethernet">
-        <githash>495505ee09b0d1d4ef94e4296d386eb0040db2ae</githash>
-        <uri>https://github.com/beaumontm/sc_ethernet.git</uri>
-    </dependency>
     <description>Various PWM driver components for single bit and multi bit ports</description>
     <exclude_dir>module_pwm_common</exclude_dir>
     <exclude_dir>module_pwm_multibit_fast</exclude_dir>
