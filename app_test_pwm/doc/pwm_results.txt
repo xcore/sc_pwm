@@ -1,11 +1,16 @@
+PWM Server Starts
 Read following Test Options ...
 A  # Phase_ID: Select which phase to test [A B C]
 1  # Narrow Width tests
 1  # Equal Width tests
 1  # ADC trigger tests
  
-. 
+Start Test Generation For Phase_A
                                              Start Checks For Phase_A
-...................................................................... 
-                                             342 tests run
-ALL TESTS PASSED
+.................................................................
+                                             3 Tests run
+                                             All Phase_A Tests Passed
+
+                                             Test Check Ends 
+PWM Server Ends
+Test Generation Ends

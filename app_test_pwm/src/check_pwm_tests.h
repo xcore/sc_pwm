@@ -15,8 +15,6 @@
 #ifndef _CHECK_PWM_TESTS_H_
 #define _CHECK_PWM_TESTS_H_
 
-#include <stdlib.h>
-
 #include <xs1.h>
 #include <assert.h>
 #include <print.h>
@@ -84,15 +82,15 @@ typedef struct PWM_LINE_TAG
 } PWM_LINE_TYP;
 
 /** Type containing all check data */
-typedef struct CHECK_PWM_TAG // Structure containing PWM check data
+typedef struct CHECK_TST_TAG // Structure containing PWM check data
 {
 	COMMON_PWM_TYP common; // Structure of PWM data common to Generator and Checker
 	char padstr1[STR_LEN]; // Padding string used to format display output
 	char padstr2[STR_LEN]; // Padding string used to format display output
 	TEST_VECT_TYP curr_vect; // Structure of containing current PWM test vector (PWM conditions to be tested)
 	TEST_VECT_TYP prev_vect; // Structure of containing previous PWM test vector
-	int motor_errs[NUM_VECT_COMPS]; // Array of error counters for one motor
-	int motor_tsts[NUM_VECT_COMPS]; // Array of test counters for one motor
+	int phase_errs[NUM_VECT_COMPS]; // Array of error counters for one phase
+	int phase_tsts[NUM_VECT_COMPS]; // Array of test counters for one phase
 	PWM_PHASE_ENUM phase_id; // Identifier of phase being tested
 	PWM_EVENT_ENUM event; // Current PWM event being processed
 	PWM_LEG_ENUM curr_leg; // Current PWM-leg under test
@@ -101,7 +99,7 @@ typedef struct CHECK_PWM_TAG // Structure containing PWM check data
 	int bound; // error bound for PWM-width measurement
 	int print;  // Print flag
 	int dbg;  // Debug flag
-} CHECK_PWM_TYP;
+} CHECK_TST_TYP;
 
 /*****************************************************************************/
 /** Check PWM results 

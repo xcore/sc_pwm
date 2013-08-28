@@ -89,7 +89,7 @@ void capture_pwm_leg_data( // Captures PWM data results for one leg
 		{
 			port_data_s.pattern = curr_pins;
 
-			// NB We need an array of channels, as one channel does NOT get read quick enough (in checker)
+			// NB We need an array of channels, as one channel does NOT read quick enough (in checker)
 			c_chk[chan_off] <: port_data_s; // Send PWM data to checker
 
 			// Update circular channel offset

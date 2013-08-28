@@ -76,6 +76,10 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 	unsigned pattern; // Bit-pattern on port
 
 
+	acquire_lock(); 
+	printstrln("PWM Server Starts");
+	release_lock();
+
 	pwm_serv_s.id = motor_id; // Assign motor identifier
 
 	do_pwm_port_config( p32_pwm_hi ,p32_pwm_lo ,p16_adc_sync ,pwm_clk ); // configure the ports
@@ -105,6 +109,8 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 		
 				c_pwm :> pwm_comms_s.params; // Receive PWM parameters from Client
 
+				if (PWM_TERMINATED == pwm_comms_s.params.id) break; // Break out of while loop
+ 
 				// Convert all PWM pulse widths to pattern/time_offset port data
 				convert_all_pulse_widths( pwm_comms_s ,pwm_ctrl_s.buf_data[pwm_comms_s.buf] ); // Max 178 Cycles
 			} // if (0 == PWM_SHARED_MEM)
@@ -166,6 +172,9 @@ void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pai
 		} // select
 	} // while(1)
 
+	acquire_lock(); 
+	printstrln("PWM Server Ends");
+	release_lock();
 } // foc_pwm_do_triggered
 /*****************************************************************************/
 // pwm_service_inv

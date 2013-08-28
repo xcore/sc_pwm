@@ -36,6 +36,15 @@
 /** Define Maximum specified motor speed. WARNING: Safety critical */
 #define MAX_SPEC_RPM 4000
 
+/** Define flag for verbose printing */
+#define VERBOSE_PRINT 0
+
+/** Define flag for printing Micro-test info. */
+#define MICRO_TESTS 0
+
+/** Print width - fix for non-wrapped output in xTIMEcomposer */
+#define PRINT_WID 72
+
 // PWM specific definitions ...
 
 /** Define the resolution of PWM (WARNING: effects update rate as tied to ref clock) */
@@ -50,9 +59,6 @@
 
 /** Define if Shared Memory is used to transfer PWM data from Client to Server */
 #define PWM_SHARED_MEM 0 // 0: Use c_pwm channel for pwm data transfer
-
-/** Define flag for verbose printing */
-#define PRINT_TST_PWM 0
 
 /* This is a bit of a cludge, we are using a non-standard configuration
  * where the timer on the tile for inner_loop() is running at 250 MHz,

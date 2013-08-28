@@ -1,98 +1,16 @@
+PWM Server Starts
 Read following Test Options ...
 B  # Phase_ID: Select which phase to test [A B C]
 0  # Narrow Width tests
 0  # Equal Width tests
 0  # ADC trigger tests
  
- Start Test Generation For Phase_B
-Small-width No_ADC DeadT_On :SKIP 
- 
+Start Test Generation For Phase_B
                                              Start Checks For Phase_B
-                                             Small-width No_ADC DeadT_On :SKIP 
-PWM:256
-PWM:256
-PWM:256
-Small-width No_ADC DeadT_On :VALID
-                                             Small-width No_ADC DeadT_On :VALID
-                                             Hi-Leg Hi_Width= 256 
-PWM:256
-                                             Lo-Leg Hi_Width= 376 
-                                             Hi-Leg Hi_Width= 256 
-PWM:256
-                                             Lo-Leg Hi_Width= 376 
-                                             Hi-Leg Hi_Width= 256 
-PWM:256
-                                             Lo-Leg Hi_Width= 376 
-                                             Hi-Leg Hi_Width= 256 
-PWM:256
-                                             Lo-Leg Hi_Width= 376 
-                                             Hi-Leg Hi_Width= 256 
-PWM:256
-                                             Lo-Leg Hi_Width= 376 
-                                             Hi-Leg Hi_Width= 256 
-PWM:256
-                                             Lo-Leg Hi_Width= 376 
-                                             Hi-Leg Hi_Width= 256 
-PWM:256
-                                             Lo-Leg Hi_Width= 376 
-                                             Hi-Leg Hi_Width= 256 
-PWM:256
-                                             Lo-Leg Hi_Width= 376 
-                                             Hi-Leg Hi_Width= 256 
-PWM:256
-                                             Lo-Leg Hi_Width= 376 
-                                             Hi-Leg Hi_Width= 256 
-PWM:256
-                                             Lo-Leg Hi_Width= 376 
-                                             Hi-Leg Hi_Width= 256 
-PWM:256
-Large-width No_ADC DeadT_On :SKIP 
-                                             Hi-Leg  Mean_Width 256 
-                                             Lo-Leg  Mean_Width 376 
-                                             Large-width No_ADC DeadT_On :SKIP 
-PWM:3840
-PWM:3840
-PWM:3840
-Large-width No_ADC DeadT_On :VALID
-                                             Large-width No_ADC DeadT_On :VALID
-                                             Hi-Leg Hi_Width= 3840 
-PWM:3840
-                                             Lo-Leg Hi_Width= 3960 
-                                             Hi-Leg Hi_Width= 3840 
-PWM:3840
-                                             Lo-Leg Hi_Width= 3960 
-                                             Hi-Leg Hi_Width= 3840 
-PWM:3840
-                                             Lo-Leg Hi_Width= 3960 
-                                             Hi-Leg Hi_Width= 3840 
-PWM:3840
-                                             Lo-Leg Hi_Width= 3960 
-                                             Hi-Leg Hi_Width= 3840 
-PWM:3840
-                                             Lo-Leg Hi_Width= 3960 
-                                             Hi-Leg Hi_Width= 3840 
-PWM:3840
-                                             Lo-Leg Hi_Width= 3960 
-PWM:3840
-                                             Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
-PWM:3840
-                                             Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
-PWM:3840
-                                             Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
-PWM:3840
-                                             Hi-Leg Hi_Width= 3840 
-                                             Lo-Leg Hi_Width= 3960 
-PWM:3840
-Large-width No_ADC DeadT_On :QUIT 
-                                             Large-width No_ADC DeadT_On :QUIT 
-                                             Hi-Leg  Mean_Width 3840 
-                                             Lo-Leg  Mean_Width 3960 
- 
-                                             106 tests run
-ALL TESTS PASSED
- 
-PWM:3840
-Test Generation Ends 
+..........................
+                                             2 Tests run
+                                             All Phase_B Tests Passed
+
+                                             Test Check Ends 
+PWM Server Ends
+Test Generation Ends

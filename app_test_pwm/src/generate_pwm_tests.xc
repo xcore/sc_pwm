@@ -142,6 +142,23 @@ static void parse_control_file( // Parse PWM control file and set up test option
 	return;
 } // parse_control_file
 /*****************************************************************************/
+static void print_progress( // Print progress indicator
+	GENERATE_PWM_TYP &tst_data_s // Reference to structure of PWM test data
+)
+{
+	// Check for display-wrap
+	if (PRINT_WID > tst_data_s.print_cnt)
+	{
+		printchar('.');
+		tst_data_s.print_cnt++;
+	} // if (PRINT_WID > tst_data_s.print_cnt)
+	else
+	{
+		printcharln('.');
+		tst_data_s.print_cnt = 1;
+	} // if (PRINT_WID > tst_data_s.print_cnt)
+} // print_progress
+/*****************************************************************************/
 static void init_pwm( // Initialise PWM parameters for one motor
 	PWM_COMMS_TYP &pwm_comms_s, // reference to structure containing PWM data
 	chanend c_pwm, // PWM channel connecting Client & Server
@@ -168,12 +185,12 @@ static void init_pwm( // Initialise PWM parameters for one motor
 /*****************************************************************************/
 static void init_test_data( // Initialise PWM Test data
 	GENERATE_PWM_TYP &tst_data_s, // Reference to structure of PWM test data
-	streaming chanend c_tst // Channel for sending test vecotrs to test checker
+	streaming chanend c_chk // Channel for sending test vecotrs to test checker
 )
 {
 	init_common_data( tst_data_s.common ); // Initialise data common to Generator and Checker
  
-	tst_data_s.print = PRINT_TST_PWM; // Set print mode
+	tst_data_s.print_on = VERBOSE_PRINT; // Set print mode
 	tst_data_s.dbg = 0; // Set debug mode
 
 	tst_data_s.period = PWM_PERIOD; // Set period between generations of PWM Client data
@@ -182,7 +199,7 @@ static void init_test_data( // Initialise PWM Test data
 
 	parse_control_file( tst_data_s ); 
 
-	c_tst <: tst_data_s.common.options; // Send test options to checker core
+	c_chk <: tst_data_s.common.options; // Send test options to checker core
 
   tst_data_s.phase_id = tst_data_s.common.options.flags[TST_PHASE]; // Store phase to be tested
 } // init_test_data
@@ -234,10 +251,10 @@ static void do_pwm_test( // Performs one PWM test
 	// Load test data into PWM phase under test
 	tst_data_s.pwm_comms.params.widths[tst_data_s.phase_id] = tst_data_s.width;
 
-	if (0 == tst_data_s.print)
+	if (0 == tst_data_s.print_on)
 	{
-		printchar('.'); // Progress indicator
-	} // if (0 == tst_data_s.print)
+		print_progress( tst_data_s ); // Print progress indicator
+	} // if (0 == tst_data_s.print_on)
 
 #if (USE_XSCOPE)
 	// NB These signals have to be registered in the file main.xc for the target application
@@ -250,12 +267,12 @@ static void do_pwm_test( // Performs one PWM test
 
 	foc_pwm_put_parameters( tst_data_s.pwm_comms ,c_pwm ); // Update the PWM values
 
-	if (tst_data_s.print)
+	if (tst_data_s.print_on)
 	{
 		acquire_lock(); // Acquire Display Mutex
 		printstr( "PWM:" ); printintln( tst_data_s.width ); 
 		release_lock(); // Release Display Mutex
-	} // if (tst_data_s.print)
+	} // if (tst_data_s.print_on)
 
 } // do_pwm_test
 /*****************************************************************************/
@@ -277,7 +294,7 @@ static int vector_compare( // Check if 2 sets of test vector are different
 /*****************************************************************************/
 static void do_pwm_vector( // Do all tests for one PWM test vector
 	GENERATE_PWM_TYP &tst_data_s, // Reference to structure of PWM test data
-	streaming chanend c_tst, // Channel for sending test vecotrs to test checker
+	streaming chanend c_chk, // Channel for sending test vecotrs to test checker
 	chanend c_pwm, 				// Channel between Client and Server
 	int test_cnt // count-down test counter
 )
@@ -290,15 +307,22 @@ static void do_pwm_vector( // Do all tests for one PWM test vector
 	// Check for new test-vector
 	if (new_vect)
 	{
-		c_tst <: tst_data_s.curr_vect; // transmit new test vector details to test checker
+		c_chk <: tst_data_s.curr_vect; // transmit new test vector details to test checker
 
 		// Check if verbose printing required
-		if (tst_data_s.print)
+		if (tst_data_s.print_on)
 		{
 			print_test_vector( tst_data_s.common ,tst_data_s.curr_vect ,"" );
-		} // if (tst_data_s.print)
+		} // if (tst_data_s.print_on)
 
 		tst_data_s.prev_vect = tst_data_s.curr_vect; // update previous vector
+
+		// Check for termination
+		if (QUIT == tst_data_s.curr_vect.comp_state[CNTRL])
+		{
+			tst_data_s.pwm_comms.params.id = PWM_TERMINATED; // Signal Termination
+			foc_pwm_put_parameters( tst_data_s.pwm_comms ,c_pwm ); // Stop PWM server core 
+		} // if (QUIT == tst_data_s.curr_vect.comp_state[CNTRL])
 	} // if (new_vect)
 
 	// Loop through tests for current test vector
@@ -313,25 +337,24 @@ static void do_pwm_vector( // Do all tests for one PWM test vector
 /*****************************************************************************/
 static void gen_pwm_width_test( // Generate PWM Test data for testing one PWM Pulse-width
 	GENERATE_PWM_TYP &tst_data_s, // Reference to structure of PWM test data
-	streaming chanend c_tst, // Channel for sending test vecotrs to test checker
+	streaming chanend c_chk, // Channel for sending test vecotrs to test checker
 	chanend c_pwm, 				// Channel between Client and Server
 	WIDTH_PWM_ENUM wid_state // Current PWM Pulse-width state under test
 )
 {
-	assign_test_vector_width( tst_data_s ,wid_state ); // Set test vector to Slow width
+	assign_test_vector_width( tst_data_s ,wid_state ); // Set width component of test vector
 	
 	tst_data_s.curr_vect.comp_state[CNTRL] = SKIP; // Skip start-up
-	do_pwm_vector( tst_data_s ,c_tst ,c_pwm ,3 );
+	do_pwm_vector( tst_data_s ,c_chk ,c_pwm ,3 );
 	
 	tst_data_s.curr_vect.comp_state[CNTRL] = VALID; // Start-up complete, Switch on testing
-	do_pwm_vector( tst_data_s ,c_tst ,c_pwm ,MAX_TESTS );
-	do_pwm_vector( tst_data_s ,c_tst ,c_pwm ,1 );
+	do_pwm_vector( tst_data_s ,c_chk ,c_pwm ,MAX_TESTS );
 
 } // gen_pwm_width_test
 /*****************************************************************************/
 static void gen_motor_pwm_test_data( // Generate PWM Test data for one motor
 	GENERATE_PWM_TYP &tst_data_s, // Reference to structure of PWM test data
-	streaming chanend c_tst, // Channel for sending test vecotrs to test checker
+	streaming chanend c_chk, // Channel for sending test vecotrs to test checker
 	chanend c_pwm 				// Channel between Client and Server
 )
 {
@@ -340,13 +363,10 @@ static void gen_motor_pwm_test_data( // Generate PWM Test data for one motor
 
 	chronometer :> tst_data_s.time;	// Get time
 
-	if (tst_data_s.print)
-	{
-		acquire_lock(); // Acquire Display Mutex
-		printstr( " Start Test Generation For Phase_");
-		printcharln( ('A' + tst_data_s.phase_id) );
-		release_lock(); // Release Display Mutex
-	} // if (tst_data_s.print)
+	acquire_lock(); // Acquire Display Mutex
+	printstr( "Start Test Generation For Phase_");
+	printcharln( ('A' + tst_data_s.phase_id) );
+	release_lock(); // Release Display Mutex
 
 	// NB These tests assume PWM_FILTER = 0
 
@@ -363,41 +383,46 @@ static void gen_motor_pwm_test_data( // Generate PWM Test data for one motor
 	assign_test_vector_leg( tst_data_s ,NUM_PWM_LEGS ); // Set test both PWM-legs
 
 	// Do pulse-width tests ...
-	if (tst_data_s.common.options.flags[TST_NARROW]) gen_pwm_width_test( tst_data_s ,c_tst ,c_pwm ,MINI );
+	if (tst_data_s.common.options.flags[TST_NARROW]) gen_pwm_width_test( tst_data_s ,c_chk ,c_pwm ,MINI );
 
-	gen_pwm_width_test( tst_data_s ,c_tst ,c_pwm ,SMALL );
+	gen_pwm_width_test( tst_data_s ,c_chk ,c_pwm ,SMALL );
 
-	if (tst_data_s.common.options.flags[TST_EQUAL]) gen_pwm_width_test( tst_data_s ,c_tst ,c_pwm ,EQUAL );
+	if (tst_data_s.common.options.flags[TST_EQUAL]) gen_pwm_width_test( tst_data_s ,c_chk ,c_pwm ,EQUAL );
 
-	gen_pwm_width_test( tst_data_s ,c_tst ,c_pwm ,LARGE );
+	gen_pwm_width_test( tst_data_s ,c_chk ,c_pwm ,LARGE );
 
-	if (tst_data_s.common.options.flags[TST_NARROW]) gen_pwm_width_test( tst_data_s ,c_tst ,c_pwm ,MAXI );
-
+	if (tst_data_s.common.options.flags[TST_NARROW]) gen_pwm_width_test( tst_data_s ,c_chk ,c_pwm ,MAXI );
 
 	tst_data_s.curr_vect.comp_state[CNTRL] = QUIT; // Signal that testing has ended for current motor
-	do_pwm_vector( tst_data_s ,c_tst ,c_pwm ,1 );
+	do_pwm_vector( tst_data_s ,c_chk ,c_pwm ,0 );
 
 } // gen_motor_pwm_test_data
 /*****************************************************************************/
 void gen_all_pwm_test_data( // Generate PWM Test data
-	streaming chanend c_tst, // Channel for sending test vecotrs to test checker
+	streaming chanend c_chk, // Channel for sending test vecotrs to test checker
 	chanend c_pwm 				// Channel between Client and Server
 )
 {
 	GENERATE_PWM_TYP tst_data_s; // Structure of PWM test data
+	int pwm_cmd; // PWM command
 
 
 	init_pwm( tst_data_s.pwm_comms ,c_pwm ,MOTOR_ID );	// Initialise PWM communication data
 
-	init_test_data( tst_data_s ,c_tst );
+	init_test_data( tst_data_s ,c_chk );
 
-	gen_motor_pwm_test_data( tst_data_s ,c_tst ,c_pwm );
+	gen_motor_pwm_test_data( tst_data_s ,c_chk ,c_pwm );
 
-	if (tst_data_s.print)
+	acquire_lock(); // Acquire Display Mutex
+	printstrln("Test Generation Ends" );
+	release_lock(); // Release Display Mutex
+
+	// Wait for test checker to terminate
+	while(PWM_TERMINATED != pwm_cmd)
 	{
-		acquire_lock(); // Acquire Display Mutex
-		printstrln( "Test Generation Ends " );
-		release_lock(); // Release Display Mutex
-	} // if (tst_data_s.print)
+		c_chk :> pwm_cmd; // get next PWM command
+	} // while(PWM_TERMINATED != pwm_cmd)
+
+	_Exit(0); // Exit without house-keeping
 } // gen_all_pwm_test_data
 /*****************************************************************************/

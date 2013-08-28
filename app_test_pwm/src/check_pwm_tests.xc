@@ -15,35 +15,40 @@
 #include "check_pwm_tests.h"
 
 /*****************************************************************************/
-static void init_check_data( // Initialise check data for PWM tests
-	CHECK_PWM_TYP &chk_data_s // Reference to structure containing test check data
+static void init_check_data( // Initialise common check data for PWM tests
+	CHECK_TST_TYP &chk_data_s // Reference to structure containing test check data
 )
 {
-	VECT_COMP_ENUM comp_cnt; // Counter for Test Vector components
-
-
 	init_common_data( chk_data_s.common ); // Initialise data common to Generator and Checker
 
 	safestrcpy( chk_data_s.padstr1 ,"                                             " );
 	safestrcpy( chk_data_s.padstr2 ,"                              " );
 
+	chk_data_s.print = VERBOSE_PRINT; // Set print mode
+	chk_data_s.dbg = 0; // Set debug mode
+} // init_check_data
+/*****************************************************************************/
+static void init_phase_data( // Initialise check data for tests of one phase of PWM
+	CHECK_TST_TYP &chk_data_s // Reference to structure containing test check data
+)
+{
+	VECT_COMP_ENUM comp_cnt; // Counter for Test Vector components
+
+
 	chk_data_s.event = PWM_LO_RISE; // Start checking when 1st Low-leg falling edge received
 	chk_data_s.curr_leg = chk_data_s.curr_vect.comp_state[LEG]; // Initialise PWM-leg under test
 	chk_data_s.prev_leg = chk_data_s.curr_leg; // Initialise previous PWM-leg under test
 
-	chk_data_s.print = PRINT_TST_PWM; // Set print mode
-	chk_data_s.dbg = 0; // Set debug mode
-
 	// Clear error and test counters for current motor
 	for (comp_cnt=0; comp_cnt<NUM_VECT_COMPS; comp_cnt++)
 	{
-		chk_data_s.motor_errs[comp_cnt] = 0; 
-		chk_data_s.motor_tsts[comp_cnt] = 0; 
+		chk_data_s.phase_errs[comp_cnt] = 0; 
+		chk_data_s.phase_tsts[comp_cnt] = 0; 
 	} // for comp_cnt
-} // init_check_data
+} // init_phase_data
 /*****************************************************************************/
 static void init_wave_data( // Initialise data structure for one PWM wave
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_WAVE_TYP &wave_data_s // input wave-data structure to be initialised
 )
 {
@@ -65,7 +70,7 @@ static void init_wave_data( // Initialise data structure for one PWM wave
 } // init_wave_data
 /*****************************************************************************/
 static void init_line_data( // Initialise wave data for one PWM balanced-line (phase)
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_LINE_TYP &line_data_s // Reference to structure containing balance-line data
 )
 {
@@ -79,7 +84,7 @@ static void init_line_data( // Initialise wave data for one PWM balanced-line (p
 } // init_line_data
 /*****************************************************************************/
 static void print_pwm_pulse( // Print PWM Pulse data
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	unsigned pulse_width, // Width of input pulse
 	const char pulse_name[] // name for input pulse
 )
@@ -95,7 +100,7 @@ static void print_pwm_pulse( // Print PWM Pulse data
 } // print_pwm_pulse
 /*****************************************************************************/
 static void print_pwm_sample( // Print PWM parameters
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_WAVE_TYP &wave_data_s // Reference to a structure containing wave data for one PWM-Leg
 )
 {
@@ -162,7 +167,7 @@ static void init_sample_data( // Initialise PWM sample data, and if necessary co
 } // init_sample_data
 /*****************************************************************************/
 static void check_adc_trigger( // Check timing of ADC trigger, against previous High-leg rising edge
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_WAVE_TYP &wave_data_s // Reference to wave-data structure for PWM-leg under test
 )
 {
@@ -179,11 +184,11 @@ static void check_adc_trigger( // Check timing of ADC trigger, against previous 
 	err_time &= PWM_MASK; // mask into range [0..PWM_MASK]
 	if (err_time > (PWM_MAX_VALUE >> 1)) err_time -= PWM_MAX_VALUE; // Max. absolute error is half PWM period
 
-	chk_data_s.motor_tsts[ADC_TRIG]++;
+	chk_data_s.phase_tsts[ADC_TRIG]++;
 
 	if (HALF_PORT_WID <= abs(err_time))
 	{
-		chk_data_s.motor_errs[ADC_TRIG]++;
+		chk_data_s.phase_errs[ADC_TRIG]++;
 
 		acquire_lock(); // Acquire Display Mutex
 		printcharln(' ');
@@ -199,7 +204,7 @@ static void check_adc_trigger( // Check timing of ADC trigger, against previous 
 } // check_adc_trigger
 /*****************************************************************************/
 static void check_dead_time( // Check dead-time between edges in High and Low legs
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PORT_TIME_TYP early_time,		// time of earlier edge
 	PORT_TIME_TYP later_time		// time of later edge 
 )
@@ -213,12 +218,12 @@ static void check_dead_time( // Check dead-time between edges in High and Low le
 	if (gap_time > (PORT_TIME_MASK>> 1)) gap_time -= PORT_TIME_MASK; // Max. absolute error is half timer period 
 	gap_time = abs(gap_time);
 
-	chk_data_s.motor_tsts[DEAD]++;
+	chk_data_s.phase_tsts[DEAD]++;
 
 	// Check gap is large enough (should be half of dead-time)
 	if ((HALF_DEAD_TIME - HALF_PORT_WID) > gap_time)
 	{
-		chk_data_s.motor_errs[DEAD]++;
+		chk_data_s.phase_errs[DEAD]++;
 
 		acquire_lock(); // Acquire Display Mutex
 		printcharln(' ');
@@ -232,7 +237,7 @@ static void check_dead_time( // Check dead-time between edges in High and Low le
 } // check_dead_time
 /*****************************************************************************/
 static void update_pwm_data( // Update PWM data
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_WAVE_TYP &wave_data_s // Reference to wave-data structure to be updated
 )
 {
@@ -301,16 +306,16 @@ static void update_pwm_data( // Update PWM data
 } // update_pwm_data
 /*****************************************************************************/
 static void check_pwm_pulse_levels( // Check PWM mean voltage
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_WAVE_TYP &wave_data_s, // Reference to a structure containing wave data for one PWM-leg
 	unsigned chk_wid 					// Check width for this width-state 
 )
 {
-	chk_data_s.motor_tsts[WIDTH]++;
+	chk_data_s.phase_tsts[WIDTH]++;
 
 	if (chk_data_s.bound < abs(wave_data_s.meas_wid - chk_wid))
 	{
-		chk_data_s.motor_errs[WIDTH]++;
+		chk_data_s.phase_errs[WIDTH]++;
 
 		acquire_lock(); // Acquire Display Mutex
 		printcharln(' ');
@@ -323,7 +328,7 @@ static void check_pwm_pulse_levels( // Check PWM mean voltage
 } // check_pwm_pulse_levels
 /*****************************************************************************/
 static void measure_pwm_width( // Calculate PWM-width from captured PWM wave data
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_WAVE_TYP &wave_data_s // Reference to wave-data structure containing line_data_s.waves[PWM_HI_LEG].meas_wid to be evaluated
 )
 {
@@ -357,7 +362,7 @@ static void measure_pwm_width( // Calculate PWM-width from captured PWM wave dat
 } // measure_pwm_width
 /*****************************************************************************/
 static void initialise_pwm_width_test( // Initialise data for new Pulse-width test
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_LINE_TYP &line_s // Reference to all wave data for one motor
 )
 {
@@ -369,7 +374,7 @@ static void initialise_pwm_width_test( // Initialise data for new Pulse-width te
 } // initialise_pwm_width_test 
 /*****************************************************************************/
 static void finalise_pwm_leg( // Terminate pulse-width test for one PWM-leg
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_WAVE_TYP &wave_data_s, // Reference to wave data for one PWM-leg
 	unsigned chk_wid // check width for this width-state under test
 )
@@ -392,7 +397,7 @@ static void finalise_pwm_leg( // Terminate pulse-width test for one PWM-leg
 } // finalise_pwm_leg
 /*****************************************************************************/
 static void finalise_pwm_phase( // Terminate pulse-width test for one phase
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_LINE_TYP &line_data_s // Reference to all wave data for one balanced-line (phase)
 )
 {
@@ -408,7 +413,7 @@ static void finalise_pwm_phase( // Terminate pulse-width test for one phase
 } // finalise_pwm_phase
 /*****************************************************************************/
 static void finalise_pwm_width_test( // Terminate pulse-width test for all phases under test
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_LINE_TYP &line_s // Reference to all wave data for one motor
 )
 {
@@ -428,7 +433,7 @@ static int pwm_data_compare( // Check if 2 sets of PWM data are different
 } // pwm_data_compare
 /*****************************************************************************/
 static void test_pwm_wave( // test new PWM input value
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_WAVE_TYP &wave_data_s // Reference to a structure containing wave data for one PWM-leg
 )
 {
@@ -457,7 +462,7 @@ static void test_pwm_wave( // test new PWM input value
 } // test_pwm_wave
 /*****************************************************************************/
 static void test_pwm_phase( // test new PWM data against PWM data for phase under test
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_LINE_TYP &phase_data_s // Reference to a structure containing wave data for one PWM phase
 )
 {
@@ -514,7 +519,7 @@ static void test_pwm_phase( // test new PWM data against PWM data for phase unde
 } // test_pwm_phase
 /*****************************************************************************/
 static void test_all_pwm( // test new PWM data against all previous PWM data
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_LINE_TYP &line_s // Reference to a structure containing wave data for one PWM-leg
 )
 {
@@ -523,7 +528,7 @@ static void test_all_pwm( // test new PWM data against all previous PWM data
 } // test_all_pwm
 /*****************************************************************************/
 static void process_new_test_vector( // Process new test vector
-	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_LINE_TYP &line_s // Reference to all wave data for one motor
 )
 {
@@ -559,11 +564,13 @@ static void process_new_test_vector( // Process new test vector
 
 } // process_new_test_vector
 /*****************************************************************************/
-void check_pwm_server_data( // Checks PWM results for all motors
+void check_phase_data( // Checks PWM results for one phase
+	CHECK_TST_TYP &chk_data_s, // Reference to structure containing test check data
+	PWM_LINE_TYP &line_s, // Reference to all PWM data for one balanced-line (phase)
 	streaming chanend c_hi_leg[], // Array of Channels for receiving PWM High-Leg data
 	streaming chanend c_lo_leg[], // Array of Channels for receiving PWM Low-Leg data
-	streaming chanend c_adc, // Channel for receiving PWM ADC-trigger data
-	streaming chanend c_tst // Channel for receiving test vectors from test generator
+	streaming chanend c_cap, // Channel for receiving from core that captures PWM ADC-trigger data
+	streaming chanend c_gen // Channel for receiving test vectors from test generator core
 )
 /* PWM Events are assumed to be transmitted in the following cyclic sequence
  * 	PWM_LO_RISE --> PWM_HI_RISE --> PWM_ADC_TRIG --> PWM_HI_FALL --> PWM_LO_FALL --> PWM_LO_RISE ...
@@ -571,15 +578,10 @@ void check_pwm_server_data( // Checks PWM results for all motors
  * However this does NOT effect this test schedule.
  */
 {
-	CHECK_PWM_TYP chk_data_s; // Structure containing test check data
-	PWM_LINE_TYP line_s; // All PWM data for one motor
 	PWM_CAPTURE_TYP hi_bufs[NUM_INP_BUFS]; // Set of buffers for capturing High-leg PWM data
 	PWM_CAPTURE_TYP lo_bufs[NUM_INP_BUFS]; // Set of buffers for capturing Low-leg PWM data
 	PWM_CAPTURE_TYP adc_bufs[NUM_INP_BUFS]; // Set of buffers for capturing ADC-trigger PWM data
-	int comp_cnt; // Counter for Test Vector components
 	int do_loop = 1;   // Flag set until loop-end condition found 
-	int motor_errs = 0;   // Preset flag to NO errors for current motor
-	int motor_tsts = 0;   // Clear test ccounter for current motor
 
 	int hi_inp_cnt = 0; // No of High-leg inputs
 	int lo_inp_cnt = 0; // No of Low-leg inputs
@@ -597,25 +599,19 @@ void check_pwm_server_data( // Checks PWM results for all motors
 	unsigned lo_chan_off = 0; // Low-leg channel offset
 
 
-	c_tst :> chk_data_s.common.options; // Get test options from generator core
-	chk_data_s.phase_id = chk_data_s.common.options.flags[TST_PHASE];
-
-	// Send Phase option to capture cores
-	c_hi_leg[0] <: chk_data_s.phase_id;
-	c_lo_leg[0] <: chk_data_s.phase_id;
-
-	c_tst :> chk_data_s.curr_vect; // Initialise test-vector structure with 1st test
-
-	init_check_data( chk_data_s ); // Initialise check data
-
 	acquire_lock(); // Acquire Display Mutex
-	printcharln(' ');
 	printstr( chk_data_s.padstr1 );
 	printstr("Start Checks For Phase_"); 
 	printcharln( ('A' + chk_data_s.phase_id) );
 	release_lock(); // Release Display Mutex
 
-	init_line_data( chk_data_s ,line_s ); // Initialise all wave data for one balanced line (phase)
+	// Send Phase option to capture cores
+	c_hi_leg[0] <: chk_data_s.phase_id;
+	c_lo_leg[0] <: chk_data_s.phase_id;
+
+	c_gen :> chk_data_s.curr_vect; // Initialise test-vector structure with 1st test
+
+	init_phase_data( chk_data_s ); // Initialise check data
 
 	// special case: initialisation for first test
   chk_data_s.prev_vect = chk_data_s.curr_vect;
@@ -650,7 +646,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 			break;
 
 			// Service any new PWM data on ADC input channel
-			case c_adc :> adc_bufs[adc_write_off].port_data.time_off :
+			case c_cap :> adc_bufs[adc_write_off].port_data.time_off :
 				adc_bufs[adc_write_off].id = ADC_PATN;
 
 				// Update circular buffer offsets
@@ -659,7 +655,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 			break;
 
 			// Service any change on test channel
-			case c_tst :> chk_data_s.curr_vect :
+			case c_gen :> chk_data_s.curr_vect :
 				// New test vector detected.
 				process_new_test_vector( chk_data_s ,line_s ); // Process new test vector
 
@@ -668,7 +664,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 				{
 					do_loop = 0; // Error flag signals end-of-loop
 				} // if (QUIT == chk_data_s.curr_vect.comp_state[CNTRL])
-			break; // c_tst 
+			break; // c_gen 
 
 			default:
 				// Ensure received events are checked in same order they were transmitted ...
@@ -720,7 +716,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 							adc_read_off = (((unsigned)adc_read_cnt) & INP_BUF_MASK); // Wrap offset into range [0..INP_BUF_MASK];
 
 							chk_data_s.event = PWM_HI_FALL; // set next event
-						} // if (adc_inp_cnt >adc_adc_read_cnt)
+						} // if (adc_inp_cnt >adc_cap_read_cnt)
 					break; // case PWM_ADC_TRIG
 
 					default :
@@ -734,54 +730,144 @@ void check_pwm_server_data( // Checks PWM results for all motors
 	// special case: finalisation for last pulse-width test
 	finalise_pwm_width_test( chk_data_s ,line_s ); 
 
-	// Update error statistics for current motor
+} // check_phase_data
+/*****************************************************************************/
+static void display_test_results( // Display results for one PWM phase
+	CHECK_TST_TYP &chk_data_s // Reference to structure containing test check data
+)
+{
+	int comp_cnt; // Counter for Test Vector components
+	int check_errs = 0;   // Preset flag to NO check errors for current PWM phase
+	int num_checks = 0;   // Clear check counter for current PWM phase
+	int test_errs = 0;   // Preset flag to NO test errors for current PWM phase
+	int num_tests = 0;   // Clear test counter for current PWM phase
+
+
+	// Update error statistics for current PWM phase
 	for (comp_cnt=1; comp_cnt<NUM_VECT_COMPS; comp_cnt++)
 	{
-		motor_errs += chk_data_s.motor_errs[comp_cnt]; 
-		motor_tsts += chk_data_s.motor_tsts[comp_cnt]; 
+		// Check if any micro-tests where done for current test vector component
+		if (0 < chk_data_s.phase_tsts[comp_cnt])
+		{
+			num_tests++; // Update macro-test counter
+			num_checks += chk_data_s.phase_tsts[comp_cnt]; 
+
+			// Check if any micro-errors where detected for current test vector component
+			if (0 < chk_data_s.phase_errs[comp_cnt])
+			{
+				test_errs++; // Update macro-error counter
+				check_errs += chk_data_s.phase_errs[comp_cnt]; 
+			} // if (0 < chk_data_s.phase_errs[comp_cnt])
+		} // if (0 < chk_data_s.phase_tsts[comp_cnt])
 	} // for comp_cnt
 
 	acquire_lock(); // Acquire Display Mutex
-	printcharln(' ');
+	printstrln("");
 	printstr( chk_data_s.padstr1 );
-	printint( motor_tsts );
-	printstrln( " tests run" );
+	printint( num_tests );
+	printstr( " Tests run" );
 
-	// Check if this motor had any errors
-	if (motor_errs)
+	// Check for verbose test output
+	if (1 == MICRO_TESTS)
+	{
+		printstr(" (Comprising ");
+		printint( num_checks );
+		printstr( " checks)" );
+	} // if (1 == MICRO_TESTS)
+
+	printstrln("");
+
+	// Check if this PWM phase had any errors
+	if (test_errs)
 	{
 		printstr( chk_data_s.padstr1 );
-		printint( motor_errs );
-		printstrln( " tests FAILED, as follows:" );
+		printint( test_errs );
+		printstrln( " Tests FAILED, as follows:" );
 
 		// Print Vector Component Names
 		for (comp_cnt=1; comp_cnt<NUM_VECT_COMPS; comp_cnt++)
 		{
 			// Check if any test run for this component
-			if (chk_data_s.motor_tsts[comp_cnt])
+			if (chk_data_s.phase_tsts[comp_cnt])
 			{
 				printstr( chk_data_s.padstr1 );
 				printstr( chk_data_s.common.comp_data[comp_cnt].comp_name.str );
-				printstr(" : ");
-				printint( chk_data_s.motor_tsts[comp_cnt] );
-				printstr( " tests run" );
 	
-				if (chk_data_s.motor_errs[comp_cnt])
+				if (chk_data_s.phase_errs[comp_cnt])
 				{
-					printstr( ", " );
-					printint( chk_data_s.motor_errs[comp_cnt] );
-					printstr(" FAILURES");
-				} // if (chk_data_s.motor_errs[comp_cnt])
-				printcharln(' ');
-			} // if (chk_data_s.motor_tsts[comp_cnt])
+					printstr(" Test FAILED");
+
+					// Check for verbose test output
+					if (1 == MICRO_TESTS)
+					{
+						printstr(" (");
+						printint( chk_data_s.phase_errs[comp_cnt] );
+						printstr( " out of " );
+						printint( chk_data_s.phase_tsts[comp_cnt] );
+						printstr( " checks failed)" );
+					} // if (1 == MICRO_TESTS)
+				} // if (chk_data_s.phase_errs[comp_cnt])
+				else
+				{
+					printstr(" Test Passed");
+
+					// Check for verbose test output
+					if (1 == MICRO_TESTS)
+					{
+						printstr(" (");
+						printint( chk_data_s.phase_tsts[comp_cnt] );
+						printstr( " checks run)" );
+					} // if (1 == MICRO_TESTS)
+				} // if (chk_data_s.phase_errs[comp_cnt])
+
+				printstrln("");
+
+			} // if (chk_data_s.phase_tsts[comp_cnt])
 		} // for comp_cnt
-	} // if (motor_errs)
+	} // if (check_errs)
 	else
 	{
-		printstrln( "ALL TESTS PASSED" );
-	} // else !(motor_errs)
+		printstr( chk_data_s.padstr1 );
+		printstr( "All Phase_" );
+		printchar( ('A' + chk_data_s.phase_id) );
+ 		printstrln( " Tests Passed" );
+	} // else !(check_errs)
 
-	printcharln( ' ' );
+	printstrln("");
 	release_lock(); // Release Display Mutex
+
+} // display_test_results
+/*****************************************************************************/
+void check_pwm_server_data( // Checks PWM results
+	streaming chanend c_hi_leg[], // Array of Channels for receiving PWM High-Leg data
+	streaming chanend c_lo_leg[], // Array of Channels for receiving PWM Low-Leg data
+	streaming chanend c_cap, // Channel for receiving from core that captures PWM ADC-trigger data
+	streaming chanend c_gen // Channel for receiving test vectors from test generator core
+)
+/* PWM Events are assumed to be transmitted in the following cyclic sequence
+ * 	PWM_LO_RISE --> PWM_HI_RISE --> PWM_ADC_TRIG --> PWM_HI_FALL --> PWM_LO_FALL --> PWM_LO_RISE ...
+ * Actually for short pulse-widths the ADC-trigger may be received earlier. 
+ * However this does NOT effect this test schedule.
+ */
+{
+	CHECK_TST_TYP chk_data_s; // Structure containing test check data
+	PWM_LINE_TYP line_s; // All PWM data for one balanced-line (phase)
+
+
+	c_gen :> chk_data_s.common.options; // Get test options from generator core
+	chk_data_s.phase_id = chk_data_s.common.options.flags[TST_PHASE];
+
+	init_check_data( chk_data_s ); // Initialise check data
+
+	check_phase_data( chk_data_s ,line_s ,c_hi_leg ,c_lo_leg ,c_cap ,c_gen ); // Check results for one PWM phase
+
+	display_test_results( chk_data_s );
+
+	acquire_lock(); // Acquire Display Mutex
+	printstr( chk_data_s.padstr1 );
+	printstrln( "Test Check Ends " );
+	release_lock(); // Release Display Mutex
+
+	c_gen <: PWM_TERMINATED; // Signal to Generator that Checker has terminated
 } // check_pwm_server_data
 /*****************************************************************************/

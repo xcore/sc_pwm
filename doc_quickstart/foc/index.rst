@@ -101,7 +101,7 @@ An example of working test output from a working PWM component can be found in a
 Using The ``Value Change Dump`` (VCD) File
 ------------------------------------------
 
-Having run the testbench once, now re-run it to dump a VCD trace so that the waveform output of the PWM can be visualised. This can require a lot of memory and may slow down the simulator so first ensure enough memory has been requested in the xTIMEcomposer init file. Go to the root directory where the XMOS tools are installed. Then edit file ``xtimecomposer_bin/xtimecomposer.exe.ini`` and ensure the requested memory is at least 4 GBytes (``-Xmx4096m``)
+Having run the testbench once, now re-run it to dump a VCD trace so that the waveform output of the PWM can be visualised. This can require a lot of memory and may slow down the simulator so first ensure enough memory has been requested in the xTIMEcomposer init file. Go to the root directory where the XMOS tools are installed. Then edit file ``xtimecomposer_bin/xtimecomposer.exe.ini`` and ensure the requested memory is at least 2 GBytes (``-Xmx2048m``)
 
 Now launch xTIMEcomposer and switch on VCD tracing as follows
 
@@ -111,7 +111,7 @@ Now launch xTIMEcomposer and switch on VCD tracing as follows
    #. Tick the ``Enable Signal Tracing`` box
    #. Click the ``Add`` button
    #. Select ``tile[1]``
-   #. Tick the ``+details`` box
+   #. Tick the ``ports`` box
    #. Click ``Apply``
    #. Click ``Run``
 
@@ -154,7 +154,7 @@ Now rebuild the code as follows:-
    #. In the ``Run Configurations`` dialogue box (see above), select the xSCOPE tab
    #. Now select the ``Offline`` button, then click ``Apply``, then click ``Run``
 
-The program will build and start to produce test output in the Console window. When the test has completed, move to the Project explorer window. In the app_test_hall directory there should be a file called ``xscope.xmt``. Double click on this file, and the xSCOPE viewer should launch. On the left-hand side of the viewer, under ``Captured Metrics``, select the arrow next to ``n``. A sub menu will open with 3 signals listed: ``PWM_A``, ``PWM_B``, and ``PWM_C``. Use the boxes to the left of each signal to switch the traces on and off. The tests take about 2.71ms. The tick marks at the bottom of the window show at what time xSCOPE sampled the signals. The signal is only sampled when the test generator writes a new value to the Output-pins. This is currently approximately every 41.us:
+The program will compile and build with the warning ``Constraints checks PASSED WITH CAVEATS``. This is because xSCOPE introduces an unspecified number of chan-ends. Test output will start to appear in the Console window. When the test has completed, move to the Project explorer window. In the app_test_hall directory there should be a file called ``xscope.xmt``. Double click on this file, and the xSCOPE viewer should launch. On the left-hand side of the viewer, under ``Captured Metrics``, select the arrow next to ``n``. A sub menu will open with 3 signals listed: ``PWM_A``, ``PWM_B``, and ``PWM_C``. Use the boxes to the left of each signal to switch the traces on and off. The tests take about 2.71ms. The tick marks at the bottom of the window show at what time xSCOPE sampled the signals. The signal is only sampled when the test generator writes a new value to the Output-pins. This is currently approximately every 41.us:
 
    #. First, switch off all traces except the ``PWM_A`` trace. This shows the pulse width being requested of the PWM Server. It starts off at a value of 32 for a narrow width, moves through 256, 2048, 3840 and ending on 3944 for the maximum width.
    #. Traces PWM_B and PWM_C will be empty. Due to timing constraints, only one PWM phase can be tested at a time. The other phases can be tested by selecting them in the test options file ``pwm_tests.txt``.

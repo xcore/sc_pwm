@@ -15,6 +15,10 @@
 #ifndef _PWM_COMMON_H_
 #define _PWM_COMMON_H_
 
+#include "use_locks.h"
+
+#include "app_global.h"
+
 #ifndef PWM_SHARED_MEM 
 	#error Define. PWM_SHARED_MEM in app_global.h
 #endif // PWM_SHARED_MEM
@@ -48,6 +52,9 @@
 /** Maximum Port timer value. See also PORT_TIME_TYP */
 #define PORT_TIME_MASK 0xFFFF
 
+/** Loop termination Command */
+#define PWM_TERMINATED (-1) // Choose a negative value
+
 /** Different PWM Phases */
 typedef enum PWM_PHASE_ETAG
 {
@@ -72,7 +79,7 @@ typedef unsigned short PORT_TIME_TYP;
 typedef struct PWM_PARAM_TAG // 
 {
 	unsigned widths[NUM_PWM_PHASES]; // Array of PWM width values
-	unsigned id; // Unique Motor identifier e.g. 0 or 1
+	int id; // Unique Motor identifier e.g. 0 or 1 (NB -1 used to signal termination)
 } PWM_PARAM_TYP;
 
 /** Structure containing pwm communication control data */

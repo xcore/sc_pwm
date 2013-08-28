@@ -15,6 +15,8 @@
 #ifndef _GENERATE_PWM_TESTS_H_
 #define _GENERATE_PWM_TESTS_H_
 
+#include <stdlib.h>
+
 #include <xs1.h>
 #include <assert.h>
 #include <print.h>
@@ -54,7 +56,8 @@ typedef struct GENERATE_PWM_TAG // Structure containing PWM test generation data
 	unsigned time; // timer value
 	unsigned period; // period (in ticks) between tests
 	unsigned width; // PWM width
-	int print;  // Print flag
+	int print_on;  // Print flag
+	int print_cnt; // Print counter
 	int dbg;  // Debug flag
 } GENERATE_PWM_TYP;
 

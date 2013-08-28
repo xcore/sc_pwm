@@ -30,6 +30,8 @@
         <version>1.0.3rc0</version>
     </dependency>
     <description>Various PWM driver components for single bit and multi bit ports</description>
+    <docdir>module_pwm_foc/doc</docdir>
+    <docdir>doc_quickstart</docdir>
     <exclude_dir>module_pwm_common</exclude_dir>
     <exclude_dir>module_pwm_multibit_fast</exclude_dir>
     <exclude_dir>module_pwm_multibit_port</exclude_dir>
