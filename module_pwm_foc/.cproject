@@ -156,7 +156,9 @@
 								<option id = "com.xmos.xc.compiler.option.include.paths.73027014" name="com.xmos.xc.compiler.option.include.paths" superClass="com.xmos.xc.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${XMOS_TOOL_PATH}/target/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${XMOS_TOOL_PATH}/target/include/gcc&quot;"/>
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
 
@@ -270,7 +272,9 @@
 								<option id = "com.xmos.c.compiler.option.include.paths.44270393" name="com.xmos.c.compiler.option.include.paths" superClass="com.xmos.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${XMOS_TOOL_PATH}/target/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${XMOS_TOOL_PATH}/target/include/gcc&quot;"/>
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
 
@@ -390,7 +394,9 @@
 									<listOptionValue builtIn="false" value="&quot;${XMOS_TOOL_PATH}/target/include/gcc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${XMOS_TOOL_PATH}/target/include/c++/4.2.1&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${XMOS_TOOL_PATH}/target/include/c++/4.2.1/xcore-xmos-elf&quot;"/>
-                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
+                                    <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks/src}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_locks}&quot;' />
+<listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/.settings}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc/src}&quot;' />
 <listOptionValue builtIn="false" value='&quot;${workspace_loc:/module_pwm_foc}&quot;' />
 
