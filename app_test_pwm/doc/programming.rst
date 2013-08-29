@@ -49,7 +49,7 @@ The steps below are designed to guide an initial understanding of how the testbe
          * As well as ``main()``, there is a function called ``xscope_user_init()``, this is called before main to initialise xSCOPE capability. In here are registered the 3 PWM signals that were described above, and seen in the xSCOPE viewer.
 
    #. Find the ``app_global.h`` header. At the top are the xSCOPE definitions, followed by the motor definitions which are specific to the type of motor being used and are currently set up for the LDO motors supplied with the development kit. Next down are the PWM definitions.
-   #. Note in ``app_global.h`` the define PRINT_TST_PWM used to switch on verbose printing. An example of this can be found in file ``pwm_results.txt``.
+   #. Note in ``app_global.h`` the define VERBOSE_PRINT used to switch on verbose printing. An example of this can be found in file ``pwm_results.txt``.
    #. Find the file ``generate_pwm_tests.xc``. In here the function ``do_pwm_test()`` handles the PWM output data via the PWM Client function ``foc_pwm_put_parameters()``. It communicates with the PWM server function ``foc_pwm_do_triggered()`` via channel ``c_gen_pwm``. Before ``foc_pwm_put_parameters()``, are the xSCOPE instructions used to capture the values seen in the xSCOPE viewer.
    #. Find the ``pwm_tests.txt`` file. In the left hand column are a set of flags to switch On/Off various sets of tests.
    #. Now that the application has been run with the default settings, you could try the following alterations.
