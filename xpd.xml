@@ -32,7 +32,7 @@
     </dependency>
     <description>Various PWM driver components for single bit and multi bit ports</description>
     <docdir>module_pwm_foc/doc</docdir>
-    <docdir>doc_quickstart</docdir>
+    <docdir>doc_quickstart/foc</docdir>
     <exclude_dir>module_pwm_common</exclude_dir>
     <exclude_dir>module_pwm_multibit_fast</exclude_dir>
     <exclude_dir>module_pwm_multibit_port</exclude_dir>
@@ -63,7 +63,7 @@
     <release parenthash = "391d22b3400787f8c7099a79e2df2f13fb0c49dc" version = "1.0.1beta1" githash = "59b46993a8e6deac1c89b29114ea638938e2a2a6"></release>
     <release parenthash = "714ebee42ea3cb4a4435095b31d88bf99b93798c" version = "1.0.1beta2" githash = "06791ac6932dc454548a27f5a69e1c5649dc63b1"></release>
     <release parenthash = "76e61d0746350fbca100ef467a7f1ee4f721926e" version = "1.0.1beta3" githash = "3ac8f34ac40353970aa6814261d032b18db03bc4"></release>
-    <release parenthash = "c38965f9bd7916f5b854ab9aaa739e655699589f" version = "1.0.1beta4"></release>
+    <release parenthash = "c38965f9bd7916f5b854ab9aaa739e655699589f" version = "1.0.1beta4" githash = "dc6bd02d2bb8f02e9bbe9c15db3c52be08c16585"></release>
     <subpartnumber>XM-001843-SM</subpartnumber>
     <vendor>XMOS</vendor>
     <version_defines></version_defines>
