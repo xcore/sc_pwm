@@ -6,6 +6,11 @@ Pulse Width Modulation (PWM) For FOC Test Harness
 :keywords: PWM, "Pulse Width Modulation", FOC, Motor Control
 :boards: None (works on simulator)
 
+History
+-------
+
+WARNING Depreciated: superceded by app_test_pwm in repository sw_foc_motor_control
+
 Features
 --------
 

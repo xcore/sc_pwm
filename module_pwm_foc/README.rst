@@ -6,6 +6,11 @@ Symmetrical Pulse Wave Modulation (PWM) Component for FOC
 :keywords: PWM, FOC, Motor Control
 :boards: XP-MC-CTRL-L2, XA-MC-PWR-DLV
 
+History
+-------
+
+WARNING Depreciated: superceded by module_foc_pwm in repository sw_foc_motor_control
+
 Features
 --------
 

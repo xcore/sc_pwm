@@ -64,6 +64,7 @@ Testbench Structure
 -------------------
 
 The test application uses the following channels:-
+
    #. c_tst: Transmits test vectors from Generator to Checker core
    #. c_pwm2adc_trig: Transmits synchronisation trigger pulse from PWM server to ADC server
    #. c_pwm: Transmits required pulse-width from PWM client to PWM server
@@ -72,6 +73,7 @@ The test application uses the following channels:-
    #. c_lo_leg[]: An array of channels for transmitting raw PWM data from the Low-Leg-Capture to the Checker core
 
 The test application uses the following ports:-
+
    #. pb32_pwm_hi[]: An array of buffered output ports for setting the High-Leg PWM voltage
    #. pb32_pwm_lo[]: An array of buffered output ports for setting the Low-Leg PWM voltage
    #. p16_adc_sync: A dummy 16-bit input port used for synchronising the PWM to ADC trigger
@@ -80,6 +82,7 @@ The test application uses the following ports:-
    #. p8_tst_sync: A dummy 8-bit ouput port used for testing the PWM to ADC trigger
 
 The test application uses the following clocks:-
+
    #. pwm_clk: Used for timing the PWM output wave-train
    #. comm_clk: A common clock used to synchronise the timers on all test ports
 

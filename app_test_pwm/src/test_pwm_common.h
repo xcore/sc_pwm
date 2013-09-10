@@ -105,7 +105,7 @@ typedef enum CNTRL_PWM_ETAG
   NUM_PWM_CNTRLS	// Handy Value!-)
 } CNTRL_PWM_ENUM;
 
-// NB Enumeration of PWM Phase-states in sc_pwm/module_foc_pwm/src/pwm_common.h
+// NB Enumeration of PWM Phase-states in module_foc_pwm/src/pwm_common.h
 
 /** Define maximum number of states for any test vector component (used to size arrays) */
 #define MAX_COMP_STATES NUM_PWM_WIDTHS	// Edit this line
