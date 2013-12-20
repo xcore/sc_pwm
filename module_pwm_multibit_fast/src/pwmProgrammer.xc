@@ -27,10 +27,10 @@ static void explain(int i, unsigned addr, unsigned w, int pc) {
     printf("%3d  %08x  %08x ", i, addr, w);
     if (w > stableZero - 20 && w <= stableZero) {
         printf("  Stable%d", (stableZero-w)>>1);
-    } 
+    }
     if (w > changeZero - 80 && w <= changeZero) {
         printf("  Change%d", (changeZero-w)>>2);
-    } 
+    }
     if (w == loopAround) {
         printf("  Loop Around");
     }
@@ -62,7 +62,7 @@ const int multiplierTable[16] = {
 #define PROGRAMSPACESIZE (256+MAXHALFCYCLE)
 
 #ifdef unsafearrays
-#pragma unsafe arrays    
+#pragma unsafe arrays
 #endif
 void pwmControl1(in port syncport, streaming chanend c, streaming chanend toPWM) {
     unsigned pc;
@@ -125,7 +125,7 @@ void pwmControl1(in port syncport, streaming chanend c, streaming chanend toPWM)
                     pc++;
                     programSpace[pc] = changeOpcode(numBytes);
                     pc += 2;    // leave room for nextPC, nextInstr, stable, loopcount
-                    
+
                     // Now patch into previous instruction
                     programSpace[startPC] = pc*4 + addressOffset;
                     startPC = pc-1;
@@ -140,7 +140,7 @@ void pwmControl1(in port syncport, streaming chanend c, streaming chanend toPWM)
                     pc++;
                     programSpace[pc] = changeOpcode(numBytes);
                     pc += 2;    // leave room for nextPC, nextInstr, stable, loopcount
-                    
+
                     // Now patch into previous instruction
                     programSpace[startPC] = pc*4 + addressOffset;
                     numBytes = 4;

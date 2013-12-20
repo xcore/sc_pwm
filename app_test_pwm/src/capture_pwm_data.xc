@@ -1,6 +1,6 @@
 /**
- * The copyrights, all other intellectual and industrial 
- * property rights are retained by XMOS and/or its licensors. 
+ * The copyrights, all other intellectual and industrial
+ * property rights are retained by XMOS and/or its licensors.
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
@@ -8,9 +8,9 @@
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
- * below. The modifications to the code are still covered by the 
+ * below. The modifications to the code are still covered by the
  * copyright notice above.
- **/ 
+ **/
 
 #include "capture_pwm_data.h"
 
@@ -26,7 +26,7 @@ void config_all_ports( // Configure all ports to use the same clock
 
 
 	for (phase_cnt=0; phase_cnt<NUM_PWM_PHASES; phase_cnt++)
-	{ 
+	{
 	  configure_in_port( p32_tst_hi[phase_cnt] ,comm_clk );
 	  configure_in_port( p32_tst_lo[phase_cnt] ,comm_clk );
 
@@ -42,7 +42,7 @@ void config_all_ports( // Configure all ports to use the same clock
 /*****************************************************************************/
 void capture_pwm_trigger_data( // Captures PWM-to-ADC trigger data
 	out port p8_tst_sync, // NB Dummy output port
-	chanend c_trigger, // PWM-to-ADC trigger channel from PWM server 
+	chanend c_trigger, // PWM-to-ADC trigger channel from PWM server
 	streaming chanend c_chk // Channel for transmitting trigger data to test checker
 )
 {

@@ -8,15 +8,15 @@
 
 void pwmMultiBitPort(
     chanend c, clock clk,
-    out buffered port:32 p, 
+    out buffered port:32 p,
     unsigned int portWidth,
-    unsigned int resolution, 
+    unsigned int resolution,
     unsigned int timeStep,
     unsigned int edge);
 
 void pwmMultiBitPortSetDutyCycle(
-    chanend c, 
-    unsigned int dutyCycle[], 
+    chanend c,
+    unsigned int dutyCycle[],
     unsigned int portWidth);
 
 #endif /* PWM_H_ */

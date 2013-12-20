@@ -1,6 +1,6 @@
 /*
- * The copyrights, all other intellectual and industrial 
- * property rights are retained by XMOS and/or its licensors. 
+ * The copyrights, all other intellectual and industrial
+ * property rights are retained by XMOS and/or its licensors.
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
@@ -8,9 +8,9 @@
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
- * below. The modifications to the code are still covered by the 
+ * below. The modifications to the code are still covered by the
  * copyright notice above.
- **/                                   
+ **/
 
 #ifndef _PWM_COMMON_H_
 #define _PWM_COMMON_H_
@@ -19,7 +19,7 @@
 
 #include "app_global.h"
 
-#ifndef PWM_SHARED_MEM 
+#ifndef PWM_SHARED_MEM
 	#error Define. PWM_SHARED_MEM in app_global.h
 #endif // PWM_SHARED_MEM
 
@@ -31,7 +31,7 @@
 #define NUM_PWM_BUFS 2  // Double-buffered
 
 /** Define PWM port width resolution */
-#define PORT_RES_BITS 5 // PWM port width resoltion (e.g. 5 for 32-bits) 
+#define PORT_RES_BITS 5 // PWM port width resoltion (e.g. 5 for 32-bits)
 
 /** Define PWM port width in bits */
 #define PWM_PORT_WID (1 << PORT_RES_BITS) // PWM port width in bits
@@ -76,7 +76,7 @@ typedef enum PWM_LEG_ETAG
 typedef unsigned short PORT_TIME_TYP;
 
 /** Structure containing PWM parameters for one motor */
-typedef struct PWM_PARAM_TAG // 
+typedef struct PWM_PARAM_TAG //
 {
 	unsigned widths[NUM_PWM_PHASES]; // Array of PWM width values
 	int id; // Unique Motor identifier e.g. 0 or 1 (NB -1 used to signal termination)

@@ -1,6 +1,6 @@
 /**
- * The copyrights, all other intellectual and industrial 
- * property rights are retained by XMOS and/or its licensors. 
+ * The copyrights, all other intellectual and industrial
+ * property rights are retained by XMOS and/or its licensors.
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
@@ -8,9 +8,9 @@
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
- * below. The modifications to the code are still covered by the 
+ * below. The modifications to the code are still covered by the
  * copyright notice above.
- **/ 
+ **/
 
 #include "test_pwm_common.h"
 
@@ -40,7 +40,7 @@ static void init_width_component( // Initialise PWM Test data for PWM width test
 	safestrcpy( vect_comp_s.state_names[LARGE].str	,"Large-width " );
 	safestrcpy( vect_comp_s.state_names[MAXI].str		,"Maxim-width " );
 
-	// Add any new component states here 
+	// Add any new component states here
 } // init_width_component
 /*****************************************************************************/
 static void init_width_info( // Initialise PWM Test data for PWM width test vector component
@@ -51,14 +51,14 @@ static void init_width_info( // Initialise PWM Test data for PWM width test vect
 {
 	init_width_component(	comm_pwm_s.comp_data[WIDTH] ,inp_states ,inp_name );
 
-	// Assign PWM-widths to each PWM width-state 
+	// Assign PWM-widths to each PWM width-state
 	comm_pwm_s.pwm_wids[MINI] = MINI_PWM;
 	comm_pwm_s.pwm_wids[SMALL] = SMALL_PWM;
 	comm_pwm_s.pwm_wids[EQUAL] = EQUAL_PWM;
 	comm_pwm_s.pwm_wids[LARGE] = LARGE_PWM;
 	comm_pwm_s.pwm_wids[MAXI] = MAXI_PWM;
 
-	// Add any new component states here 
+	// Add any new component states here
 } // init_width_info
 /*****************************************************************************/
 static void init_leg_component( // Initialise PWM Test data for PWM-leg test vector component
@@ -84,7 +84,7 @@ static void init_leg_component( // Initialise PWM Test data for PWM-leg test vec
 	safestrcpy( vect_comp_s.state_names[PWM_LO_LEG].str		,"Lo-Leg " );
 	safestrcpy( vect_comp_s.state_names[NUM_PWM_LEGS].str	,"" );
 
-	// Add any new component states here 
+	// Add any new component states here
 } // init_phase_component
 /*****************************************************************************/
 static void init_adc_component( // Initialise PWM Test data for ADC trigger test vector component
@@ -109,7 +109,7 @@ static void init_adc_component( // Initialise PWM Test data for ADC trigger test
 	safestrcpy( vect_comp_s.state_names[NO_ADC].str ,"No_ADC " );
 	safestrcpy( vect_comp_s.state_names[ADC_ON].str ,"ADC_On " );
 
-	// Add any new component states here 
+	// Add any new component states here
 } // init_adc_component
 /*****************************************************************************/
 static void init_deadtime_component( // Initialise PWM Test data for Dead-Time test vector component
@@ -134,7 +134,7 @@ static void init_deadtime_component( // Initialise PWM Test data for Dead-Time t
 	safestrcpy( vect_comp_s.state_names[NO_DEAD].str ,"No_DeadT " );
 	safestrcpy( vect_comp_s.state_names[DEAD_ON].str ,"DeadT_On " );
 
-	// Add any new component states here 
+	// Add any new component states here
 } // init_deadtime_component
 /*****************************************************************************/
 static void init_control_component( // Initialise PWM Test data for Control/Communications test vector component
@@ -160,7 +160,7 @@ static void init_control_component( // Initialise PWM Test data for Control/Comm
 	safestrcpy( vect_comp_s.state_names[VALID].str	,"VALID" );
 	safestrcpy( vect_comp_s.state_names[SKIP].str		,"SKIP " );
 
-	// Add any new component states here 
+	// Add any new component states here
 } // init_control_component
 /*****************************************************************************/
 void print_test_vector( // print test vector details

@@ -1,6 +1,6 @@
 /*
- * The copyrights, all other intellectual and industrial 
- * property rights are retained by XMOS and/or its licensors. 
+ * The copyrights, all other intellectual and industrial
+ * property rights are retained by XMOS and/or its licensors.
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
@@ -8,7 +8,7 @@
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
- * below. The modifications to the code are still covered by the 
+ * below. The modifications to the code are still covered by the
  * copyright notice above.
  *
  **/
@@ -47,7 +47,7 @@
 .linkset pwm_op_simple.maxthreads, 0
 
 .cc_top pwm_op_simple.func, pwm_op_simple
-.globl pwm_op_simple
+.globl pwm_op_simple
 
 // r0 - buffer index
 // r1 - p_pwm[],
@@ -98,7 +98,7 @@ pwm_op_simple:
 	add r4, r3, r7
 	ldaw r4, r4[r6]
 	ldw r4, r4[0]
-	
+
 	// get current time stamp
 	getts r5, res[r0]
 
@@ -142,7 +142,7 @@ PWM_MODE_1:
 	and r5, r6, r5
 
 	bu PWM_MODE_1
-	
+
 GO_UPDATE_M1:
 	// get buffer number
 	chkct res[r8], 0x1
@@ -198,7 +198,7 @@ PWM_MODE_2:
 	setpt res[r0], r6
 	ldw r6, r2[3]
 	out res[r0], r6
-	
+
 	// setup event
 	ldap r11, GO_UPDATE_M1
 	setv res[r8], r11
@@ -214,8 +214,8 @@ PWM_MODE_2:
 	// clear events
 	clrsr 0x1
 	clre
-	
+
 	bu PWM_MODE_2
 
 .cc_bottom pwm_op_simple.func
-	
+

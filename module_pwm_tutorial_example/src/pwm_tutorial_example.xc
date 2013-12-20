@@ -33,7 +33,7 @@ void pwm_tutorial_example ( chanend c, out port p, unsigned port_width) {
   p <: 0;
 
   //get the current port time
-  p <: 0 @ now; 
+  p <: 0 @ now;
 
   while(1) {
 	if(period != duty) { // if not always on
@@ -53,7 +53,7 @@ void pwm_tutorial_example ( chanend c, out port p, unsigned port_width) {
       p @now <: val;
 	}
 
-    //select on channelend tests for new data on the channel from the client 
+    //select on channelend tests for new data on the channel from the client
     select {
       //this case is taken if the channel has data
       case c :> duty:

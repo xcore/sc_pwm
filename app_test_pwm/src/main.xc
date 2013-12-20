@@ -1,6 +1,6 @@
 /**
- * The copyrights, all other intellectual and industrial 
- * property rights are retained by XMOS and/or its licensors. 
+ * The copyrights, all other intellectual and industrial
+ * property rights are retained by XMOS and/or its licensors.
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
@@ -8,9 +8,9 @@
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
- * below. The modifications to the code are still covered by the 
+ * below. The modifications to the code are still covered by the
  * copyright notice above.
- **/                                   
+ **/
 
 #include "main.h"
 
@@ -36,7 +36,7 @@ void xscope_user_init()
 		,XSCOPE_CONTINUOUS, "PWM_A", XSCOPE_INT , "n"
 		,XSCOPE_CONTINUOUS, "PWM_B", XSCOPE_INT , "n"
 		,XSCOPE_CONTINUOUS, "PWM_C", XSCOPE_INT , "n"
-	); // xscope_register 
+	); // xscope_register
 } // xscope_user_init
 /*****************************************************************************/
 #endif // (USE_XSCOPE)
@@ -54,7 +54,7 @@ int main ( void ) // Program Entry Point
 
 	par
 	{	// NB All cores are run on one tile so that all cores use the same clock frequency (100 MHz)
-		on tile[MOTOR_TILE] : 
+		on tile[MOTOR_TILE] :
 		{
 		  init_locks(); // Initialise Mutex for display
 
@@ -63,10 +63,10 @@ int main ( void ) // Program Entry Point
 			par
 			{
 				gen_all_pwm_test_data( c_gen_chk ,c_gen_pwm ); // Generate test data using PWM Client
-		
+
 				// Server function under test
 				foc_pwm_do_triggered( MOTOR_ID, c_gen_pwm ,pb32_pwm_hi ,pb32_pwm_lo ,c_pwm2adc_trig ,p16_adc_sync ,pwm_clk );
-		
+
 				capture_pwm_leg_data( pb32_tst_hi ,c_hi_leg ,PWM_HI_LEG ); // Capture PWM Hi-Leg data
 
 				capture_pwm_leg_data( pb32_tst_lo ,c_lo_leg ,PWM_LO_LEG ); // Capture PWM Lo-Leg data
@@ -75,10 +75,10 @@ int main ( void ) // Program Entry Point
 
 				check_pwm_server_data( c_hi_leg ,c_lo_leg ,c_cap_chk ,c_gen_chk ); // Check results
 			} // par
-		
+
 		  free_locks(); // Free Mutex for display
-		} // on tile[MOTOR_TILE] : 
-	} // par 
+		} // on tile[MOTOR_TILE] :
+	} // par
 
 	return 0;
 } // main

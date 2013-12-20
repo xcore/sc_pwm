@@ -18,7 +18,7 @@ void pwmSingleBitPort(
     chanend c, clock clk,
     out buffered port:32 p[],
     unsigned int numPorts,
-    unsigned int resolution, 
+    unsigned int resolution,
     unsigned int timeStep,
     unsigned int edge) {
 
@@ -41,7 +41,7 @@ void pwmSingleBitPort(
     }
     start_clock(clk);
 
-    // Gets the initial time. 
+    // Gets the initial time.
     t :> time;
     time += period;
     while (1) {
@@ -49,9 +49,9 @@ void pwmSingleBitPort(
     	select {
         // A new set of duty cycle values are avaliable.
 #pragma xta endpoint "updateDutyCycle"
-        case slave { 
+        case slave {
             int i = 0;
-            do { 
+            do {
             	numTicks = 0;
                 c :> dutyCycle[i];
                 ++i;
@@ -63,7 +63,7 @@ void pwmSingleBitPort(
         case t when timerafter (time) :> void:
             if (numTicks == resolution)
                 numTicks = 0;
-            
+
             for (unsigned int i = 0; i < numPorts; ++i) {
                 #pragma xta label "handlePwmLoop"
                 unsigned int value = dutyCycle[i];
@@ -238,8 +238,8 @@ void pwmSingleBitPortTrigger(
 }
 
 void pwmSingleBitPortSetDutyCycle(
-    chanend c, 
-    unsigned int dutyCycle[], 
+    chanend c,
+    unsigned int dutyCycle[],
     unsigned int numPorts) {
 
     assert(numPorts <= MAX_NUM_PORTS);

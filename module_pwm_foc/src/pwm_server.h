@@ -1,6 +1,6 @@
 /*
- * The copyrights, all other intellectual and industrial 
- * property rights are retained by XMOS and/or its licensors. 
+ * The copyrights, all other intellectual and industrial
+ * property rights are retained by XMOS and/or its licensors.
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
@@ -8,10 +8,10 @@
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
- * below. The modifications to the code are still covered by the 
+ * below. The modifications to the code are still covered by the
  * copyright notice above.
  *
- **/                                   
+ **/
 
 #ifndef _PWM_SERVER_H_
 #define _PWM_SERVER_H_
@@ -24,11 +24,11 @@
 #include "pwm_common.h"
 #include "pwm_convert_width.h"
 
-#ifndef LOCK_ADC_TO_PWM 
+#ifndef LOCK_ADC_TO_PWM
 	#error Define. LOCK_ADC_TO_PWM in app_global.h
 #endif // LOCK_ADC_TO_PWM
 
-#define PWM_CLK_MHZ 250 // For historical reasons, PWM timings are based on a 250 MHz clock 
+#define PWM_CLK_MHZ 250 // For historical reasons, PWM timings are based on a 250 MHz clock
 
 // Number of PWM time increments between ADC/PWM synchronisation points. NB Independent of Reference Frequency
 #define INIT_SYNC_INCREMENT (PWM_MAX_VALUE)
@@ -57,9 +57,9 @@ typedef struct PWM_SERV_TAG
 void foc_pwm_do_triggered( // Implementation of the Centre-aligned, High-Low pair, PWM server, with ADC synchronization
 	unsigned motor_id, // Motor identifier
 	chanend c_pwm, // PWM channel between Client and Server
-	buffered out port:32 p32_pwm_hi[], // array of PWM ports (High side)  
-	buffered out port:32 p32_pwm_lo[], // array of PWM ports (Low side)   
-	chanend? c_adc_trig, // ADC trigger channel 
+	buffered out port:32 p32_pwm_hi[], // array of PWM ports (High side)
+	buffered out port:32 p32_pwm_lo[], // array of PWM ports (Low side)
+	chanend? c_adc_trig, // ADC trigger channel
 	in port? p16_adc_sync, // Dummy port used with ADC trigger
 	clock pwm_clk // clock for generating accurate PWM timing
 );

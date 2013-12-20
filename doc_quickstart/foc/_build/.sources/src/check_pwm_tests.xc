@@ -1,6 +1,6 @@
 /**
- * The copyrights, all other intellectual and industrial 
- * property rights are retained by XMOS and/or its licensors. 
+ * The copyrights, all other intellectual and industrial
+ * property rights are retained by XMOS and/or its licensors.
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
@@ -8,9 +8,9 @@
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
- * below. The modifications to the code are still covered by the 
+ * below. The modifications to the code are still covered by the
  * copyright notice above.
- **/ 
+ **/
 
 #include "check_pwm_tests.h"
 
@@ -37,8 +37,8 @@ static void init_check_data( // Initialise check data for PWM tests
 	// Clear error and test counters for current motor
 	for (comp_cnt=0; comp_cnt<NUM_VECT_COMPS; comp_cnt++)
 	{
-		chk_data_s.motor_errs[comp_cnt] = 0; 
-		chk_data_s.motor_tsts[comp_cnt] = 0; 
+		chk_data_s.motor_errs[comp_cnt] = 0;
+		chk_data_s.motor_tsts[comp_cnt] = 0;
 	} // for comp_cnt
 } // init_check_data
 /*****************************************************************************/
@@ -73,7 +73,7 @@ static void init_line_data( // Initialise wave data for one PWM balanced-line (p
 
 
 	for (leg_cnt=0; leg_cnt<NUM_PWM_LEGS; leg_cnt++)
-	{ 
+	{
 		init_wave_data( chk_data_s ,line_data_s.waves[leg_cnt] );
 	} // for leg_cnt
 } // init_line_data
@@ -151,7 +151,7 @@ static void init_sample_data( // Initialise PWM sample data, and if necessary co
 	// Check for edge ...
 
 	/* NB The following logic relies on the fact that some combinations are unreachable,
-	 * because the minimum pulse width is PWM_PORT_WID (32) 
+	 * because the minimum pulse width is PWM_PORT_WID (32)
 	 */
 	if (curr_pwm_s.first != curr_pwm_s.last)
 	{ // Edge found
@@ -201,7 +201,7 @@ static void check_adc_trigger( // Check timing of ADC trigger, against previous 
 static void check_dead_time( // Check dead-time between edges in High and Low legs
 	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
 	PORT_TIME_TYP early_time,		// time of earlier edge
-	PORT_TIME_TYP later_time		// time of later edge 
+	PORT_TIME_TYP later_time		// time of later edge
 )
 {
 	int gap_time; // Time gap between edges
@@ -210,7 +210,7 @@ static void check_dead_time( // Check dead-time between edges in High and Low le
 	gap_time = later_time - early_time; // Time difference between edges
 
 	gap_time &= PORT_TIME_MASK; // mask into range [0..PORT_TIME_MASK]
-	if (gap_time > (PORT_TIME_MASK>> 1)) gap_time -= PORT_TIME_MASK; // Max. absolute error is half timer period 
+	if (gap_time > (PORT_TIME_MASK>> 1)) gap_time -= PORT_TIME_MASK; // Max. absolute error is half timer period
 	gap_time = abs(gap_time);
 
 	chk_data_s.motor_tsts[DEAD]++;
@@ -248,7 +248,7 @@ static void update_pwm_data( // Update PWM data
 	// Update pulse times ...
 
 	/* NB The following logic relies on the fact that some combinations are unreachable,
-	 * because the minimum pulse width is PWM_PORT_WID (32) 
+	 * because the minimum pulse width is PWM_PORT_WID (32)
 	 */
 
 	if (curr_pwm_s.last)
@@ -286,7 +286,7 @@ static void update_pwm_data( // Update PWM data
 			{ // update accumulators for test of high-pulse-width
 				wave_data_s.hi_sum += wave_data_s.hi_wid;
 				wave_data_s.hi_num++;
-	
+
 				if (chk_data_s.print)
 				{
 					print_pwm_pulse( chk_data_s ,wave_data_s.hi_wid ,"Hi_Width" ); // Print new PWM pulse data
@@ -303,7 +303,7 @@ static void update_pwm_data( // Update PWM data
 static void check_pwm_pulse_levels( // Check PWM mean voltage
 	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
 	PWM_WAVE_TYP &wave_data_s, // Reference to a structure containing wave data for one PWM-leg
-	unsigned chk_wid 					// Check width for this width-state 
+	unsigned chk_wid 					// Check width for this width-state
 )
 {
 	chk_data_s.motor_tsts[WIDTH]++;
@@ -349,10 +349,10 @@ static void measure_pwm_width( // Calculate PWM-width from captured PWM wave dat
 	period = hi_mean + lo_mean;	// Calculate mean PWM wave period
 
 	// Calculate equivalent measured PWM-width
-	if (period) 
+	if (period)
 	{
 		wave_data_s.meas_wid = ((PWM_MAX_VALUE * hi_mean) + (period >> 1))/period;
-	} // if (period) 
+	} // if (period)
 
 } // measure_pwm_width
 /*****************************************************************************/
@@ -365,8 +365,8 @@ static void initialise_pwm_width_test( // Initialise data for new Pulse-width te
 	init_line_data( chk_data_s ,line_s ); // Initialise all wave data for one balanced line (phase)
 
 	// Evaluate error bounds for Pulse-width checks (~2%)
-	chk_data_s.bound = 1 + (chk_data_s.common.pwm_wids[chk_data_s.curr_vect.comp_state[WIDTH]] >> 6); 
-} // initialise_pwm_width_test 
+	chk_data_s.bound = 1 + (chk_data_s.common.pwm_wids[chk_data_s.curr_vect.comp_state[WIDTH]] >> 6);
+} // initialise_pwm_width_test
 /*****************************************************************************/
 static void finalise_pwm_leg( // Terminate pulse-width test for one PWM-leg
 	CHECK_PWM_TYP &chk_data_s, // Reference to structure containing test check data
@@ -397,7 +397,7 @@ static void finalise_pwm_phase( // Terminate pulse-width test for one phase
 )
 {
 	WIDTH_PWM_ENUM wid_state = chk_data_s.prev_vect.comp_state[WIDTH]; // Local copy of width-state under test
-	unsigned hi_width = chk_data_s.common.pwm_wids[wid_state]; // Pulse-width check value for High-Leg 
+	unsigned hi_width = chk_data_s.common.pwm_wids[wid_state]; // Pulse-width check value for High-Leg
 
 
 	chk_data_s.curr_leg = PWM_HI_LEG; // Set PWM-leg under test
@@ -413,7 +413,7 @@ static void finalise_pwm_width_test( // Terminate pulse-width test for all phase
 )
 {
 	finalise_pwm_phase( chk_data_s ,line_s );
-} // finalise_pwm_width_test 
+} // finalise_pwm_width_test
 /*****************************************************************************/
 static int pwm_data_compare( // Check if 2 sets of PWM data are different
 	PWM_PORT_TYP &data_a,	// Structure containing 1st set of PWM parameters
@@ -447,7 +447,7 @@ static void test_pwm_wave( // test new PWM input value
 //			print_pwm_sample( chk_data_s ,wave_data_s ); // Print new PWM sample
 		} // if (chk_data_s.print)
 
-		init_sample_data( wave_data_s.curr_data ); 
+		init_sample_data( wave_data_s.curr_data );
 
 		update_pwm_data( chk_data_s ,wave_data_s ); // Update PWM-leg data
 
@@ -470,13 +470,13 @@ static void test_pwm_phase( // test new PWM data against PWM data for phase unde
 		// Check which PWM event expected
 		switch(chk_data_s.event)
 		{
-			case PWM_LO_RISE : // Low-leg rising edge 
+			case PWM_LO_RISE : // Low-leg rising edge
 				check_dead_time( chk_data_s ,phase_data_s.waves[PWM_HI_LEG].fall_time ,phase_data_s.waves[PWM_LO_LEG].rise_time );
 
 				chk_data_s.event = PWM_HI_RISE; // set next event
 			break; // case PWM_LO_RISE
-			
-			case PWM_HI_RISE : // High-leg rising edge 
+
+			case PWM_HI_RISE : // High-leg rising edge
 				check_dead_time( chk_data_s ,phase_data_s.waves[PWM_LO_LEG].rise_time ,phase_data_s.waves[PWM_HI_LEG].rise_time );
 
 				chk_data_s.event = PWM_ADC_TRIG; // set next event
@@ -499,13 +499,13 @@ static void test_pwm_phase( // test new PWM data against PWM data for phase unde
 
 				chk_data_s.event = PWM_LO_FALL; // set next event
 			break; // case PWM_HI_FALL
-			
-			case PWM_LO_FALL : // Low-leg falling edge 
+
+			case PWM_LO_FALL : // Low-leg falling edge
 				check_dead_time( chk_data_s ,phase_data_s.waves[PWM_HI_LEG].fall_time ,phase_data_s.waves[PWM_LO_LEG].fall_time );
 
 				chk_data_s.event = PWM_LO_RISE; // set next event
 			break; // case PWM_LO_FALL
-		
+
 			default :
 				assert( 0 == 1); // Unexpected PWM event found
 			break; // default
@@ -567,7 +567,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 )
 /* PWM Events are assumed to be transmitted in the following cyclic sequence
  * 	PWM_LO_RISE --> PWM_HI_RISE --> PWM_ADC_TRIG --> PWM_HI_FALL --> PWM_LO_FALL --> PWM_LO_RISE ...
- * Actually for short pulse-widths the ADC-trigger may be received earlier. 
+ * Actually for short pulse-widths the ADC-trigger may be received earlier.
  * However this does NOT effect this test schedule.
  */
 {
@@ -577,7 +577,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 	PWM_CAPTURE_TYP lo_bufs[NUM_INP_BUFS]; // Set of buffers for capturing Low-leg PWM data
 	PWM_CAPTURE_TYP adc_bufs[NUM_INP_BUFS]; // Set of buffers for capturing ADC-trigger PWM data
 	int comp_cnt; // Counter for Test Vector components
-	int do_loop = 1;   // Flag set until loop-end condition found 
+	int do_loop = 1;   // Flag set until loop-end condition found
 	int motor_errs = 0;   // Preset flag to NO errors for current motor
 	int motor_tsts = 0;   // Clear test ccounter for current motor
 
@@ -611,7 +611,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 	acquire_lock(); // Acquire Display Mutex
 	printcharln(' ');
 	printstr( chk_data_s.padstr1 );
-	printstr("Start Checks For Phase_"); 
+	printstr("Start Checks For Phase_");
 	printcharln( ('A' + chk_data_s.phase_id) );
 	release_lock(); // Release Display Mutex
 
@@ -625,7 +625,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 		print_test_vector( chk_data_s.common ,chk_data_s.curr_vect ,chk_data_s.padstr1 ); // Print new test vector details
 	} // if (chk_data_s.print)
 
-	initialise_pwm_width_test( chk_data_s ,line_s ); 
+	initialise_pwm_width_test( chk_data_s ,line_s );
 
 	while (do_loop) {
 		select {
@@ -668,7 +668,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 				{
 					do_loop = 0; // Error flag signals end-of-loop
 				} // if (QUIT == chk_data_s.curr_vect.comp_state[CNTRL])
-			break; // c_tst 
+			break; // c_tst
 
 			default:
 				// Ensure received events are checked in same order they were transmitted ...
@@ -691,7 +691,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 							lo_read_off = (((unsigned)lo_read_cnt) & INP_BUF_MASK); // Wrap offset into range [0..INP_BUF_MASK];
 						} // if (lo_inp_cnt > lo_read_cnt)
 					break; // case PWM_LO_RISE
-					
+
 					case PWM_HI_RISE : case PWM_HI_FALL : // High-leg channel
 						// Check if any new data to read
 						if (hi_inp_cnt > hi_read_cnt)
@@ -707,7 +707,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 							hi_read_off = (((unsigned)hi_read_cnt) & INP_BUF_MASK); // Wrap offset into range [0..INP_BUF_MASK];
 						} // if (hi_inp_cnt > hi_read_cnt)
 					break; // case PWM_HI_RISE
-					
+
 					case PWM_ADC_TRIG : // ADC-trigger
 						// Check if any new data to read
 						if (adc_inp_cnt >adc_read_cnt)
@@ -732,13 +732,13 @@ void check_pwm_server_data( // Checks PWM results for all motors
 	}	// while (do_loop)
 
 	// special case: finalisation for last pulse-width test
-	finalise_pwm_width_test( chk_data_s ,line_s ); 
+	finalise_pwm_width_test( chk_data_s ,line_s );
 
 	// Update error statistics for current motor
 	for (comp_cnt=1; comp_cnt<NUM_VECT_COMPS; comp_cnt++)
 	{
-		motor_errs += chk_data_s.motor_errs[comp_cnt]; 
-		motor_tsts += chk_data_s.motor_tsts[comp_cnt]; 
+		motor_errs += chk_data_s.motor_errs[comp_cnt];
+		motor_tsts += chk_data_s.motor_tsts[comp_cnt];
 	} // for comp_cnt
 
 	acquire_lock(); // Acquire Display Mutex
@@ -765,7 +765,7 @@ void check_pwm_server_data( // Checks PWM results for all motors
 				printstr(" : ");
 				printint( chk_data_s.motor_tsts[comp_cnt] );
 				printstr( " tests run" );
-	
+
 				if (chk_data_s.motor_errs[comp_cnt])
 				{
 					printstr( ", " );

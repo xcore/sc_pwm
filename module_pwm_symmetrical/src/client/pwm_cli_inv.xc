@@ -1,6 +1,6 @@
 /*
- * The copyrights, all other intellectual and industrial 
- * property rights are retained by XMOS and/or its licensors. 
+ * The copyrights, all other intellectual and industrial
+ * property rights are retained by XMOS and/or its licensors.
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
@@ -8,7 +8,7 @@
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
- * below. The modifications to the code are still covered by the 
+ * below. The modifications to the code are still covered by the
  * copyright notice above.
  *
  */
@@ -28,7 +28,7 @@
 
 /*****************************************************************************/
 #pragma unsafe arrays
-void update_pwm_inv( 
+void update_pwm_inv(
 	chanend c_pwm, // Channel from run_motor thread
 	unsigned pwm_widths[], // array of pulse-widths for each phase
 	unsigned motor_id, // Motor identifier
@@ -44,15 +44,15 @@ void update_pwm_inv(
 	c_pwm <: cur_buf; // Signal PWM server that PWM data is ready to read.
 	cur_buf = 1 - cur_buf; // Toggle buffer identifier ready for next iteration
 
-#ifndef SHARED_MEM 
+#ifndef SHARED_MEM
 	// If NOT using shared memory model: Pulse widths are passed down channel for server to calculate port data
 
-	for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
+	for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++)
 	{
 		c_pwm <: pwm_widths[phase_cnt]; // Send PWM pulse-width for current phase
 	} // for phase_cnt
 #endif // ifndef SHARED_MEM
 
-} // update_pwm_inv 
+} // update_pwm_inv
 /*****************************************************************************/
 // pwm_cli_inv

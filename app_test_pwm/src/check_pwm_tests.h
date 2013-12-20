@@ -1,6 +1,6 @@
 /**
- * The copyrights, all other intellectual and industrial 
- * property rights are retained by XMOS and/or its licensors. 
+ * The copyrights, all other intellectual and industrial
+ * property rights are retained by XMOS and/or its licensors.
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
@@ -8,9 +8,9 @@
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
- * below. The modifications to the code are still covered by the 
+ * below. The modifications to the code are still covered by the
  * copyright notice above.
- **/                                   
+ **/
 
 #ifndef _CHECK_PWM_TESTS_H_
 #define _CHECK_PWM_TESTS_H_
@@ -44,8 +44,8 @@ typedef enum PWM_EVENT_ETAG
   PWM_LO_RISE = 0,	// Low-leg rising edge
   PWM_HI_RISE,			// High-leg rising edge
   PWM_ADC_TRIG,			// ADC-trigger event
-  PWM_HI_FALL,			// High-leg falling edge 
-  PWM_LO_FALL,			// Low-leg falling edge 
+  PWM_HI_FALL,			// High-leg falling edge
+  PWM_LO_FALL,			// Low-leg falling edge
   NUM_PWM_EVENTS    // Handy Value!-)
 } PWM_EVENT_ENUM;
 
@@ -60,12 +60,12 @@ typedef struct PWM_SAMP_TAG // Structure containing data for one PWM sample
 /** Type containing data for one PWM-leg */
 typedef struct PWM_WAVE_TAG // Structure containing data for one PWM Wave
 {
-	PWM_SAMP_TYP curr_data; // data for current PWM sample 
+	PWM_SAMP_TYP curr_data; // data for current PWM sample
 	PWM_SAMP_TYP prev_data; // data for previous PWM sample
 	int meas_wid;	// measured PWM width
 	unsigned time_sum; // Time accumulated during pulse
-	unsigned hi_wid; // Measure width of High(one) portion of pulse 
-	unsigned lo_wid; // Measure width of Low(zero) portion of pulse 
+	unsigned hi_wid; // Measure width of High(one) portion of pulse
+	unsigned lo_wid; // Measure width of Low(zero) portion of pulse
 	int hi_sum;	// sum of high-times
 	int lo_sum;	// sum of low-times
 	int hi_num;	// No. of high-times
@@ -102,7 +102,7 @@ typedef struct CHECK_TST_TAG // Structure containing PWM check data
 } CHECK_TST_TYP;
 
 /*****************************************************************************/
-/** Check PWM results 
+/** Check PWM results
  * \param c_hi_leg[], // Array of Channels for receiving PWM High-Leg data
  * \param c_lo_leg[], // Array of Channels for receiving PWM Low-Leg data
  * \param c_adc, // Channel for receiving PWM ADC-trigger data

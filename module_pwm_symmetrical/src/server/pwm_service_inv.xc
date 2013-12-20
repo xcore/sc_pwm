@@ -1,6 +1,6 @@
 /*
  * The copyrights, all other intellectual and industrial
- * property rights are retained by XMOS and/or its licensors. 
+ * property rights are retained by XMOS and/or its licensors.
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
@@ -8,10 +8,10 @@
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
- * below. The modifications to the code are still covered by the 
+ * below. The modifications to the code are still covered by the
  * copyright notice above.
  *
- **/                                   
+ **/
 
 #include <assert.h>
 
@@ -29,30 +29,30 @@
 #include <xscope.h>
 #endif
 
-extern unsigned pwm_op_inv( 
-	unsigned buf_id, 
-	buffered out port:32 p32_pwm_hi[], 
-	buffered out port:32 p32_pwm_lo[], 
-	chanend c_pwm, 
-	unsigned control, 
-	chanend? c_trig, 
-	in port? p16_adc_sync 
+extern unsigned pwm_op_inv(
+	unsigned buf_id,
+	buffered out port:32 p32_pwm_hi[],
+	buffered out port:32 p32_pwm_lo[],
+	chanend c_pwm,
+	unsigned control,
+	chanend? c_trig,
+	in port? p16_adc_sync
 );
 
 /*****************************************************************************/
-static void do_pwm_port_config( 
-	buffered out port:32 p32_pwm_hi[], 
-	buffered out port:32 p32_pwm_lo[], 
-	in port? p16_adc_sync, 
-	clock pwm_clk 
+static void do_pwm_port_config(
+	buffered out port:32 p32_pwm_hi[],
+	buffered out port:32 p32_pwm_lo[],
+	in port? p16_adc_sync,
+	clock pwm_clk
 )
 {
 	unsigned i;
 
 	for (i = 0; i < NUM_PWM_PHASES; i++)
 	{
-		configure_out_port( p32_pwm_hi[i] ,pwm_clk ,0 ); // Set initial value of port to 0 (Switched Off) 
-		configure_out_port( p32_pwm_lo[i] ,pwm_clk ,0 ); // Set initial value of port to 0 (Switched Off)  
+		configure_out_port( p32_pwm_hi[i] ,pwm_clk ,0 ); // Set initial value of port to 0 (Switched Off)
+		configure_out_port( p32_pwm_lo[i] ,pwm_clk ,0 ); // Set initial value of port to 0 (Switched Off)
 		set_port_inv( p32_pwm_lo[i] );
 	}
 
@@ -64,7 +64,7 @@ static void do_pwm_port_config(
 } // do_pwm_port_config_inv_adc_trig
 /*****************************************************************************/
 void load_pwm_port_data( // Load one set of output port data
-	PWM_PORT_TYP &port_data_s, // Reference to structure containing PWM output port 
+	PWM_PORT_TYP &port_data_s, // Reference to structure containing PWM output port
 	buffered out port:32 p32_pwm_leg, // current 32-bit buffered output port
 	unsigned ref_time // Reference time-stamp
 )
@@ -105,10 +105,10 @@ void do_pwm_period( // Does processing for one PWM period (4096 cycles)
 	PWM_SERV_TYP &pwm_serv_s, // Reference to structure containing PWM server control data structure
 	PWM_BUFFER_TYP &pwm_data_s, // Reference to structure containing PWM output data for one period
 	unsigned motor_id, // Motor identifier
-	chanend c_pwm, 
-	buffered out port:32 p32_pwm_hi[], 
-	buffered out port:32 p32_pwm_lo[], 
-	chanend? c_adc_trig, 
+	chanend c_pwm,
+	buffered out port:32 p32_pwm_hi[],
+	buffered out port:32 p32_pwm_lo[],
+	chanend? c_adc_trig,
 	in port? p16_adc_sync
 )
 {
@@ -118,7 +118,7 @@ void do_pwm_period( // Does processing for one PWM period (4096 cycles)
 #ifndef SHARED_MEM
 		// If NOT using shared memory model: Receive Pulse widths from channel and calculate port data on server side.
 
-		for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++) 
+		for (int phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++)
 		{
 			c_pwm :> pwm_serv_s.widths[phase_cnt]; // Receive PWM pulse-width for current phase
 		} // for phase_cnt
@@ -157,13 +157,13 @@ void do_pwm_period( // Does processing for one PWM period (4096 cycles)
 
 } // do_pwm_period
 /*****************************************************************************/
-void do_pwm_inv_triggered( 
+void do_pwm_inv_triggered(
 	unsigned motor_id, // Motor identifier
-	chanend c_pwm, 
-	buffered out port:32 p32_pwm_hi[], 
-	buffered out port:32 p32_pwm_lo[], 
-	chanend? c_adc_trig, 
-	in port? p16_adc_sync, 
+	chanend c_pwm,
+	buffered out port:32 p32_pwm_hi[],
+	buffered out port:32 p32_pwm_lo[],
+	chanend? c_adc_trig,
+	in port? p16_adc_sync,
 	clock pwm_clk
 )
 {
@@ -180,7 +180,7 @@ void do_pwm_inv_triggered(
 	unsigned mem_addr; // Shared memory address
 
 	// Send the PWM client the shared memory structure address
-	mem_addr = get_pwm_struct_address( pwm_ctrl_s ); 
+	mem_addr = get_pwm_struct_address( pwm_ctrl_s );
 	c_pwm <: mem_addr;
 }
 #endif // ifdef SHARED_MEM
@@ -197,7 +197,7 @@ void do_pwm_inv_triggered(
 	// Loop forever
 	while (1)
 	{
-		// Do processing for one PWM period, using PWM data in current buffer 
+		// Do processing for one PWM period, using PWM data in current buffer
 		do_pwm_period( pwm_serv_s ,pwm_ctrl_s.buf_data[pwm_serv_s.cur_buf] ,motor_id
 			,c_pwm ,p32_pwm_hi ,p32_pwm_lo ,c_adc_trig ,p16_adc_sync );
 

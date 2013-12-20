@@ -1,6 +1,6 @@
 /**
- * The copyrights, all other intellectual and industrial 
- * property rights are retained by XMOS and/or its licensors. 
+ * The copyrights, all other intellectual and industrial
+ * property rights are retained by XMOS and/or its licensors.
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
@@ -8,9 +8,9 @@
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
- * below. The modifications to the code are still covered by the 
+ * below. The modifications to the code are still covered by the
  * copyright notice above.
- **/                                   
+ **/
 
 #ifndef _TEST_PWM_COMMON_H_
 #define _TEST_PWM_COMMON_H_
@@ -37,7 +37,7 @@
 #define SMALL_PWM (1 << SMALL_RES_BITS)
 
 /** Define value for Medium Speed test */
-#define EQUAL_PWM (PWM_MAX_VALUE >> 1) 
+#define EQUAL_PWM (PWM_MAX_VALUE >> 1)
 
 /** Define value for High Speed test */
 #define LARGE_PWM (PWM_MAX_VALUE - SMALL_PWM)
@@ -119,13 +119,13 @@ typedef struct STRING_TAG // Structure containing string array
 /** Type containing Test Vector */
 typedef struct TEST_VECT_TAG // Structure containing test vector (PWM conditions to be tested)
 {
-	int comp_state[NUM_VECT_COMPS]; // array containing current states for each test vector component 
+	int comp_state[NUM_VECT_COMPS]; // array containing current states for each test vector component
 } TEST_VECT_TYP;
 
 /** Type containing Meta-information for one Test Vector */
 typedef struct VECT_COMP_TAG // Structure containing common PWM test data for one test vector component
 {
-	STRING_TYP state_names[MAX_COMP_STATES]; // Array of names for each state of this test vector component 
+	STRING_TYP state_names[MAX_COMP_STATES]; // Array of names for each state of this test vector component
 	STRING_TYP comp_name; // name for this test vector component
 	int num_states; // number of states for this test vector component
 } VECT_COMP_TYP;

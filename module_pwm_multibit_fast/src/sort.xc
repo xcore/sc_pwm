@@ -21,7 +21,7 @@
                     }
 
 #ifdef unsafearrays
-#pragma unsafe arrays    
+#pragma unsafe arrays
 #endif
 static void halfsort(int t0, int t1, int t2, int t3, struct pwmpoint o[]) {
     if (before(t0, t1)) {
@@ -112,7 +112,7 @@ static void halfsort(int t0, int t1, int t2, int t3, struct pwmpoint o[]) {
 }
 
 #ifdef unsafearrays
-#pragma unsafe arrays    
+#pragma unsafe arrays
 #endif
 void sortPoints(struct pwmpoint x[8]) {
     struct pwmpoint yl[5];

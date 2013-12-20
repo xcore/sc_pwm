@@ -41,7 +41,7 @@ void signalgenerator( chanend c) {
                 c :> int _;
                 for(int i = 0; i < 8; i++) {
                     t += differences[i + j*8];
-                    c <: t; 
+                    c <: t;
                 }
                 now += pwmCycle;
                 c <: now;

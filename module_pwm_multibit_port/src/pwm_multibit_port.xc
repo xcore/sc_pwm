@@ -15,7 +15,7 @@ void pwmMultiBitPort(
     chanend c, clock clk,
     out buffered port:32 p,
     unsigned int portWidth,
-    unsigned int resolution, 
+    unsigned int resolution,
     unsigned int timeStep,
     unsigned int edge) {
 
@@ -48,7 +48,7 @@ void pwmMultiBitPort(
     set_port_clock(p, clk);
     start_clock(clk);
 
-    // Gets the initial time. 
+    // Gets the initial time.
 
     t :> time;
     time += period;
@@ -57,11 +57,11 @@ void pwmMultiBitPort(
         select {
         // A new set of duty cycle values are avaliable.
         #pragma xta endpoint "updateDutyCycle"
-        case slave { 
+        case slave {
             int i = 0;
-            do { 
-                c :> nextDutyCycle[i];  
-                ++i; 
+            do {
+                c :> nextDutyCycle[i];
+                ++i;
             } while (i < portWidth);}:
             break;
 
@@ -76,9 +76,9 @@ void pwmMultiBitPort(
                 }
                 numTicks = 0;
             }
-           
+
             // Calculates the value to be output on the port.
-            portValue = 0; 
+            portValue = 0;
             for (unsigned int i = 0; i < portWidth; ++i) {
                 #pragma xta label "calculatePortValueLoop"
                 unsigned int value = dutyCycle[i];
@@ -165,8 +165,8 @@ void pwmMultiBitPort(
 }
 
 void pwmMultiBitPortSetDutyCycle(
-    chanend c, 
-    unsigned int dutyCycle[], 
+    chanend c,
+    unsigned int dutyCycle[],
     unsigned int portWidth) {
 
     master {
@@ -191,7 +191,7 @@ static void setUp(
     case 16:
         clocksPerPeriod = 2;
         break;
-   
+
     default:
         assert(0);
         break;

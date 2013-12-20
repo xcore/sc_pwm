@@ -1,6 +1,6 @@
 /**
- * The copyrights, all other intellectual and industrial 
- * property rights are retained by XMOS and/or its licensors. 
+ * The copyrights, all other intellectual and industrial
+ * property rights are retained by XMOS and/or its licensors.
  * Terms and conditions covering the use of this code can
  * be found in the Xmos End User License Agreement.
  *
@@ -8,9 +8,9 @@
  *
  * In the case where this code is a modification of existing code
  * under a separate license, the separate license terms are shown
- * below. The modifications to the code are still covered by the 
+ * below. The modifications to the code are still covered by the
  * copyright notice above.
- **/ 
+ **/
 
 #include "generate_pwm_tests.h"
 
@@ -31,7 +31,7 @@ static void parse_control_file( // Parse PWM control file and set up test option
 
 
 	// Initialise file buffer
-  for (char_cnt = 0; char_cnt < FILE_SIZE; ++char_cnt) 
+  for (char_cnt = 0; char_cnt < FILE_SIZE; ++char_cnt)
 	{
     file_buf[char_cnt] = 0;
   } // for char_cnt
@@ -49,7 +49,7 @@ static void parse_control_file( // Parse PWM control file and set up test option
 	printstrln("Read following Test Options ..." );
 
 	// Parse the file buffer for test options
-  for (char_cnt = 0; char_cnt < FILE_SIZE; ++char_cnt) 
+  for (char_cnt = 0; char_cnt < FILE_SIZE; ++char_cnt)
 	{
     curr_char = file_buf[char_cnt]; // Get next character
 
@@ -124,7 +124,7 @@ static void parse_control_file( // Parse PWM control file and set up test option
 					char_cnt++;
 					assert(char_cnt < FILE_SIZE); // End-of-file found
 				} // while ('\n' != file_buf[char_cnt])
-	
+
 				line_cnt++;
 				new_line = 0; // Clear new_line flag
 			} // if (new_line)
@@ -138,7 +138,7 @@ static void parse_control_file( // Parse PWM control file and set up test option
 	assert(test_cnt == NUM_TEST_OPTS); // Check read required number of test options found
 	assert(NUM_TEST_OPTS <= line_cnt); // Check enough file lines read
 	assert(test_cnt <= line_cnt); // Check no more than one test/line
- 
+
 	return;
 } // parse_control_file
 /*****************************************************************************/
@@ -173,7 +173,7 @@ static void init_pwm( // Initialise PWM parameters for one motor
 
 	// initialise arrays
 	for (phase_cnt = 0; phase_cnt < NUM_PWM_PHASES; phase_cnt++)
-	{ 
+	{
 		pwm_comms_s.params.widths[phase_cnt] = 0;
 	} // for phase_cnt
 
@@ -181,7 +181,7 @@ static void init_pwm( // Initialise PWM parameters for one motor
 	c_pwm :> pwm_comms_s.mem_addr; // Receive shared memory address from PWM server
 
 	return;
-} // init_pwm 
+} // init_pwm
 /*****************************************************************************/
 static void init_test_data( // Initialise PWM Test data
 	GENERATE_PWM_TYP &tst_data_s, // Reference to structure of PWM test data
@@ -189,7 +189,7 @@ static void init_test_data( // Initialise PWM Test data
 )
 {
 	init_common_data( tst_data_s.common ); // Initialise data common to Generator and Checker
- 
+
 	tst_data_s.print_on = VERBOSE_PRINT; // Set print mode
 	tst_data_s.dbg = 0; // Set debug mode
 
@@ -197,7 +197,7 @@ static void init_test_data( // Initialise PWM Test data
 	tst_data_s.curr_vect.comp_state[CNTRL] = SKIP; // Initialise to skipped test for set-up mode
 	tst_data_s.prev_vect.comp_state[CNTRL] = QUIT; // Initialise to something that will force an update
 
-	parse_control_file( tst_data_s ); 
+	parse_control_file( tst_data_s );
 
 	c_chk <: tst_data_s.common.options; // Send test options to checker core
 
@@ -270,7 +270,7 @@ static void do_pwm_test( // Performs one PWM test
 	if (tst_data_s.print_on)
 	{
 		acquire_lock(); // Acquire Display Mutex
-		printstr( "PWM:" ); printintln( tst_data_s.width ); 
+		printstr( "PWM:" ); printintln( tst_data_s.width );
 		release_lock(); // Release Display Mutex
 	} // if (tst_data_s.print_on)
 
@@ -321,7 +321,7 @@ static void do_pwm_vector( // Do all tests for one PWM test vector
 		if (QUIT == tst_data_s.curr_vect.comp_state[CNTRL])
 		{
 			tst_data_s.pwm_comms.params.id = PWM_TERMINATED; // Signal Termination
-			foc_pwm_put_parameters( tst_data_s.pwm_comms ,c_pwm ); // Stop PWM server core 
+			foc_pwm_put_parameters( tst_data_s.pwm_comms ,c_pwm ); // Stop PWM server core
 		} // if (QUIT == tst_data_s.curr_vect.comp_state[CNTRL])
 	} // if (new_vect)
 
@@ -343,10 +343,10 @@ static void gen_pwm_width_test( // Generate PWM Test data for testing one PWM Pu
 )
 {
 	assign_test_vector_width( tst_data_s ,wid_state ); // Set width component of test vector
-	
+
 	tst_data_s.curr_vect.comp_state[CNTRL] = SKIP; // Skip start-up
 	do_pwm_vector( tst_data_s ,c_chk ,c_pwm ,3 );
-	
+
 	tst_data_s.curr_vect.comp_state[CNTRL] = VALID; // Start-up complete, Switch on testing
 	do_pwm_vector( tst_data_s ,c_chk ,c_pwm ,MAX_TESTS );
 
