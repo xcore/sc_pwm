@@ -64,13 +64,11 @@ ports = {
 channels = {
   c_pwm = {
     short = "Connects PWM Client and Server",
-    type = "non-streaming",
     long  = "Client sends PWM parameters (e.g. width), Server clocks out PWM Wave-train on output ports",
     help  = "",
   },
   c_adc_trig = {
     short = "ADC trigger channel",
-    type = "non-streaming",
     long  = "PWM Server transmits a synchronisation pulse, typically used to synchronise with an ADC module",
     help  = "",
   },
